@@ -6,6 +6,15 @@ Plateforme comparative pour l'élection générale québécoise de 2026 (5 octob
 
 **Positions de partis documentées et sourcées pour les 5 partis. Candidats : les 127 circonscriptions du Québec sont désormais couvertes — 635 candidat·e·s confirmé·e·s (5 partis × 127 circonscriptions).** Couverture complète, région par région : Mauricie ✅ → Laval ✅ → Chaudière-Appalaches ✅ → Estrie ✅ → Capitale-Nationale ✅ → Centre-du-Québec ✅ → Outaouais ✅ → Saguenay-Lac-Saint-Jean ✅ → Bas-Saint-Laurent/Gaspésie–Îles-de-la-Madeleine ✅ → Abitibi-Témiscamingue/Côte-Nord/Nord-du-Québec ✅ → Laurentides ✅ → Lanaudière ✅ → Montérégie ✅ → Montréal ✅. Les six dimensions, les couches analytiques et l'indice « Québec d'abord » sont codés pour les 5 partis à partir de la couverture de la campagne, avec une source citée sous chaque position. Voir « Sources et méthode » ci-dessous.
 
+**Biographies enrichies (âge, études, établissement, diplôme, profession, expérience politique) — en cours, parti par parti :**
+- PQ (127 candidat·e·s) ✅ terminé
+- PLQ (127 candidat·e·s) ✅ terminé
+- CAQ (127 candidat·e·s) ✅ terminé
+- PCQ (127 candidat·e·s) ⏳ à faire
+- QS (127 candidat·e·s) ⏳ à faire
+
+Voir « À venir » ci-dessous pour la méthode et l'état précis de la suite.
+
 ## Contenu
 
 [`index.html`](index.html) — application à page unique (une seule page HTML, navigation par « pages » internes en JS, pas de défilement continu) avec cinq vues :
@@ -26,7 +35,22 @@ Ouvrir [`index.html`](index.html) dans un navigateur, ou consulter la version pu
 
 ## À venir
 
-- Les 127 circonscriptions et les 5 partis sont désormais couverts (nom, circonscription, parti confirmés pour chaque candidat·e). Reste à approfondir :
-- Biographies plus complètes (âge, études, domaine de formation) pour les candidat·e·s dont seuls le nom/circonscription/parti et une note d'expérience sommaire sont confirmés pour l'instant.
-- Vérification indépendante des cellules marquées « peu documenté ».
+Les 127 circonscriptions et les 5 partis sont couverts au niveau gabarit (nom, circonscription, parti confirmés pour chaque candidat·e). Travail en cours pour approfondir les biographies (âge, domaine d'études, établissement, diplôme, profession, expérience politique) parti par parti, dans cet ordre : PQ ✅ → PLQ ✅ → CAQ ✅ → **PCQ (prochain)** → QS.
+
+**Méthode établie (à réutiliser pour PCQ et QS) :**
+1. Chaque parti a des pages de biographie individuelles sur son propre site (aucune bio fiable sur qc125.com, qui ne contient que des projections électorales) :
+   - PQ : `https://pq.org/nos-candidats/<prenom-nom-slug>/` (ou chercher le lien exact sur `https://pq.org/nos-candidats/`)
+   - PLQ : `https://plq.org/equipe/<prenom-nom-slug>/`
+   - CAQ : `https://coalitionavenirquebec.org/fr/blog/equipe/<prenom-nom-slug>/`
+   - PCQ : `https://conservateur.quebec/candidat/<circonscription-slug>/` (URL basée sur la circonscription, pas le nom — ex. `/candidat/trois-rivieres/`). Attention aux noms de circonscription à trait d'union long (–) : le convertir en trait d'union simple (-) avant de slugifier, sinon l'URL devinée échoue (ex. `charlevoix–côte-de-beaupré` → `charlevoix-cote-de-beaupre`, pas `charlevoixcote-de-beaupre`). Plusieurs fiches PCQ sont encore à blanc (« À venir… ») — dans ce cas, chercher une source de presse à la place plutôt que d'inventer.
+   - QS : structure du site à vérifier au démarrage de cette étape (pas encore explorée).
+2. Slugifier le nom (ou la circonscription pour PCQ) : minuscules, accents retirés, espaces/apostrophes → traits d'union.
+3. Déléguer la recherche à des agents en arrière-plan par lots de ~16 candidat·e·s (WebFetch sur chaque page devinée ; si 404, repli sur WebSearch). Consigne stricte donnée aux agents : ne jamais inventer une donnée manquante — laisser le champ absent plutôt que d'écrire « non documenté » (le rendu HTML affiche déjà un tiret « — » via la fonction `cell()` pour les champs vides).
+4. Intégrer les résultats dans le tableau `CANDIDATS` (`index.html`, ~ligne 782) en ajoutant seulement les champs confirmés (`age`, `domaine`, `etablissement`, `diplome`, `profession`, `experience`) ; garder `complet:false` sauf pour les 6 chef·fes de parti.
+5. Committer et pousser vers GitHub par lots de 20 à 30 candidat·e·s enrichi·e·s (pas un seul gros commit à la fin).
+
+**Autres tâches en attente :**
+- Vérification indépendante des cellules de positions de partis marquées « peu documenté ».
 - Mise à jour des positions et des candidatures si des changements significatifs surviennent avant le 5 octobre 2026 (désistements, remplacements de dernière minute après la clôture des mises en candidature du 17 septembre).
+
+**Note :** une routine cloud automatisée (« Enrichir bios candidats QC2026 ») a été programmée le 24 septembre 2026 pour reprendre ce travail heure par heure de façon autonome, avec les mêmes consignes. Si elle est toujours active, elle peut avoir progressé sur PCQ/QS en parallèle d'une reprise manuelle — vérifier l'état du tableau `CANDIDATS` avant de relancer une recherche pour éviter les doublons.
