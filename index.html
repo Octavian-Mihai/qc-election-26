@@ -569,9 +569,6 @@
         <li><code>Profession avant la politique</code> — texte court</li>
         <li><code>Domaine d'études</code> / <code>Établissement</code> / <code>Diplôme le plus élevé</code> — texte court</li>
         <li><code>Expérience politique</code> — texte libre (poste, palier, années) ou « aucune — première candidature »</li>
-        <li><code>Genre</code> — catégoriel</li>
-        <li><code>Données démographiques pertinentes</code> — texte libre</li>
-        <li><code>Intérêts de portefeuille probables</code> — texte libre, inféré du parcours</li>
       </ul>
 
       <aside class="note">
@@ -969,9 +966,6 @@
       + '<td>'+cell(c.etablissement)+'</td>'
       + '<td>'+cell(c.diplome)+'</td>'
       + '<td>'+cell(c.experience)+'</td>'
-      + '<td>'+cell(c.genre)+'</td>'
-      + '<td>'+cell(c.demo)+'</td>'
-      + '<td>'+cell(c.interets)+'</td>'
       + '<td>'+sourceHTML(c)+'</td>'
       + '</tr>';
   }
@@ -979,8 +973,7 @@
   var CAND_HEAD = '<tr><th scope="col">Candidat·e</th><th scope="col">Circonscription</th><th scope="col">Parti</th>'
     + '<th scope="col">Âge</th><th scope="col">Profession avant la politique</th><th scope="col">Domaine d\'études</th>'
     + '<th scope="col">Établissement</th><th scope="col">Diplôme le plus élevé</th><th scope="col">Expérience politique</th>'
-    + '<th scope="col">Genre</th><th scope="col">Données démographiques pertinentes</th>'
-    + '<th scope="col">Intérêts de portefeuille probables</th><th scope="col">Source</th></tr>';
+    + '<th scope="col">Source</th></tr>';
 
   function setCandMode(mode){
     state.candMode = mode;
