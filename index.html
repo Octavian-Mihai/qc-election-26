@@ -376,14 +376,52 @@
   }
   .site-footer p{font-size:.85rem; color:var(--ink-soft); margin:0; max-width:70ch;}
   .site-footer strong{color:var(--ink)}
+
+  /* ---------- theme toggle ---------- */
+  .header-right{display:flex; align-items:center; gap:10px;}
+  .theme-toggle{
+    display:inline-flex; align-items:center; gap:2px;
+    background:var(--surface-2); border:1px solid var(--border);
+    border-radius:999px; padding:3px;
+  }
+  .theme-toggle button{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:28px; height:28px; border-radius:999px; border:none;
+    background:transparent; color:var(--ink-soft); cursor:pointer; padding:0;
+  }
+  .theme-toggle button svg{width:15px; height:15px; display:block;}
+  .theme-toggle button:hover{color:var(--ink);}
+  .theme-toggle button.active{background:var(--accent); color:var(--accent-contrast);}
 </style>
+
+<script>
+  (function(){
+    try{
+      var saved = localStorage.getItem('qc26-theme');
+      if(saved === 'light' || saved === 'dark'){ document.documentElement.setAttribute('data-theme', saved); }
+    }catch(e){}
+  })();
+</script>
 
 <a class="skip-link" href="#accueil">Aller au contenu principal</a>
 
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="wordmark" href="#accueil" onclick="goTo('accueil')">Repères <span>Québec 2026</span></a>
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+    <div class="header-right">
+      <div class="theme-toggle" role="group" aria-label="Thème de l'interface">
+        <button type="button" data-theme-btn="system" title="Système" aria-pressed="false" onclick="setTheme('system')">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="4" width="15" height="10" rx="1.5"/><path d="M7 17h6M10 14v3" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" data-theme-btn="light" title="Clair" aria-pressed="false" onclick="setTheme('light')">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4M15.3 15.3l-1.4-1.4M6.1 6.1 4.7 4.7"/></svg>
+        </button>
+        <button type="button" data-theme-btn="dark" title="Sombre" aria-pressed="false" onclick="setTheme('dark')">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.8 12.9A7 7 0 0 1 7.1 3.2a7 7 0 1 0 9.7 9.7Z"/></svg>
+        </button>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+    </div>
     <nav class="site-nav" id="siteNav" aria-label="Navigation principale">
       <a href="#accueil" onclick="goTo('accueil')">Accueil</a>
       <a href="#partis" onclick="goTo('partis')">Partis</a>
@@ -3152,6 +3190,21 @@
     try{ if(location.hash !== '#'+id) history.pushState(null,'','#'+id); }catch(e){}
   }
 
+  function setTheme(pref){
+    if(pref === 'light' || pref === 'dark'){
+      document.documentElement.setAttribute('data-theme', pref);
+    } else {
+      pref = 'system';
+      document.documentElement.removeAttribute('data-theme');
+    }
+    try{ localStorage.setItem('qc26-theme', pref); }catch(e){}
+    document.querySelectorAll('[data-theme-btn]').forEach(function(btn){
+      var on = btn.getAttribute('data-theme-btn') === pref;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
   (function init(){
     var toggle = document.getElementById('navToggle');
     var nav = document.getElementById('siteNav');
@@ -3159,6 +3212,10 @@
       var open = nav.classList.toggle('open');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+
+    var savedTheme = 'system';
+    try{ savedTheme = localStorage.getItem('qc26-theme') || 'system'; }catch(e){}
+    setTheme(savedTheme);
 
     document.getElementById('heroFlag').innerHTML = QUEBEC_FLAG_SVG;
     document.getElementById('introPartyRow').innerHTML = PARTIES.map(function(p){
