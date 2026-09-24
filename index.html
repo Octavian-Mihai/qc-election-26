@@ -4,52 +4,52 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#F7F2E7;
+    --bg:#F4F7FC;
     --surface:#FFFFFF;
-    --surface-2:#FBF6EA;
-    --ink:#20293A;
-    --ink-soft:#5B6472;
-    --ink-faint:#8A8F98;
-    --border:#E4DBC5;
-    --accent:#A9722C;
-    --accent-contrast:#FFFBF3;
-    --accent-2:#3F6B6A;
-    --accent-2-soft:#E4EEEC;
-    --code-bg:#EFEAE0;
-    --shadow:0 1px 2px rgba(32,41,58,.06), 0 12px 28px -16px rgba(32,41,58,.22);
+    --surface-2:#EAF1FB;
+    --ink:#0E2140;
+    --ink-soft:#4C5C77;
+    --ink-faint:#8896AC;
+    --border:#D6E2F3;
+    --accent:#0B3D91;
+    --accent-contrast:#FFFFFF;
+    --accent-2:#2D74C9;
+    --accent-2-soft:#E1EDFB;
+    --code-bg:#E9F0FA;
+    --shadow:0 1px 2px rgba(14,33,64,.06), 0 12px 28px -16px rgba(14,33,64,.24);
     color-scheme:light;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#161A22;
-      --surface:#1E2430;
-      --surface-2:#232A38;
-      --ink:#ECE7D9;
-      --ink-soft:#AEB4BE;
-      --ink-faint:#7E8592;
-      --border:#323B4A;
-      --accent:#D7A44C;
-      --accent-contrast:#20293A;
-      --accent-2:#7FB5B2;
-      --accent-2-soft:#1E3433;
-      --code-bg:#1B2028;
+      --bg:#0B1626;
+      --surface:#122036;
+      --surface-2:#17273E;
+      --ink:#EAF1FB;
+      --ink-soft:#AEC0DB;
+      --ink-faint:#7A8CA8;
+      --border:#26395A;
+      --accent:#5B9BF0;
+      --accent-contrast:#0B1626;
+      --accent-2:#7FB5F0;
+      --accent-2-soft:#1B3352;
+      --code-bg:#101E32;
       --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 28px -16px rgba(0,0,0,.6);
       color-scheme:dark;
     }
   }
   :root[data-theme="dark"]{
-    --bg:#161A22;
-    --surface:#1E2430;
-    --surface-2:#232A38;
-    --ink:#ECE7D9;
-    --ink-soft:#AEB4BE;
-    --ink-faint:#7E8592;
-    --border:#323B4A;
-    --accent:#D7A44C;
-    --accent-contrast:#20293A;
-    --accent-2:#7FB5B2;
-    --accent-2-soft:#1E3433;
-    --code-bg:#1B2028;
+    --bg:#0B1626;
+    --surface:#122036;
+    --surface-2:#17273E;
+    --ink:#EAF1FB;
+    --ink-soft:#AEC0DB;
+    --ink-faint:#7A8CA8;
+    --border:#26395A;
+    --accent:#5B9BF0;
+    --accent-contrast:#0B1626;
+    --accent-2:#7FB5F0;
+    --accent-2-soft:#1B3352;
+    --code-bg:#101E32;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 28px -16px rgba(0,0,0,.6);
     color-scheme:dark;
   }
@@ -166,13 +166,27 @@
   }
   .status-badge::before{content:"● "; color:var(--accent);}
 
+  /* ---------- flag ---------- */
+  .hero-flag{margin:0 0 18px;}
+  .hero-flag svg{display:block; width:72px; height:54px; border-radius:5px; box-shadow:var(--shadow);}
+
+  /* ---------- party badges (drawn monograms, not official logos) ---------- */
+  .party-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    font-family:"IBM Plex Mono", monospace; font-weight:700; font-size:.72rem;
+    color:#fff; border-radius:6px; padding:.28em .5em; letter-spacing:.02em;
+    line-height:1; white-space:nowrap; box-shadow:0 1px 1px rgba(0,0,0,.15) inset;
+  }
+  .party-badge.lg{font-size:.85rem; padding:.4em .7em; border-radius:8px;}
+
   .party-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:44px;}
   .party-chip{
-    display:flex; flex-direction:column; gap:2px;
+    display:flex; align-items:center; gap:10px;
     background:var(--surface); border:1px solid var(--border);
-    border-radius:10px; padding:.6em .95em; box-shadow:var(--shadow);
+    border-radius:10px; padding:.55em .95em .55em .6em; box-shadow:var(--shadow);
     font-family:"IBM Plex Mono", monospace; font-weight:500; font-size:.95rem;
   }
+  .party-chip .chip-text{display:flex; flex-direction:column; gap:1px;}
   .party-chip small{font-family:"IBM Plex Sans", sans-serif; font-weight:400; color:var(--ink-soft); font-size:.72rem;}
 
   .toc-grid{
@@ -202,6 +216,39 @@
   }
   .chip-btn:hover{border-color:var(--accent-2); color:var(--ink);}
   .chip-btn.active{background:var(--accent); color:var(--accent-contrast); border-color:var(--accent);}
+
+  /* ---------- circonscription search + scrolling alphabetical list ---------- */
+  .circ-search-wrap{position:relative; max-width:360px; margin:18px 0 12px;}
+  .circ-search{
+    width:100%; font-family:"IBM Plex Sans", sans-serif; font-size:.92rem;
+    padding:.65em .9em; border-radius:10px; border:1px solid var(--border);
+    background:var(--surface); color:var(--ink); box-shadow:var(--shadow);
+  }
+  .circ-search:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .circ-count{font-size:.78rem; color:var(--ink-faint); margin:0 0 10px;}
+  .circ-scroll{
+    max-height:340px; overflow-y:auto;
+    border:1px solid var(--border); border-radius:12px;
+    background:var(--surface); box-shadow:var(--shadow);
+    margin-bottom:30px;
+  }
+  .circ-letter{
+    position:sticky; top:0; z-index:1;
+    background:var(--surface-2); color:var(--accent-2);
+    font-family:"IBM Plex Mono", monospace; font-size:.72rem; font-weight:700;
+    letter-spacing:.06em; padding:5px 14px; border-bottom:1px solid var(--border);
+    border-top:1px solid var(--border);
+  }
+  .circ-scroll > .circ-letter:first-child{border-top:none;}
+  .circ-item{
+    display:block; width:100%; text-align:left; font-family:"IBM Plex Sans", sans-serif;
+    font-size:.9rem; color:var(--ink); background:transparent; border:none;
+    border-bottom:1px solid var(--border); padding:.55em 14px; cursor:pointer;
+  }
+  .circ-item:last-child{border-bottom:none;}
+  .circ-item:hover{background:var(--surface-2);}
+  .circ-item.active{background:var(--accent); color:var(--accent-contrast); font-weight:600;}
+  .circ-empty{padding:14px; font-size:.85rem; color:var(--ink-faint); font-style:italic;}
 
   /* ---------- gauges (empty score placeholders) ---------- */
   .gauge{display:inline-flex; gap:4px; vertical-align:middle;}
@@ -352,6 +399,7 @@
   <!-- ============ PAGE : ACCUEIL ============ -->
   <section id="page-accueil" class="page">
     <div class="wrap">
+      <div class="hero-flag" aria-hidden="true" id="heroFlag"></div>
       <p class="eyebrow">Élection générale du Québec · 2026</p>
       <h1>Repères Québec 2026</h1>
       <p class="lede">Plateforme comparative pour l'élection générale québécoise de 2026. Choisissez une section ci-dessous.</p>
@@ -361,13 +409,7 @@
         <span><strong>Instantané de campagne, pas un résultat final.</strong> Les positions ci-dessous sont codées à partir de la couverture de la campagne jusqu'au 23 septembre 2026. Le vote a lieu le 5 octobre 2026 — les partis peuvent encore préciser ou ajuster leurs engagements d'ici là. Chaque position cite sa source ; les cellules marquées <span class="thin-flag">peu documenté</span> reposent sur une couverture plus mince et méritent d'être vérifiées davantage.</span>
       </div>
 
-      <div class="party-row" aria-label="Partis couverts par ce squelette">
-        <span class="party-chip">CAQ <small>Coalition Avenir Québec</small></span>
-        <span class="party-chip">PCQ <small>Parti conservateur du Québec</small></span>
-        <span class="party-chip">PLQ <small>Parti libéral du Québec</small></span>
-        <span class="party-chip">PQ <small>Parti Québécois</small></span>
-        <span class="party-chip">QS <small>Québec solidaire</small></span>
-      </div>
+      <div class="party-row" aria-label="Partis couverts par ce squelette" id="introPartyRow"></div>
 
       <div class="toc-grid">
         <a class="toc-card" href="#partis" onclick="goTo('partis')">
@@ -465,7 +507,13 @@
         <button type="button" class="chip-btn" data-party-chip="QS" onclick="selectParty('QS')">QS</button>
       </div>
 
-      <div class="filter-row" id="candFilterCirc" role="group" aria-label="Filtrer par circonscription" hidden></div>
+      <div id="candCircPicker" hidden>
+        <div class="circ-search-wrap">
+          <input type="text" class="circ-search" id="circSearch" placeholder="Rechercher une circonscription…" oninput="renderCircList()" aria-label="Rechercher une circonscription">
+        </div>
+        <p class="circ-count" id="circCount"></p>
+        <div class="circ-scroll" id="candFilterCirc" role="listbox" aria-label="Circonscriptions, par ordre alphabétique"></div>
+      </div>
 
       <p class="caption" id="candidatsCount"></p>
 
@@ -677,6 +725,34 @@
     {code:'PQ',  full:'Parti Québécois'},
     {code:'QS',  full:'Québec solidaire'}
   ];
+
+  // Couleurs de marque approximatives par parti, utilisées pour des pastilles
+  // dessinées (monogrammes) en l'absence des logos officiels — voir README.
+  var PARTY_COLORS = {
+    CAQ:'#0098DB', PCQ:'#0B3C74', PLQ:'#E4032E', PQ:'#0F5FA6', QS:'#FF7900'
+  };
+  function partyBadge(code, big){
+    var bg = PARTY_COLORS[code] || 'var(--accent)';
+    return '<span class="party-badge'+(big?' lg':'')+'" style="background:'+bg+'">'+code+'</span>';
+  }
+  // Fleur-de-lis simplifiée, dessinée à la main (pas d'import externe) : trois pétales + base.
+  var FLEUR_PATH = 'M0,-1.55 C-0.55,-1.55 -0.85,-1.05 -0.6,-0.6 C-0.85,-0.55 -1.05,-0.25 -0.95,0.05'
+    + ' C-1.35,-0.05 -1.75,0.25 -1.65,0.7 C-1.55,1.05 -1.15,1.1 -0.85,0.9'
+    + ' C-0.75,1.15 -0.45,1.25 -0.22,1.05 C-0.3,1.6 -0.55,1.75 -0.55,1.75 L0.55,1.75'
+    + ' C0.55,1.75 0.3,1.6 0.22,1.05 C0.45,1.25 0.75,1.15 0.85,0.9'
+    + ' C1.15,1.1 1.55,1.05 1.65,0.7 C1.75,0.25 1.35,-0.05 0.95,0.05'
+    + ' C1.05,-0.25 0.85,-0.55 0.6,-0.6 C0.85,-1.05 0.55,-1.55 0,-1.55 Z';
+  function fleurSVG(cx, cy){
+    return '<g transform="translate('+cx+','+cy+') scale(0.62)"><path d="'+FLEUR_PATH+'" fill="#fff"/></g>';
+  }
+  var QUEBEC_FLAG_SVG =
+    '<svg viewBox="0 0 12 9" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Drapeau du Québec">'
+    + '<rect width="12" height="9" fill="#003DA5"/>'
+    + '<rect x="5.55" width="0.9" height="9" fill="#fff"/>'
+    + '<rect y="4.05" width="12" height="0.9" fill="#fff"/>'
+    + fleurSVG(2.75,2.25) + fleurSVG(9.25,2.25)
+    + fleurSVG(2.75,6.75) + fleurSVG(9.25,6.75)
+    + '</svg>';
   var DIMENSIONS = [
     {id:'immigration',    label:'Immigration et identité', a1:'Restrictionniste, nationaliste', a5:"Ouvert, axé sur l'intégration économique"},
     {id:'souverainete',   label:'Souveraineté et relations fédérales-provinciales', a1:'Souverainiste dur, référendum', a5:'Fédéraliste, travail dans le cadre canadien'},
@@ -2936,7 +3012,7 @@
     return '<tr>'
       + '<td>'+c.nom+(c.chef?' <span class="tag">chef·fe</span>':'')+'</td>'
       + '<td>'+c.circ+'</td>'
-      + '<td>'+c.parti+'</td>'
+      + '<td>'+partyBadge(c.parti)+'</td>'
       + '<td>'+cell(c.age)+'</td>'
       + '<td>'+cell(c.profession)+'</td>'
       + '<td>'+cell(c.domaine)+'</td>'
@@ -2961,18 +3037,42 @@
     document.getElementById('candModePartiBtn').classList.toggle('active', mode==='parti');
     document.getElementById('candModeCircBtn').classList.toggle('active', mode==='circonscription');
     document.getElementById('candFilterParti').hidden = mode!=='parti';
-    document.getElementById('candFilterCirc').hidden = mode!=='circonscription';
+    document.getElementById('candCircPicker').hidden = mode!=='circonscription';
     renderCandidats();
   }
 
   function selectCirc(circ){
     state.circ = circ;
-    document.querySelectorAll('[data-circ-chip]').forEach(function(btn){
-      var on = btn.getAttribute('data-circ-chip') === circ;
+    document.querySelectorAll('[data-circ-item]').forEach(function(btn){
+      var on = btn.getAttribute('data-circ-item') === circ;
       btn.classList.toggle('active', on);
-      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
     renderCandidats();
+  }
+
+  function renderCircList(){
+    var q = (document.getElementById('circSearch').value || '').trim().toLocaleLowerCase('fr-CA');
+    var sorted = CIRCS.slice().sort(function(a,b){ return a.localeCompare(b,'fr-CA'); });
+    var matches = q
+      ? sorted.filter(function(c){ return c.toLocaleLowerCase('fr-CA').indexOf(q) !== -1; })
+      : sorted;
+
+    var html = '';
+    var lastLetter = '';
+    matches.forEach(function(c){
+      var letter = c.charAt(0).toLocaleUpperCase('fr-CA');
+      if(letter !== lastLetter){
+        html += '<div class="circ-letter">'+letter+'</div>';
+        lastLetter = letter;
+      }
+      var active = c === state.circ;
+      html += '<button type="button" class="circ-item'+(active?' active':'')+'" role="option" aria-selected="'+(active?'true':'false')+'" data-circ-item="'+c+'" onclick="selectCirc(\''+c+'\')">'+c+'</button>';
+    });
+
+    document.getElementById('candFilterCirc').innerHTML = html
+      || '<p class="circ-empty">Aucune circonscription ne correspond à cette recherche.</p>';
+    document.getElementById('circCount').textContent = matches.length + ' circonscription' + (matches.length>1?'s':'') + ' (127 au total)';
   }
 
   function renderCandidats(){
@@ -3001,9 +3101,16 @@
 
   function updatePartyChips(){
     document.querySelectorAll('[data-party-chip]').forEach(function(btn){
-      var on = btn.getAttribute('data-party-chip') === state.party;
+      var code = btn.getAttribute('data-party-chip');
+      var on = code === state.party;
       btn.classList.toggle('active', on);
       btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if(on){
+        var c = PARTY_COLORS[code];
+        btn.style.background = c; btn.style.borderColor = c; btn.style.color = '#fff';
+      } else {
+        btn.style.background = ''; btn.style.borderColor = ''; btn.style.color = '';
+      }
     });
   }
   function updateTopicChips(){
@@ -3053,9 +3160,12 @@
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
-    document.getElementById('candFilterCirc').innerHTML = CIRCS.slice().sort().map(function(c){
-      return '<button type="button" class="chip-btn" data-circ-chip="'+c+'" onclick="selectCirc(\''+c+'\')">'+c+'</button>';
+    document.getElementById('heroFlag').innerHTML = QUEBEC_FLAG_SVG;
+    document.getElementById('introPartyRow').innerHTML = PARTIES.map(function(p){
+      return '<span class="party-chip">'+partyBadge(p.code, true)+'<span class="chip-text">'+p.code+'<small>'+p.full+'</small></span></span>';
     }).join('');
+
+    renderCircList();
 
     renderPartis();
     renderEnjeux();
