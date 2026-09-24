@@ -13,7 +13,7 @@ Plateforme comparative pour l'élection générale québécoise de 2026 (5 octob
 - **Accueil** — page de repère qui dirige vers les quatre sections suivantes.
 - **Partis** — analyse par parti, filtrable (CAQ/PCQ/PLQ/PQ/QS) : positionnement sourcé sur les six dimensions, couches analytiques (saillance, rhétorique populiste, transparence budgétaire, compatibilité de coalition) et indice « Québec d'abord ».
 - **Enjeux** — comparatif par enjeu, filtrable par dimension : pour l'enjeu choisi, les cinq partis triés et positionnés côte à côte. Volontairement descriptif, pas de verdict — la plateforme montre les positions, le lecteur juge qui sert le mieux ses priorités pour le Québec.
-- **Candidats** — profils par parti : complets et sourcés pour les 5 chefs (Fréchette/Trois-Rivières, Duhaime/Bellechasse, Milliard/Orford, St-Pierre Plamondon/Camille-Laurin, Ghazal/Mercier) et leurs 20 adversaires directs (nom + circonscription confirmés, biographie à documenter) ; gabarit vide pour les ~100 autres circonscriptions.
+- **Candidats** — gabarit complet (12 champs), en deux modes de consultation : *par parti* (filtre CAQ/PCQ/PLQ/PQ/QS) ou *par circonscription* (Bellechasse, Camille-Laurin, Mercier, Orford, Trois-Rivières pour l'instant). Profils complets et sourcés pour les 5 chefs de parti ; nom + circonscription confirmés pour leurs 20 adversaires directs (biographie à documenter) ; gabarit vide pour les ~100 autres circonscriptions.
 - **Méthodologie** — grille de notation complète, méthodologie des couches analytiques, liste des champs de métadonnées additionnels, construction de l'indice « Québec d'abord », et note d'architecture i18n (`fr-CA` comme seule locale active pour l'instant).
 
 ## Sources et méthode

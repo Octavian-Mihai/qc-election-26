@@ -55,6 +55,7 @@
   }
 
   *,*::before,*::after{box-sizing:border-box}
+  [hidden]{display:none !important;}
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
   }
@@ -449,10 +450,14 @@
     <div class="wrap">
       <p class="eyebrow">Analyse des candidats</p>
       <h2 id="candidatsHeading">—</h2>
-      <p class="section-intro">Profils par candidat et par circonscription, filtrés par parti — complets pour les chefs de parti, confirmés (nom/circonscription) mais pas encore documentés pour les autres.</p>
-      <p class="caption" id="candidatsCount"></p>
+      <p class="section-intro">Gabarit complet, en deux modes de consultation.</p>
 
-      <div class="filter-row" role="group" aria-label="Filtrer par parti">
+      <div class="filter-row" role="group" aria-label="Mode de consultation">
+        <button type="button" class="chip-btn active" id="candModePartiBtn" onclick="setCandMode('parti')">Par parti</button>
+        <button type="button" class="chip-btn" id="candModeCircBtn" onclick="setCandMode('circonscription')">Par circonscription</button>
+      </div>
+
+      <div class="filter-row" id="candFilterParti" role="group" aria-label="Filtrer par parti">
         <button type="button" class="chip-btn" data-party-chip="CAQ" onclick="selectParty('CAQ')">CAQ</button>
         <button type="button" class="chip-btn" data-party-chip="PCQ" onclick="selectParty('PCQ')">PCQ</button>
         <button type="button" class="chip-btn" data-party-chip="PLQ" onclick="selectParty('PLQ')">PLQ</button>
@@ -460,32 +465,20 @@
         <button type="button" class="chip-btn" data-party-chip="QS" onclick="selectParty('QS')">QS</button>
       </div>
 
-      <div id="candidatsList" style="margin:20px 0 34px"></div>
+      <div class="filter-row" id="candFilterCirc" role="group" aria-label="Filtrer par circonscription" hidden>
+        <button type="button" class="chip-btn" data-circ-chip="Bellechasse" onclick="selectCirc('Bellechasse')">Bellechasse</button>
+        <button type="button" class="chip-btn" data-circ-chip="Camille-Laurin" onclick="selectCirc('Camille-Laurin')">Camille-Laurin</button>
+        <button type="button" class="chip-btn" data-circ-chip="Mercier" onclick="selectCirc('Mercier')">Mercier</button>
+        <button type="button" class="chip-btn" data-circ-chip="Orford" onclick="selectCirc('Orford')">Orford</button>
+        <button type="button" class="chip-btn" data-circ-chip="Trois-Rivières" onclick="selectCirc('Trois-Rivières')">Trois-Rivières</button>
+      </div>
 
-      <h3>Gabarit complet (toutes circonscriptions)</h3>
-      <p class="section-intro">En-têtes de référence pour les ~100 circonscriptions encore non documentées.</p>
+      <p class="caption" id="candidatsCount"></p>
+
       <div class="table-scroll">
         <table>
-          <thead>
-            <tr>
-              <th scope="col">Candidat·e</th>
-              <th scope="col">Circonscription</th>
-              <th scope="col">Âge</th>
-              <th scope="col">Profession avant la politique</th>
-              <th scope="col">Domaine d'études</th>
-              <th scope="col">Établissement</th>
-              <th scope="col">Diplôme le plus élevé</th>
-              <th scope="col">Expérience politique <span class="muted">(municipale / provinciale / fédérale, ou première candidature)</span></th>
-              <th scope="col">Genre</th>
-              <th scope="col">Données démographiques pertinentes</th>
-              <th scope="col">Intérêts de portefeuille probables selon le parcours</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="empty-row">
-              <td colspan="11">Aucune ligne — gabarit vide, à remplir lors de la collecte de données.</td>
-            </tr>
-          </tbody>
+          <thead id="candidatsTableHead"></thead>
+          <tbody id="candidatsTableBody"></tbody>
         </table>
       </div>
 
@@ -706,7 +699,7 @@
   ];
   var PAGES = ['accueil','partis','enjeux','candidats','methodologie'];
 
-  var state = { party:'CAQ', topic:'immigration' };
+  var state = { party:'CAQ', topic:'immigration', candMode:'parti', circ:'Trois-Rivières' };
 
   // Positions codées à partir de la couverture de la campagne 2026 (recherche effectuée le 23 septembre 2026,
   // campagne en cours jusqu'au 5 octobre — les positions peuvent encore évoluer). Score : 1 = ancrage "Score 1"
@@ -793,30 +786,45 @@
   // mise en candidature close le 17 sept. 2026). Profils complets pour les 5 chefs ; les autres candidat·e·s
   // sont confirmé·e·s (nom/circonscription/parti) mais leur profil biographique reste à documenter.
   var CANDIDATS = [
-    {nom:"Christine Fréchette", parti:"CAQ", circ:"Trois-Rivières", chef:true, age:56, profession:"Consultante en affaires publiques ; présidente de chambre de commerce (2016-2021)",
-      etudes:"Baccalauréat en administration des affaires — économie et commerce international, HEC Montréal (1992) ; maîtrise en relations internationales, Université Laval (1994)",
+    {nom:"Christine Fréchette", parti:"CAQ", circ:"Trois-Rivières", chef:true, age:56,
+      profession:"Consultante en affaires publiques ; présidente de chambre de commerce (2016-2021)",
+      domaine:"Économie et commerce international ; puis relations internationales",
+      etablissement:"HEC Montréal ; Université Laval",
+      diplome:"Baccalauréat (HEC Montréal, 1992) ; maîtrise (Université Laval, 1994)",
       experience:"Ministre de l'Économie, de l'Innovation et de l'Énergie (depuis 2024) ; députée de Sanguinet (depuis 2022) ; candidate défaite à la mairie d'arrondissement à Montréal (Vision Montréal, 2009)",
-      genre:"Femme", interets:"Économie, commerce international, relations Québec-Canada",
+      genre:"Femme", demo:"", interets:"Économie, commerce international, relations Québec-Canada",
       src:"Wikipédia ; La Presse/Le Quotidien (choix de circonscription)", url:"https://en.wikipedia.org/wiki/Christine_Fr%C3%A9chette", complet:true},
-    {nom:"Éric Duhaime", parti:"PCQ", circ:"Bellechasse", chef:true, age:57, profession:"Chroniqueur et animateur radio (Journal de Montréal, National Post, FM93)",
-      etudes:"Baccalauréat en science politique, Université de Montréal ; maîtrise, École nationale d'administration publique (ÉNAP)",
+    {nom:"Éric Duhaime", parti:"PCQ", circ:"Bellechasse", chef:true, age:57,
+      profession:"Chroniqueur et animateur radio (Journal de Montréal, National Post, FM93)",
+      domaine:"Science politique ; puis administration publique",
+      etablissement:"Université de Montréal ; École nationale d'administration publique (ÉNAP)",
+      diplome:"Baccalauréat (Université de Montréal) ; maîtrise (ÉNAP)",
       experience:"Chef du PCQ (depuis 2021) ; candidat défait dans Chauveau (2022) et Arthabaska (2025) ; organisateur politique et conseiller (ADQ, Alliance canadienne, Bloc Québécois) avant sa carrière médiatique",
-      genre:"Homme", interets:"Réduction de la taille de l'État, énergie, communications",
+      genre:"Homme", demo:"Ouvertement gai depuis 2017 (fait rendu public par lui-même)", interets:"Réduction de la taille de l'État, énergie, communications",
       src:"Wikipédia", url:"https://en.wikipedia.org/wiki/%C3%89ric_Duhaime", complet:true},
-    {nom:"Charles Milliard", parti:"PLQ", circ:"Orford", chef:true, age:47, profession:"Pharmacien ; cadre chez Uniprix (2003-2016) ; PDG de la Fédération des chambres de commerce du Québec (2019-2024)",
-      etudes:"Baccalauréat en pharmacie, certificat en économie, Université Laval (2002) ; MBA, HEC Montréal (2007)",
+    {nom:"Charles Milliard", parti:"PLQ", circ:"Orford", chef:true, age:47,
+      profession:"Pharmacien ; cadre chez Uniprix (2003-2016) ; PDG de la Fédération des chambres de commerce du Québec (2019-2024)",
+      domaine:"Pharmacie ; économie ; gestion",
+      etablissement:"Université Laval ; HEC Montréal",
+      diplome:"Baccalauréat en pharmacie et certificat en économie (Université Laval, 2002) ; MBA (HEC Montréal, 2007)",
       experience:"Première candidature à une élection ; chef du PLQ (élu à la direction en février 2026, après une candidature perdue en 2025)",
-      genre:"Homme", interets:"Économie, PME, santé (pharmacie)",
+      genre:"Homme", demo:"", interets:"Économie, PME, santé (pharmacie)",
       src:"Wikipédia", url:"https://en.wikipedia.org/wiki/Charles_Milliard", complet:true},
-    {nom:"Paul St-Pierre Plamondon", parti:"PQ", circ:"Camille-Laurin", chef:true, age:49, profession:"Avocat (litige, Stikeman Elliott ; associé chez Delegatus) ; auteur et chroniqueur (Les Affaires)",
-      etudes:"Collège André-Grasset ; baccalauréats en droit civil et common law, Université McGill (2001) ; certificat en droit international, Université de Lund ; MBA, Université d'Oxford (2006)",
+    {nom:"Paul St-Pierre Plamondon", parti:"PQ", circ:"Camille-Laurin", chef:true, age:49,
+      profession:"Avocat (litige, Stikeman Elliott ; associé chez Delegatus) ; auteur et chroniqueur (Les Affaires)",
+      domaine:"Droit civil et common law ; droit international ; administration des affaires",
+      etablissement:"Collège André-Grasset ; Université McGill ; Université de Lund ; Université d'Oxford",
+      diplome:"Baccalauréats en droit civil et common law (McGill, 2001) ; certificat en droit international (Lund) ; MBA (Oxford, 2006)",
       experience:"Chef du PQ (depuis 2020) ; député de Camille-Laurin (depuis 2022) ; candidat à la direction du PQ (2016) ; candidat défait dans Prévost (2018)",
-      genre:"Homme", interets:"Justice, gouvernance, souveraineté et affaires constitutionnelles",
+      genre:"Homme", demo:"", interets:"Justice, gouvernance, souveraineté et affaires constitutionnelles",
       src:"Wikipédia", url:"https://en.wikipedia.org/wiki/Paul_St-Pierre_Plamondon", complet:true},
-    {nom:"Ruba Ghazal", parti:"QS", circ:"Mercier", chef:true, age:47, profession:"Comptable professionnelle agréée",
-      etudes:"Études en comptabilité, HEC Montréal et Université de Sherbrooke",
+    {nom:"Ruba Ghazal", parti:"QS", circ:"Mercier", chef:true, age:47,
+      profession:"Comptable professionnelle agréée",
+      domaine:"Comptabilité",
+      etablissement:"HEC Montréal ; Université de Sherbrooke",
+      diplome:"Études en comptabilité (diplôme précis non confirmé dans notre recherche)",
       experience:"Coporte-parole de Québec solidaire (depuis 2024) ; députée de Mercier (depuis 2018) ; membre fondatrice de QS (2006) ; candidate défaite dans Laurier-Dorion (2007, 2008)",
-      genre:"Femme", interets:"Finances publiques, justice fiscale, immigration",
+      genre:"Femme", demo:"", interets:"Finances publiques, justice fiscale, immigration",
       src:"Wikipédia", url:"https://en.wikipedia.org/wiki/Ruba_Ghazal", complet:true},
 
     {nom:"Jean Pellerin", parti:"PQ", circ:"Trois-Rivières", chef:false, src:"Qc125", url:"https://qc125.com/1116f.htm", complet:false},
@@ -914,32 +922,75 @@
     document.getElementById('enjeuxParties').innerHTML = rows;
   }
 
+  var CIRCS = ['Bellechasse','Camille-Laurin','Mercier','Orford','Trois-Rivières'];
+
+  function cell(v){ return v ? v : '<span class="muted">—</span>'; }
+
+  function candidateRowHTML(c){
+    return '<tr>'
+      + '<td>'+c.nom+(c.chef?' <span class="tag">chef·fe</span>':'')+'</td>'
+      + '<td>'+c.circ+'</td>'
+      + '<td>'+c.parti+'</td>'
+      + '<td>'+cell(c.age)+'</td>'
+      + '<td>'+cell(c.profession)+'</td>'
+      + '<td>'+cell(c.domaine)+'</td>'
+      + '<td>'+cell(c.etablissement)+'</td>'
+      + '<td>'+cell(c.diplome)+'</td>'
+      + '<td>'+cell(c.experience)+'</td>'
+      + '<td>'+cell(c.genre)+'</td>'
+      + '<td>'+cell(c.demo)+'</td>'
+      + '<td>'+cell(c.interets)+'</td>'
+      + '<td>'+sourceHTML(c)+'</td>'
+      + '</tr>';
+  }
+
+  var CAND_HEAD = '<tr><th scope="col">Candidat·e</th><th scope="col">Circonscription</th><th scope="col">Parti</th>'
+    + '<th scope="col">Âge</th><th scope="col">Profession avant la politique</th><th scope="col">Domaine d\'études</th>'
+    + '<th scope="col">Établissement</th><th scope="col">Diplôme le plus élevé</th><th scope="col">Expérience politique</th>'
+    + '<th scope="col">Genre</th><th scope="col">Données démographiques pertinentes</th>'
+    + '<th scope="col">Intérêts de portefeuille probables</th><th scope="col">Source</th></tr>';
+
+  function setCandMode(mode){
+    state.candMode = mode;
+    document.getElementById('candModePartiBtn').classList.toggle('active', mode==='parti');
+    document.getElementById('candModeCircBtn').classList.toggle('active', mode==='circonscription');
+    document.getElementById('candFilterParti').hidden = mode!=='parti';
+    document.getElementById('candFilterCirc').hidden = mode!=='circonscription';
+    renderCandidats();
+  }
+
+  function selectCirc(circ){
+    state.circ = circ;
+    document.querySelectorAll('[data-circ-chip]').forEach(function(btn){
+      var on = btn.getAttribute('data-circ-chip') === circ;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    renderCandidats();
+  }
+
   function renderCandidats(){
-    var p = findParty(state.party);
-    document.getElementById('candidatsHeading').textContent = 'Candidats — ' + p.full + ' (' + p.code + ')';
+    var list, heading;
+    if(state.candMode === 'circonscription'){
+      list = CANDIDATS.filter(function(c){ return c.circ === state.circ; });
+      heading = 'Candidats — circonscription de ' + state.circ;
+    } else {
+      var p = findParty(state.party);
+      list = CANDIDATS.filter(function(c){ return c.parti === p.code; });
+      heading = 'Candidats — ' + p.full + ' (' + p.code + ')';
+    }
+    document.getElementById('candidatsHeading').textContent = heading;
 
-    var list = CANDIDATS.filter(function(c){ return c.parti === p.code; });
-    var cardsHTML = list.map(function(c){
-      if(c.complet){
-        return '<div class="stat-tile" style="margin-bottom:14px">'
-          + '<h4>'+c.nom+' — '+c.circ+(c.chef?' <span class="tag">chef·fe de parti</span>':'')+'</h4>'
-          + '<p class="cell-note" style="max-width:none"><strong>Âge</strong> '+c.age+' · <strong>Genre</strong> '+c.genre+'</p>'
-          + '<p class="cell-note" style="max-width:none"><strong>Profession avant la politique</strong> '+c.profession+'</p>'
-          + '<p class="cell-note" style="max-width:none"><strong>Études</strong> '+c.etudes+'</p>'
-          + '<p class="cell-note" style="max-width:none"><strong>Expérience politique</strong> '+c.experience+'</p>'
-          + '<p class="cell-note" style="max-width:none"><strong>Intérêts de portefeuille probables</strong> '+c.interets+'</p>'
-          + sourceHTML(c) + '</div>';
-      }
-      return '<div class="stat-tile" style="margin-bottom:14px">'
-        + '<h4>'+c.nom+' — '+c.circ+'</h4>'
-        + '<p class="cell-note" style="max-width:none">'+(c.experience?c.experience+' · ':'')+'Profil biographique (âge, profession, études) pas encore documenté dans cette passe de recherche.</p>'
-        + sourceHTML(c) + '</div>';
-    }).join('');
+    var rows = list.map(candidateRowHTML).join('');
+    document.getElementById('candidatsTableHead').innerHTML = CAND_HEAD;
+    document.getElementById('candidatsTableBody').innerHTML = rows
+      || '<tr class="empty-row"><td colspan="13">Aucun·e candidat·e confirmé·e dans notre recherche pour cette sélection pour l\'instant.</td></tr>';
 
-    document.getElementById('candidatsList').innerHTML = cardsHTML || '<p class="cell-note" style="max-width:none">Aucun·e candidat·e confirmé·e dans notre recherche pour ce parti pour l\'instant.</p>';
     document.getElementById('candidatsCount').textContent = list.length
-      ? ('Candidat·e·s confirmé·e·s dans '+list.length+' circonscription'+(list.length>1?'s':'')+' sur ~125 (voir « à venir » ci-dessous).')
+      ? (list.length + ' candidat·e' + (list.length>1?'s':'') + ' confirmé·e' + (list.length>1?'s':'') + ' — cellules « — » : pas encore documenté.')
       : '';
+
+    updatePartyChips();
   }
 
   function updatePartyChips(){
