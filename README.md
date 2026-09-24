@@ -4,7 +4,7 @@ Plateforme comparative pour l'élection générale québécoise de 2026 (5 octob
 
 ## Statut
 
-**Positions de partis documentées et sourcées. Candidats : 235 personnes confirmées dans 47 circonscriptions (5 chefs + adversaires + Mauricie, Laval, Chaudière-Appalaches, Estrie, Capitale-Nationale, Centre-du-Québec et Outaouais complètes) ; gabarit vide pour le reste.** Expansion en cours, région par région, dans l'ordre : Mauricie ✅ → Laval ✅ → Chaudière-Appalaches ✅ → Estrie ✅ → Capitale-Nationale ✅ → Centre-du-Québec ✅ → Outaouais ✅ → Saguenay-Lac-Saint-Jean → Bas-Saint-Laurent → Abitibi-Témiscamingue → Côte-Nord/Gaspésie/Nord-du-Québec → Laurentides → Lanaudière → Montérégie → Montréal. Les six dimensions, les couches analytiques et l'indice « Québec d'abord » sont codés pour les 5 partis à partir de la couverture de la campagne, avec une source citée sous chaque position. Voir « Sources et méthode » ci-dessous.
+**Positions de partis documentées et sourcées. Candidats : 260 personnes confirmées dans 52 circonscriptions (5 chefs + adversaires + Mauricie, Laval, Chaudière-Appalaches, Estrie, Capitale-Nationale, Centre-du-Québec, Outaouais et Saguenay-Lac-Saint-Jean complètes) ; gabarit vide pour le reste.** Expansion en cours, région par région, dans l'ordre : Mauricie ✅ → Laval ✅ → Chaudière-Appalaches ✅ → Estrie ✅ → Capitale-Nationale ✅ → Centre-du-Québec ✅ → Outaouais ✅ → Saguenay-Lac-Saint-Jean ✅ → Bas-Saint-Laurent → Abitibi-Témiscamingue → Côte-Nord/Gaspésie/Nord-du-Québec → Laurentides → Lanaudière → Montérégie → Montréal. Les six dimensions, les couches analytiques et l'indice « Québec d'abord » sont codés pour les 5 partis à partir de la couverture de la campagne, avec une source citée sous chaque position. Voir « Sources et méthode » ci-dessous.
 
 ## Contenu
 
@@ -13,7 +13,7 @@ Plateforme comparative pour l'élection générale québécoise de 2026 (5 octob
 - **Accueil** — page de repère qui dirige vers les quatre sections suivantes.
 - **Partis** — analyse par parti, filtrable (CAQ/PCQ/PLQ/PQ/QS) : positionnement sourcé sur les six dimensions, couches analytiques (saillance, rhétorique populiste, transparence budgétaire, compatibilité de coalition) et indice « Québec d'abord ».
 - **Enjeux** — comparatif par enjeu, filtrable par dimension : pour l'enjeu choisi, les cinq partis triés et positionnés côte à côte. Volontairement descriptif, pas de verdict — la plateforme montre les positions, le lecteur juge qui sert le mieux ses priorités pour le Québec.
-- **Candidats** — gabarit complet (12 champs), en deux modes de consultation : *par parti* (filtre CAQ/PCQ/PLQ/PQ/QS) ou *par circonscription* (47 circonscriptions couvertes pour l'instant, dont les régions complètes de la Mauricie, de Laval, de Chaudière-Appalaches, de l'Estrie, de la Capitale-Nationale, du Centre-du-Québec et de l'Outaouais). Profils complets et sourcés pour les 6 chefs/coporte-parole de parti (incluant Sol Zanetti, coporte-parole de QS, candidat dans Jean-Lesage) ; nom + circonscription confirmés pour les 229 autres candidat·e·s (biographie documentée quand l'information publique le permettait) ; gabarit vide pour les 80 autres circonscriptions.
+- **Candidats** — gabarit complet (12 champs), en deux modes de consultation : *par parti* (filtre CAQ/PCQ/PLQ/PQ/QS) ou *par circonscription* (52 circonscriptions couvertes pour l'instant, dont les régions complètes de la Mauricie, de Laval, de Chaudière-Appalaches, de l'Estrie, de la Capitale-Nationale, du Centre-du-Québec, de l'Outaouais et du Saguenay-Lac-Saint-Jean). Profils complets et sourcés pour les 6 chefs/coporte-parole de parti (incluant Sol Zanetti, coporte-parole de QS, candidat dans Jean-Lesage) ; nom + circonscription confirmés pour les 254 autres candidat·e·s (biographie documentée quand l'information publique le permettait) ; gabarit vide pour les 75 autres circonscriptions.
 - **Méthodologie** — grille de notation complète, méthodologie des couches analytiques, liste des champs de métadonnées additionnels, construction de l'indice « Québec d'abord », et note d'architecture i18n (`fr-CA` comme seule locale active pour l'instant).
 
 ## Sources et méthode
@@ -26,7 +26,7 @@ Ouvrir [`index.html`](index.html) dans un navigateur, ou consulter la version pu
 
 ## À venir
 
-- Profils de candidats pour les 80 circonscriptions restantes, région par région (voir l'ordre dans « Statut » ci-dessus) — au total, les 5 partis dans les 127 circonscriptions du Québec (confirmé via Wikipédia « Liste des circonscriptions provinciales du Québec par région » et Le Québec Vote).
+- Profils de candidats pour les 75 circonscriptions restantes, région par région (voir l'ordre dans « Statut » ci-dessus) — au total, les 5 partis dans les 127 circonscriptions du Québec (confirmé via Wikipédia « Liste des circonscriptions provinciales du Québec par région » et Le Québec Vote).
 - Biographies plus complètes (âge, études) pour les candidat·e·s dont seul le nom/circonscription/parti est confirmé pour l'instant.
 - Vérification indépendante des cellules marquées « peu documenté ».
 - Mise à jour des positions si des changements significatifs surviennent avant le 5 octobre 2026.
