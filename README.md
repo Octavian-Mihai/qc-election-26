@@ -17,7 +17,7 @@ Voir « À venir » ci-dessous pour la méthode et l'état précis de la suite.
 
 ## Contenu
 
-[`index.html`](index.html) — application à page unique (une seule page HTML, navigation par « pages » internes en JS, pas de défilement continu) avec cinq vues :
+[`index.html`](index.html) — application à page unique (une seule page HTML, navigation par « pages » internes en JS, pas de défilement continu) avec cinq vues. Les données des candidat·e·s et la liste des 127 circonscriptions vivent dans [`candidats.js`](candidats.js) (chargé via `<script src>`), séparées du balisage et de la logique pour garder `index.html` lisible en revue.
 
 - **Accueil** — page de repère qui dirige vers les quatre sections suivantes.
 - **Partis** — analyse par parti, filtrable (CAQ/PCQ/PLQ/PQ/QS) : positionnement sourcé sur les six dimensions, couches analytiques (saillance, rhétorique populiste, transparence budgétaire, compatibilité de coalition) et indice « Québec d'abord ».
@@ -46,7 +46,7 @@ Les 127 circonscriptions et les 5 partis sont couverts au niveau gabarit (nom, c
    - QS : structure du site à vérifier au démarrage de cette étape (pas encore explorée).
 2. Slugifier le nom (ou la circonscription pour PCQ) : minuscules, accents retirés, espaces/apostrophes → traits d'union.
 3. Déléguer la recherche à des agents en arrière-plan par lots de ~16 candidat·e·s (WebFetch sur chaque page devinée ; si 404, repli sur WebSearch). Consigne stricte donnée aux agents : ne jamais inventer une donnée manquante — laisser le champ absent plutôt que d'écrire « non documenté » (le rendu HTML affiche déjà un tiret « — » via la fonction `cell()` pour les champs vides).
-4. Intégrer les résultats dans le tableau `CANDIDATS` (`index.html`, ~ligne 782) en ajoutant seulement les champs confirmés (`age`, `domaine`, `etablissement`, `diplome`, `profession`, `experience`) ; garder `complet:false` sauf pour les 6 chef·fes de parti.
+4. Intégrer les résultats dans le tableau `CANDIDATS` (désormais dans [`candidats.js`](candidats.js), pas `index.html`) en ajoutant seulement les champs confirmés (`age`, `domaine`, `etablissement`, `diplome`, `profession`, `experience`) ; garder `complet:false` sauf pour les 6 chef·fes de parti.
 5. Committer et pousser vers GitHub par lots de 20 à 30 candidat·e·s enrichi·e·s (pas un seul gros commit à la fin).
 
 **Autres tâches en attente :**
