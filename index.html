@@ -1,0 +1,804 @@
+<title>Repères Québec 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F2E7;
+    --surface:#FFFFFF;
+    --surface-2:#FBF6EA;
+    --ink:#20293A;
+    --ink-soft:#5B6472;
+    --ink-faint:#8A8F98;
+    --border:#E4DBC5;
+    --accent:#A9722C;
+    --accent-contrast:#FFFBF3;
+    --accent-2:#3F6B6A;
+    --accent-2-soft:#E4EEEC;
+    --code-bg:#EFEAE0;
+    --shadow:0 1px 2px rgba(32,41,58,.06), 0 12px 28px -16px rgba(32,41,58,.22);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#161A22;
+      --surface:#1E2430;
+      --surface-2:#232A38;
+      --ink:#ECE7D9;
+      --ink-soft:#AEB4BE;
+      --ink-faint:#7E8592;
+      --border:#323B4A;
+      --accent:#D7A44C;
+      --accent-contrast:#20293A;
+      --accent-2:#7FB5B2;
+      --accent-2-soft:#1E3433;
+      --code-bg:#1B2028;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 28px -16px rgba(0,0,0,.6);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#161A22;
+    --surface:#1E2430;
+    --surface-2:#232A38;
+    --ink:#ECE7D9;
+    --ink-soft:#AEB4BE;
+    --ink-faint:#7E8592;
+    --border:#323B4A;
+    --accent:#D7A44C;
+    --accent-contrast:#20293A;
+    --accent-2:#7FB5B2;
+    --accent-2-soft:#1E3433;
+    --code-bg:#1B2028;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 28px -16px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+  }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size:16px;
+    line-height:1.65;
+  }
+
+  h1,h2,h3{
+    font-family:"Source Serif 4", Georgia, "Times New Roman", serif;
+    color:var(--ink);
+    line-height:1.2;
+    text-wrap:balance;
+    margin:0 0 .5em;
+    font-weight:600;
+  }
+  h2{font-size:clamp(1.5rem,3.2vw,2rem)}
+  h3{font-size:1.15rem;margin:1.6em 0 .5em}
+  h3:first-child{margin-top:0}
+  h4{font-family:"IBM Plex Sans",sans-serif;margin:0}
+  p{margin:0 0 1em}
+  a{color:var(--accent)}
+  code{font-family:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace; font-size:.9em; background:var(--code-bg); padding:.1em .35em; border-radius:4px;}
+  .muted{color:var(--ink-soft); font-weight:400;}
+
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+
+  .wrap{max-width:1080px;margin-inline:auto;padding-inline:20px}
+
+  .skip-link{
+    position:absolute; left:-999px; top:auto;
+    background:var(--accent); color:var(--accent-contrast);
+    padding:.6em 1em; border-radius:0 0 8px 0; z-index:100;
+    font-weight:600; text-decoration:none;
+  }
+  .skip-link:focus{left:0; top:0;}
+
+  /* ---------- header / nav ---------- */
+  .site-header{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:20;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-block:14px; gap:16px; position:relative;
+  }
+  .wordmark{
+    font-family:"Source Serif 4", Georgia, serif;
+    font-weight:600; font-size:1.05rem; color:var(--ink);
+    text-decoration:none; white-space:nowrap;
+  }
+  .wordmark span{color:var(--accent)}
+  .nav-toggle{
+    display:none;
+    font-family:inherit; font-size:.85rem; font-weight:600;
+    background:transparent; color:var(--ink); border:1px solid var(--border);
+    padding:.45em .9em; border-radius:8px; cursor:pointer;
+  }
+  .site-nav{display:flex; flex-wrap:wrap; gap:4px 22px;}
+  .site-nav a{
+    color:var(--ink-soft); text-decoration:none; font-size:.92rem; font-weight:500;
+    padding:.3em 0; border-bottom:2px solid transparent;
+  }
+  .site-nav a:hover, .site-nav a.active{color:var(--ink); border-bottom-color:var(--accent);}
+
+  @media (max-width:760px){
+    .nav-toggle{display:inline-block}
+    .site-nav{
+      display:none; flex-direction:column; gap:2px;
+      position:absolute; left:0; right:0; top:100%;
+      background:var(--surface); border-bottom:1px solid var(--border);
+      padding:10px 20px 16px; box-shadow:var(--shadow);
+    }
+    .site-nav.open{display:flex}
+    .site-nav a{padding:.55em 0; border-bottom:1px solid var(--border);}
+  }
+
+  /* ---------- pages ---------- */
+  .page{padding-block:44px 64px; min-height:50vh;}
+  .eyebrow{
+    font-size:.78rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent-2); margin:0 0 .8em;
+  }
+  .section-intro{max-width:70ch; color:var(--ink-soft);}
+  .section-intro strong{color:var(--ink)}
+
+  /* ---------- hero / accueil ---------- */
+  h1{font-size:clamp(2.1rem,5vw,3.2rem); margin-bottom:.35em;}
+  .lede{font-size:1.1rem; color:var(--ink-soft); max-width:62ch;}
+
+  .status-badge{
+    display:inline-block; margin:18px 0 28px;
+    background:var(--surface-2); border:1px solid var(--border);
+    color:var(--ink); font-size:.85rem; font-weight:600;
+    padding:.55em 1em; border-radius:999px;
+  }
+  .status-badge::before{content:"● "; color:var(--accent);}
+
+  .party-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:44px;}
+  .party-chip{
+    display:flex; flex-direction:column; gap:2px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:.6em .95em; box-shadow:var(--shadow);
+    font-family:"IBM Plex Mono", monospace; font-weight:500; font-size:.95rem;
+  }
+  .party-chip small{font-family:"IBM Plex Sans", sans-serif; font-weight:400; color:var(--ink-soft); font-size:.72rem;}
+
+  .toc-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(210px,1fr));
+    gap:14px;
+  }
+  .toc-card{
+    display:block; background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:18px; text-decoration:none; color:var(--ink);
+    box-shadow:var(--shadow);
+  }
+  .toc-card:hover{border-color:var(--accent)}
+  .toc-num{
+    font-family:"IBM Plex Mono", monospace; font-size:.78rem; color:var(--accent);
+    font-variant-numeric:tabular-nums; display:block; margin-bottom:.6em;
+  }
+  .toc-card h3{font-size:1rem; margin:0 0 .3em;}
+  .toc-card p{font-size:.86rem; color:var(--ink-soft); margin:0;}
+
+  /* ---------- filters (chips) ---------- */
+  .filter-row{display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 30px;}
+  .chip-btn{
+    font-family:"IBM Plex Sans", sans-serif; font-size:.85rem; font-weight:600;
+    padding:.55em 1.1em; border-radius:999px; border:1px solid var(--border);
+    background:var(--surface); color:var(--ink-soft); cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .chip-btn:hover{border-color:var(--accent-2); color:var(--ink);}
+  .chip-btn.active{background:var(--accent); color:var(--accent-contrast); border-color:var(--accent);}
+
+  /* ---------- gauges (empty score placeholders) ---------- */
+  .gauge{display:inline-flex; gap:4px; vertical-align:middle;}
+  .gauge i{width:14px; height:14px; border-radius:4px; border:1.5px solid var(--border); display:inline-block;}
+  .gauge-wrap{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+  .gauge-label{font-size:.72rem; color:var(--ink-faint); font-style:italic;}
+
+  /* ---------- partis page ---------- */
+  .dim-row{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 0; border-bottom:1px solid var(--border); flex-wrap:wrap;}
+  .dim-row:last-child{border-bottom:none;}
+  .dim-row .anchor-col{font-size:.82rem; margin-top:.25em;}
+  .crosslink{font-size:.82rem; color:var(--accent); text-decoration:none; font-weight:600; white-space:nowrap;}
+  .crosslink:hover{text-decoration:underline;}
+
+  .layer-tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin:18px 0 30px;}
+  .stat-tile{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow);}
+  .stat-tile h4{font-size:.78rem; color:var(--accent-2); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px;}
+  .stat-tile .value{font-family:"IBM Plex Mono", monospace; font-size:1.5rem; color:var(--ink-faint); font-variant-numeric:tabular-nums;}
+  .stat-tile p{font-size:.8rem; color:var(--ink-soft); margin:.5em 0 0;}
+
+  /* ---------- enjeux page ---------- */
+  .anchor-pair{display:flex; flex-wrap:wrap; gap:24px; background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin:18px 0 26px; font-size:.9rem;}
+  .anchor-pair strong{color:var(--accent-2);}
+  .party-line{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 18px; border:1px solid var(--border); border-radius:10px; margin-bottom:10px; background:var(--surface); flex-wrap:wrap; box-shadow:var(--shadow);}
+
+  /* ---------- tables ---------- */
+  .table-scroll{
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+    border:1px solid var(--border); border-radius:12px;
+    background:var(--surface); box-shadow:var(--shadow);
+    margin-block:22px;
+  }
+  table{border-collapse:collapse; width:100%; min-width:640px;}
+  th,td{
+    text-align:left; padding:11px 14px; font-size:.9rem;
+    border-bottom:1px solid var(--border); vertical-align:top;
+  }
+  thead th{
+    background:var(--surface-2); color:var(--ink);
+    font-weight:600; font-size:.82rem; white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none}
+  .empty-row td{
+    color:var(--ink-faint); font-style:italic; text-align:center;
+    padding:22px 14px;
+  }
+  .anchor-col{color:var(--ink-soft); font-size:.88rem;}
+
+  .field-notes{
+    list-style:none; margin:0 0 26px; padding:0;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:8px 20px;
+    font-size:.86rem; color:var(--ink-soft);
+  }
+  .field-notes li{padding:6px 0; border-bottom:1px dashed var(--border);}
+  .field-notes code{background:transparent; padding:0; color:var(--ink);}
+
+  /* ---------- callouts / notes ---------- */
+  .note, .callout{
+    border:1px solid var(--border); border-left:3px solid var(--accent-2);
+    background:var(--surface); border-radius:0 12px 12px 0;
+    padding:18px 20px; margin-block:22px; box-shadow:var(--shadow);
+  }
+  .note h3, .callout h3{font-size:.95rem; margin:0 0 .4em;}
+  .note p, .callout p{margin-bottom:0; font-size:.92rem; color:var(--ink-soft);}
+  .callout{border-left-color:var(--accent);}
+  .callout strong{color:var(--ink)}
+
+  /* ---------- layer cards (méthodologie) ---------- */
+  .layer-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px; margin-block:26px;
+  }
+  .layer-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:20px; box-shadow:var(--shadow);
+  }
+  .layer-card h3{color:var(--accent-2); font-size:1rem; margin-top:0;}
+  .layer-card p{font-size:.9rem; color:var(--ink-soft); margin-bottom:.8em;}
+  .method{
+    font-size:.82rem; color:var(--ink-faint); margin:0;
+    padding-top:.7em; border-top:1px dashed var(--border);
+  }
+
+  /* ---------- metadata groups ---------- */
+  .meta-groups{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-block:22px;}
+  .meta-group{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:18px 20px; box-shadow:var(--shadow);
+  }
+  .meta-group h4{
+    margin:0 0 10px; font-size:.78rem; font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--accent-2);
+  }
+  .meta-group ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;}
+  .meta-group li{font-size:.88rem; display:flex; justify-content:space-between; gap:10px; align-items:baseline;}
+  .tag{
+    font-family:"IBM Plex Mono", monospace; font-size:.72rem; font-weight:500;
+    color:var(--ink-soft); background:var(--accent-2-soft); border-radius:6px;
+    padding:.15em .5em; white-space:nowrap;
+  }
+
+  .component-list{margin:0 0 20px; padding-left:1.2em;}
+  .component-list li{margin-bottom:.5em; font-size:.96rem;}
+
+  .code-block{
+    background:var(--code-bg); border:1px solid var(--border); border-radius:10px;
+    padding:16px 18px; overflow-x:auto; font-family:"IBM Plex Mono", monospace;
+    font-size:.82rem; line-height:1.6; color:var(--ink);
+  }
+  .caption{font-size:.8rem; color:var(--ink-faint); margin-top:8px;}
+
+  .site-footer{
+    border-top:1px solid var(--border); padding-block:32px 48px; background:var(--surface-2);
+  }
+  .site-footer p{font-size:.85rem; color:var(--ink-soft); margin:0; max-width:70ch;}
+  .site-footer strong{color:var(--ink)}
+</style>
+
+<a class="skip-link" href="#accueil">Aller au contenu principal</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="#accueil" onclick="goTo('accueil')">Repères <span>Québec 2026</span></a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+    <nav class="site-nav" id="siteNav" aria-label="Navigation principale">
+      <a href="#accueil" onclick="goTo('accueil')">Accueil</a>
+      <a href="#partis" onclick="goTo('partis')">Partis</a>
+      <a href="#enjeux" onclick="goTo('enjeux')">Enjeux</a>
+      <a href="#candidats" onclick="goTo('candidats')">Candidats</a>
+      <a href="#methodologie" onclick="goTo('methodologie')">Méthodologie</a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu">
+
+  <!-- ============ PAGE : ACCUEIL ============ -->
+  <section id="page-accueil" class="page">
+    <div class="wrap">
+      <p class="eyebrow">Élection générale du Québec · 2026</p>
+      <h1>Repères Québec 2026</h1>
+      <p class="lede">Squelette méthodologique d'une plateforme comparative pour l'élection générale québécoise de 2026. Choisissez une section ci-dessous — aucune donnée n'est remplie pour l'instant.</p>
+
+      <div class="status-badge">Statut&nbsp;: squelette méthodologique — aucune donnée de candidat ou de parti n'est incluse</div>
+
+      <div class="party-row" aria-label="Partis couverts par ce squelette">
+        <span class="party-chip">CAQ <small>Coalition Avenir Québec</small></span>
+        <span class="party-chip">PCQ <small>Parti conservateur du Québec</small></span>
+        <span class="party-chip">PLQ <small>Parti libéral du Québec</small></span>
+        <span class="party-chip">PQ <small>Parti Québécois</small></span>
+        <span class="party-chip">QS <small>Québec solidaire</small></span>
+      </div>
+
+      <div class="toc-grid">
+        <a class="toc-card" href="#partis" onclick="goTo('partis')">
+          <span class="toc-num">01</span>
+          <h3>Analyse par parti</h3>
+          <p>Positionnement de chaque parti sur les six dimensions et l'indice composite, avec filtre.</p>
+        </a>
+        <a class="toc-card" href="#enjeux" onclick="goTo('enjeux')">
+          <span class="toc-num">02</span>
+          <h3>Comparatif par enjeu</h3>
+          <p>Qui se positionne comment, enjeu par enjeu — à vous de juger qui sert le mieux l'intérêt du Québec.</p>
+        </a>
+        <a class="toc-card" href="#candidats" onclick="goTo('candidats')">
+          <span class="toc-num">03</span>
+          <h3>Candidats par parti</h3>
+          <p>Gabarit de profils de candidats, filtré par parti.</p>
+        </a>
+        <a class="toc-card" href="#methodologie" onclick="goTo('methodologie')">
+          <span class="toc-num">04</span>
+          <h3>Méthodologie</h3>
+          <p>Sources, couches d'analyse, indice « Québec d'abord » et architecture i18n.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PAGE : PARTIS ============ -->
+  <section id="page-partis" class="page" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Analyse par parti</p>
+      <h2 id="partisHeading">—</h2>
+      <p class="section-intro">Sélectionnez un parti pour voir son positionnement sur les six dimensions, ses couches analytiques et son indice « Québec d'abord ». <strong>Aucune donnée n'est codée</strong> — cette page illustre la structure à venir.</p>
+
+      <div class="filter-row" role="group" aria-label="Filtrer par parti">
+        <button type="button" class="chip-btn" data-party-chip="CAQ" onclick="selectParty('CAQ')">CAQ</button>
+        <button type="button" class="chip-btn" data-party-chip="PCQ" onclick="selectParty('PCQ')">PCQ</button>
+        <button type="button" class="chip-btn" data-party-chip="PLQ" onclick="selectParty('PLQ')">PLQ</button>
+        <button type="button" class="chip-btn" data-party-chip="PQ" onclick="selectParty('PQ')">PQ</button>
+        <button type="button" class="chip-btn" data-party-chip="QS" onclick="selectParty('QS')">QS</button>
+      </div>
+
+      <h3>Positionnement par dimension</h3>
+      <div id="partisDimensions"></div>
+
+      <h3>Couches analytiques</h3>
+      <div class="layer-tiles" id="partisLayers"></div>
+
+      <h3>Indice composite « Québec d'abord »</h3>
+      <div class="stat-tile" style="max-width:300px">
+        <h4>Indice</h4>
+        <div class="value">—</div>
+        <p>À coder — <a class="crosslink" href="#methodologie" onclick="goTo('methodologie')">voir la méthodologie →</a></p>
+      </div>
+
+      <p style="margin-top:30px"><a class="crosslink" href="#candidats" onclick="goTo('candidats')">Voir les candidats de ce parti →</a></p>
+    </div>
+  </section>
+
+  <!-- ============ PAGE : ENJEUX ============ -->
+  <section id="page-enjeux" class="page" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Comparatif par enjeu</p>
+      <h2 id="enjeuxHeading">—</h2>
+      <p class="section-intro">Pour chaque enjeu, ce comparatif montre où se positionne chaque parti. Le positionnement est <strong>descriptif</strong>&nbsp;: à vous d'évaluer qui répond le mieux à vos priorités pour le Québec.</p>
+
+      <div class="filter-row" role="group" aria-label="Filtrer par enjeu">
+        <button type="button" class="chip-btn" data-topic-chip="immigration" onclick="selectTopic('immigration')">Immigration et identité</button>
+        <button type="button" class="chip-btn" data-topic-chip="souverainete" onclick="selectTopic('souverainete')">Souveraineté</button>
+        <button type="button" class="chip-btn" data-topic-chip="economie" onclick="selectTopic('economie')">Économie et fiscalité</button>
+        <button type="button" class="chip-btn" data-topic-chip="environnement" onclick="selectTopic('environnement')">Environnement et énergie</button>
+        <button type="button" class="chip-btn" data-topic-chip="sante" onclick="selectTopic('sante')">Santé</button>
+        <button type="button" class="chip-btn" data-topic-chip="education" onclick="selectTopic('education')">Éducation</button>
+      </div>
+
+      <div id="enjeuxAnchors"></div>
+      <div id="enjeuxParties"></div>
+    </div>
+  </section>
+
+  <!-- ============ PAGE : CANDIDATS ============ -->
+  <section id="page-candidats" class="page" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Analyse des candidats</p>
+      <h2 id="candidatsHeading">—</h2>
+      <p class="section-intro">Gabarit de profils par candidat et par circonscription, filtré par parti. <strong>Aucune ligne n'est remplie.</strong></p>
+
+      <div class="filter-row" role="group" aria-label="Filtrer par parti">
+        <button type="button" class="chip-btn" data-party-chip="CAQ" onclick="selectParty('CAQ')">CAQ</button>
+        <button type="button" class="chip-btn" data-party-chip="PCQ" onclick="selectParty('PCQ')">PCQ</button>
+        <button type="button" class="chip-btn" data-party-chip="PLQ" onclick="selectParty('PLQ')">PLQ</button>
+        <button type="button" class="chip-btn" data-party-chip="PQ" onclick="selectParty('PQ')">PQ</button>
+        <button type="button" class="chip-btn" data-party-chip="QS" onclick="selectParty('QS')">QS</button>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Candidat·e</th>
+              <th scope="col">Circonscription</th>
+              <th scope="col">Âge</th>
+              <th scope="col">Profession avant la politique</th>
+              <th scope="col">Domaine d'études</th>
+              <th scope="col">Établissement</th>
+              <th scope="col">Diplôme le plus élevé</th>
+              <th scope="col">Expérience politique <span class="muted">(municipale / provinciale / fédérale, ou première candidature)</span></th>
+              <th scope="col">Genre</th>
+              <th scope="col">Données démographiques pertinentes</th>
+              <th scope="col">Intérêts de portefeuille probables selon le parcours</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="empty-row">
+              <td colspan="11">Aucune ligne — gabarit vide, à remplir lors de la collecte de données.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="field-notes">
+        <li><code>Âge</code> — nombre entier</li>
+        <li><code>Profession avant la politique</code> — texte court</li>
+        <li><code>Domaine d'études</code> / <code>Établissement</code> / <code>Diplôme le plus élevé</code> — texte court</li>
+        <li><code>Expérience politique</code> — texte libre (poste, palier, années) ou « aucune — première candidature »</li>
+        <li><code>Genre</code> — catégoriel</li>
+        <li><code>Données démographiques pertinentes</code> — texte libre</li>
+        <li><code>Intérêts de portefeuille probables</code> — texte libre, inféré du parcours</li>
+      </ul>
+
+      <aside class="note">
+        <h3>Sources prévues</h3>
+        <p>Sites officiels des partis, dépôts publics d'Élections Québec, réseaux sociaux des candidat·e·s. La structure de citation (source, date de consultation, lien individuel) reste à définir au moment du remplissage.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ PAGE : MÉTHODOLOGIE ============ -->
+  <section id="page-methodologie" class="page" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Méthodologie</p>
+      <h2>Méthodologie et architecture</h2>
+      <p class="section-intro">Détails méthodologiques derrière les pages « Partis », « Enjeux » et « Candidats » — grille complète, couches d'analyse, indice composite et architecture d'internationalisation.</p>
+
+      <h3>Grille de notation complète (1–5)</h3>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Dimension</th>
+              <th scope="col">Score 1</th>
+              <th scope="col">Score 5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Immigration et identité</strong></td>
+              <td class="anchor-col">Restrictionniste, nationaliste</td>
+              <td class="anchor-col">Ouvert, axé sur l'intégration économique</td>
+            </tr>
+            <tr>
+              <td><strong>Souveraineté et relations fédérales-provinciales</strong></td>
+              <td class="anchor-col">Souverainiste dur, référendum</td>
+              <td class="anchor-col">Fédéraliste, travail dans le cadre canadien</td>
+            </tr>
+            <tr>
+              <td><strong>Économie et fiscalité</strong></td>
+              <td class="anchor-col">Libre-marché, baisses d'impôts, moins d'État</td>
+              <td class="anchor-col">Social-démocrate, taxes sur la richesse, État interventionniste</td>
+            </tr>
+            <tr>
+              <td><strong>Environnement et énergie</strong></td>
+              <td class="anchor-col">Extraction, pro-développement</td>
+              <td class="anchor-col">Écologiste, transition rapide</td>
+            </tr>
+            <tr>
+              <td><strong>Santé</strong></td>
+              <td class="anchor-col">Privé, concurrence</td>
+              <td class="anchor-col">Public, universel</td>
+            </tr>
+            <tr>
+              <td><strong>Éducation</strong></td>
+              <td class="anchor-col">Choix, concurrence</td>
+              <td class="anchor-col">Égalité, gratuité</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="caption">Scores intermédiaires (2 à 4) interpolés lors du codage, selon la même logique bidirectionnelle. L'échelle mesure une position, pas une qualité.</p>
+
+      <h3>Couches analytiques supplémentaires</h3>
+      <div class="layer-grid">
+        <div class="layer-card">
+          <h3>Score de saillance</h3>
+          <p>Fréquence relative des mentions de chaque dimension dans les sources officielles d'un parti. Distingue la <em>priorité</em> accordée à un enjeu de la <em>position</em> défendue.</p>
+          <p class="method">Méthode envisagée&nbsp;: dénombrement de mentions/mots-clés par dimension (plateforme, discours, communiqués), normalisé sur l'ensemble des sources d'un même parti.</p>
+        </div>
+        <div class="layer-card">
+          <h3>Indicateur de rhétorique populiste</h3>
+          <p>Ancré dans la définition minimale de Cas Mudde&nbsp;: une idéologie faible qui divise la société en deux camps homogènes et antagonistes — « le peuple pur » et « l'élite corrompue » — et présente la politique comme l'expression directe de la volonté générale.</p>
+          <p class="method">Indicateurs de codage&nbsp;: appel à un peuple homogène et vertueux&nbsp;; attaques contre une élite jugée corrompue ou déconnectée&nbsp;; revendication d'être l'unique représentant légitime du peuple (antipluralisme)&nbsp;; remise en cause de la légitimité des contre-pouvoirs. Cadre appliqué <strong>symétriquement</strong> au populisme de gauche (anti-élite économique) et de droite (anti-élite culturelle ou « mondialiste »).</p>
+        </div>
+        <div class="layer-card">
+          <h3>Transparence budgétaire</h3>
+          <p>Pour chaque engagement chiffrable&nbsp;: le coût est-il estimé, et une source de financement est-elle identifiée&nbsp;?</p>
+          <p class="method">Codage envisagé par promesse&nbsp;: chiffrée (oui / non / partiellement) et financée (oui / non / partiellement), agrégées en une proportion par parti.</p>
+        </div>
+        <div class="layer-card">
+          <h3>Compatibilité de coalition</h3>
+          <p>Le Québec élit son Assemblée nationale au scrutin uninominal majoritaire à un tour&nbsp;: les coalitions de cabinet à l'européenne n'y sont pas la norme historique. Avec cinq partis compétitifs, la question pertinente est la plausibilité d'ententes de gouvernement minoritaire.</p>
+          <p class="method">Méthode envisagée&nbsp;: distance idéologique par paire de partis sur les six dimensions, combinée aux lignes rouges explicitement déclarées&nbsp;; la plausibilité mathématique s'ajoutera une fois des projections de sièges disponibles.</p>
+        </div>
+      </div>
+
+      <h3>Champs de métadonnées additionnels</h3>
+      <p class="section-intro">Champs binaires ou catégoriels, factuels et vérifiables, pour affiner le filtrage au-delà du gabarit de profil.</p>
+      <div class="meta-groups">
+        <div class="meta-group">
+          <h4>Statut électoral</h4>
+          <ul>
+            <li>Première candidature <span class="tag">oui / non</span></li>
+            <li>Député·e sortant·e <span class="tag">oui / non</span></li>
+            <li>Déjà défait·e précédemment <span class="tag">oui / non</span></li>
+            <li>Nombre de mandats précédents <span class="tag">nombre</span></li>
+          </ul>
+        </div>
+        <div class="meta-group">
+          <h4>Parcours professionnel et social</h4>
+          <ul>
+            <li>Origine syndicale <span class="tag">oui / non</span></li>
+            <li>Origine milieu des affaires <span class="tag">oui / non</span></li>
+            <li>Origine communautaire / OBNL <span class="tag">oui / non</span></li>
+            <li>Ancien·ne élu·e municipal·e <span class="tag">oui / non</span></li>
+            <li>Ancien·ne personnel politique <span class="tag">oui / non</span></li>
+          </ul>
+        </div>
+        <div class="meta-group">
+          <h4>Ancrage local</h4>
+          <ul>
+            <li>Réside dans la circonscription <span class="tag">oui / non</span></li>
+            <li>Années de résidence <span class="tag">nombre</span></li>
+          </ul>
+        </div>
+        <div class="meta-group">
+          <h4>Parcours académique récent</h4>
+          <ul>
+            <li>Étudiant·e depuis 5 ans <span class="tag">oui / non</span></li>
+          </ul>
+        </div>
+        <div class="meta-group">
+          <h4>Financement (si public)</h4>
+          <ul>
+            <li>Montant amassé à ce jour <span class="tag">$</span></li>
+            <li>Nombre de donateurs <span class="tag">nombre</span></li>
+          </ul>
+        </div>
+        <div class="meta-group">
+          <h4>Présence numérique</h4>
+          <ul>
+            <li>Actif·ve sur réseaux sociaux <span class="tag">oui / non</span></li>
+            <li>Plateformes utilisées <span class="tag">liste</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Indice composite « Québec d'abord »</h3>
+      <div class="callout">
+        <p><strong>Note de méthode&nbsp;:</strong> cet indice est <strong>positionnel et descriptif</strong> — il situe chaque parti sur un axe de nationalisme et de protectionnisme économique/culturel, sans jugement de valeur implicite. Il est construit et appliqué de façon identique pour les cinq partis.</p>
+      </div>
+      <p>Combine quatre composantes&nbsp;:</p>
+      <ol class="component-list">
+        <li>Priorité aux intérêts québécois sur les engagements fédéraux ou mondiaux</li>
+        <li>Protectionnisme culturel et linguistique</li>
+        <li>Nationalisme économique</li>
+        <li>Position restrictionniste en immigration</li>
+      </ol>
+      <p class="method" style="margin-bottom:26px">Construction envisagée&nbsp;: moyenne des quatre sous-composantes, dérivées du codage des dimensions « souveraineté » et « immigration et identité » (recodées selon le sens de cet axe) et des couches ci-dessus. Le sens de chaque sous-composante devra être vérifié pour que l'indice reste cohérent — une position restrictionniste en immigration correspond à un score de 1 sur la dimension, mais à une valeur élevée sur cette composante.</p>
+
+      <h3>Architecture i18n</h3>
+      <p class="section-intro">Le français est aujourd'hui la seule langue active. La structure ci-dessous est pensée pour accueillir d'autres langues plus tard, sans réécriture du contenu ni de la logique d'affichage.</p>
+
+      <p><strong>Séparation contenu / structure.</strong> Aucun libellé d'interface n'est codé en dur dans la logique d'affichage. Chaque texte visible est identifié par une clé stable, résolue via un fichier de ressources propre à chaque langue.</p>
+      <p><strong>Une seule locale active.</strong> <code>fr-CA</code> est la langue par défaut et, pour l'instant, la seule active. Le mécanisme de repli (<code>fr-CA</code> → <code>fr</code>) est prévu dans la structure même s'il n'est pas encore sollicité.</p>
+      <p><strong>Convention de nommage.</strong> Les clés sont groupées par section, par exemple <code>profils.circonscription.label</code> ou <code>grille.sante.ancrage5</code>.</p>
+      <p><strong>Formats sensibles à la locale, dès le départ.</strong> Dates, nombres et pluriels suivent des règles propres au français qu'un moteur i18n doit gérer nativement dès la première langue.</p>
+      <p><strong>Libellés vs données.</strong> Les libellés d'interface se traduisent&nbsp;; les données (nom d'un·e candidat·e, d'une circonscription, d'un parti) restent stables d'une langue à l'autre.</p>
+
+      <div class="code-block"><pre style="margin:0; white-space:pre-wrap;"><code>fr-CA:
+  profils.circonscription.label: "Circonscription"
+  profils.premiere_candidature.label: "Première candidature"
+  grille.sante.label: "Santé"
+  grille.sante.ancrage1: "Privé, concurrence"
+  grille.sante.ancrage5: "Public, universel"</code></pre></div>
+      <p class="caption">Extrait illustratif — montre la forme des clés, ce n'est pas une implémentation fonctionnelle.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p><strong>Repères Québec 2026</strong> — squelette méthodologique pour l'élection générale québécoise de 2026. Couvre CAQ, PCQ, PLQ, PQ et QS de façon identique&nbsp;; aucune donnée de candidat ou de parti n'est incluse dans ce document.</p>
+  </div>
+</footer>
+
+<script>
+  var PARTIES = [
+    {code:'CAQ', full:'Coalition Avenir Québec'},
+    {code:'PCQ', full:'Parti conservateur du Québec'},
+    {code:'PLQ', full:'Parti libéral du Québec'},
+    {code:'PQ',  full:'Parti Québécois'},
+    {code:'QS',  full:'Québec solidaire'}
+  ];
+  var DIMENSIONS = [
+    {id:'immigration',    label:'Immigration et identité', a1:'Restrictionniste, nationaliste', a5:"Ouvert, axé sur l'intégration économique"},
+    {id:'souverainete',   label:'Souveraineté et relations fédérales-provinciales', a1:'Souverainiste dur, référendum', a5:'Fédéraliste, travail dans le cadre canadien'},
+    {id:'economie',       label:'Économie et fiscalité', a1:"Libre-marché, baisses d'impôts, moins d'État", a5:'Social-démocrate, taxes sur la richesse, État interventionniste'},
+    {id:'environnement',  label:'Environnement et énergie', a1:'Extraction, pro-développement', a5:'Écologiste, transition rapide'},
+    {id:'sante',          label:'Santé', a1:'Privé, concurrence', a5:'Public, universel'},
+    {id:'education',      label:'Éducation', a1:'Choix, concurrence', a5:'Égalité, gratuité'}
+  ];
+  var LAYERS = [
+    {label:'Score de saillance'},
+    {label:'Rhétorique populiste'},
+    {label:'Transparence budgétaire'},
+    {label:'Compatibilité de coalition'}
+  ];
+  var PAGES = ['accueil','partis','enjeux','candidats','methodologie'];
+
+  var state = { party:'CAQ', topic:'immigration' };
+
+  function gaugeHTML(){
+    var t=''; for(var i=0;i<5;i++){ t+='<i></i>'; }
+    return '<span class="gauge" aria-hidden="true">'+t+'</span><span class="gauge-label">score à venir</span>';
+  }
+
+  function findParty(code){
+    for(var i=0;i<PARTIES.length;i++){ if(PARTIES[i].code===code) return PARTIES[i]; }
+    return PARTIES[0];
+  }
+  function findDim(id){
+    for(var i=0;i<DIMENSIONS.length;i++){ if(DIMENSIONS[i].id===id) return DIMENSIONS[i]; }
+    return DIMENSIONS[0];
+  }
+
+  function renderPartis(){
+    var p = findParty(state.party);
+    document.getElementById('partisHeading').textContent = p.full + ' (' + p.code + ')';
+
+    var dimHTML = DIMENSIONS.map(function(d){
+      return '<div class="dim-row">'
+        + '<div><strong>'+d.label+'</strong><div class="anchor-col">1&nbsp;· '+d.a1+' &nbsp;—&nbsp; 5&nbsp;· '+d.a5+'</div></div>'
+        + '<div class="gauge-wrap">'+gaugeHTML()+'<a class="crosslink" href="#enjeux" onclick="selectTopic(\''+d.id+'\');goTo(\'enjeux\')">voir cet enjeu →</a></div>'
+        + '</div>';
+    }).join('');
+    document.getElementById('partisDimensions').innerHTML = dimHTML;
+
+    var layerHTML = LAYERS.map(function(l){
+      return '<div class="stat-tile"><h4>'+l.label+'</h4><div class="value">—</div><p>À coder</p></div>';
+    }).join('');
+    document.getElementById('partisLayers').innerHTML = layerHTML;
+  }
+
+  function renderEnjeux(){
+    var d = findDim(state.topic);
+    document.getElementById('enjeuxHeading').textContent = d.label;
+    document.getElementById('enjeuxAnchors').innerHTML =
+      '<div class="anchor-pair"><span><strong>Score 1</strong> — '+d.a1+'</span><span><strong>Score 5</strong> — '+d.a5+'</span></div>';
+
+    var rows = PARTIES.map(function(p){
+      return '<div class="party-line"><span><strong>'+p.code+'</strong> <span class="muted">— '+p.full+'</span></span>'
+        + '<div class="gauge-wrap">'+gaugeHTML()+'<a class="crosslink" href="#partis" onclick="selectParty(\''+p.code+'\');goTo(\'partis\')">détails →</a></div></div>';
+    }).join('');
+    document.getElementById('enjeuxParties').innerHTML = rows;
+  }
+
+  function renderCandidats(){
+    var p = findParty(state.party);
+    document.getElementById('candidatsHeading').textContent = 'Candidats — ' + p.full + ' (' + p.code + ')';
+  }
+
+  function updatePartyChips(){
+    document.querySelectorAll('[data-party-chip]').forEach(function(btn){
+      var on = btn.getAttribute('data-party-chip') === state.party;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  function updateTopicChips(){
+    document.querySelectorAll('[data-topic-chip]').forEach(function(btn){
+      var on = btn.getAttribute('data-topic-chip') === state.topic;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  function selectParty(code){
+    state.party = code;
+    renderPartis();
+    renderCandidats();
+    updatePartyChips();
+  }
+  function selectTopic(id){
+    state.topic = id;
+    renderEnjeux();
+    updateTopicChips();
+  }
+
+  function showPage(id){
+    if(PAGES.indexOf(id) === -1) id = 'accueil';
+    PAGES.forEach(function(p){
+      document.getElementById('page-'+p).hidden = (p !== id);
+    });
+    document.querySelectorAll('.site-nav a').forEach(function(a){
+      a.classList.toggle('active', a.getAttribute('href') === '#'+id);
+    });
+    var nav = document.getElementById('siteNav');
+    nav.classList.remove('open');
+    document.getElementById('navToggle').setAttribute('aria-expanded','false');
+    window.scrollTo(0,0);
+  }
+
+  function goTo(id){
+    showPage(id);
+    try{ if(location.hash !== '#'+id) history.pushState(null,'','#'+id); }catch(e){}
+  }
+
+  (function init(){
+    var toggle = document.getElementById('navToggle');
+    var nav = document.getElementById('siteNav');
+    toggle.addEventListener('click', function(){
+      var open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    renderPartis();
+    renderEnjeux();
+    renderCandidats();
+    updatePartyChips();
+    updateTopicChips();
+
+    window.addEventListener('hashchange', function(){
+      showPage((location.hash||'#accueil').slice(1));
+    });
+    window.addEventListener('popstate', function(){
+      showPage((location.hash||'#accueil').slice(1));
+    });
+    showPage((location.hash||'#accueil').slice(1));
+  })();
+</script>
