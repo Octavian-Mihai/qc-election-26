@@ -465,13 +465,7 @@
         <button type="button" class="chip-btn" data-party-chip="QS" onclick="selectParty('QS')">QS</button>
       </div>
 
-      <div class="filter-row" id="candFilterCirc" role="group" aria-label="Filtrer par circonscription" hidden>
-        <button type="button" class="chip-btn" data-circ-chip="Bellechasse" onclick="selectCirc('Bellechasse')">Bellechasse</button>
-        <button type="button" class="chip-btn" data-circ-chip="Camille-Laurin" onclick="selectCirc('Camille-Laurin')">Camille-Laurin</button>
-        <button type="button" class="chip-btn" data-circ-chip="Mercier" onclick="selectCirc('Mercier')">Mercier</button>
-        <button type="button" class="chip-btn" data-circ-chip="Orford" onclick="selectCirc('Orford')">Orford</button>
-        <button type="button" class="chip-btn" data-circ-chip="Trois-Rivières" onclick="selectCirc('Trois-Rivières')">Trois-Rivières</button>
-      </div>
+      <div class="filter-row" id="candFilterCirc" role="group" aria-label="Filtrer par circonscription" hidden></div>
 
       <p class="caption" id="candidatsCount"></p>
 
@@ -850,7 +844,26 @@
     {nom:"Kelly-Anne Gagné", parti:"CAQ", circ:"Mercier", chef:false, src:"Qc125", url:"https://qc125.com/1076f.htm", complet:false},
     {nom:"Thierno Diallo", parti:"PLQ", circ:"Mercier", chef:false, src:"Qc125", url:"https://qc125.com/1076f.htm", complet:false},
     {nom:"Phoudsady Vanny", parti:"PQ", circ:"Mercier", chef:false, src:"Qc125", url:"https://qc125.com/1076f.htm", complet:false},
-    {nom:"François Plamondon", parti:"PCQ", circ:"Mercier", chef:false, src:"Qc125", url:"https://qc125.com/1076f.htm", complet:false}
+    {nom:"François Plamondon", parti:"PCQ", circ:"Mercier", chef:false, src:"Qc125", url:"https://qc125.com/1076f.htm", complet:false},
+
+    // Mauricie (région complète — Trois-Rivières déjà couverte ci-dessus via Fréchette)
+    {nom:"Marie-Ève Myrand", parti:"CAQ", circ:"Champlain", chef:false, src:"Qc125", url:"https://qc125.com/1020f.htm", complet:false},
+    {nom:"Annie Pronovost", parti:"PLQ", circ:"Champlain", chef:false, src:"Qc125", url:"https://qc125.com/1020f.htm", complet:false},
+    {nom:"René Branchaud", parti:"PQ", circ:"Champlain", chef:false, profession:"Avocat, chef de la pratique droit des affaires (cabinet Lavery) ; natif de Grand-Mère", src:"Le Nouvelliste", url:"https://www.lenouvelliste.ca/actualites/actualites-locales/2026/03/31/le-pq-confirme-la-candidature-de-rene-branchaud-dans-champlain-cest-un-retour-aux-sources-WZXQPFXUVZBYNBHV5U6R5CUKGY/", complet:false},
+    {nom:"Katherine Heckersbruch", parti:"QS", circ:"Champlain", chef:false, profession:"Coordonnatrice à l'accessibilité, BAIL-Mauricie (défense des droits des personnes en situation de handicap)", src:"couverture de campagne QS Mauricie", url:"https://www.lhebdojournal.com/actualites/quebec-solidaire-complete-son-equipe-en-mauricie/", complet:false},
+    {nom:"Adriana Szalontai", parti:"PCQ", circ:"Champlain", chef:false, src:"Qc125", url:"https://qc125.com/1020f.htm", complet:false},
+
+    {nom:"Simon Allaire", parti:"CAQ", circ:"Maskinongé", chef:false, src:"Qc125", url:"https://qc125.com/1071f.htm", complet:false},
+    {nom:"Nancy Mignault", parti:"PLQ", circ:"Maskinongé", chef:false, src:"Qc125", url:"https://qc125.com/1071f.htm", complet:false},
+    {nom:"Isabelle Blais", parti:"PQ", circ:"Maskinongé", chef:false, src:"Qc125", url:"https://qc125.com/1071f.htm", complet:false},
+    {nom:"Simon Piotte", parti:"QS", circ:"Maskinongé", chef:false, profession:"Ex-directeur de CPE (plus de 35 ans)", src:"couverture de campagne QS Mauricie", url:"https://www.lhebdojournal.com/actualites/quebec-solidaire-complete-son-equipe-en-mauricie/", complet:false},
+    {nom:"Marc-André Cloutier", parti:"PCQ", circ:"Maskinongé", chef:false, src:"Qc125", url:"https://qc125.com/1071f.htm", complet:false},
+
+    {nom:"Guy Veillette", parti:"CAQ", circ:"Laviolette-Saint-Maurice", chef:false, src:"Qc125", url:"https://qc125.com/1063f.htm", complet:false},
+    {nom:"Laurent Bélisle", parti:"PLQ", circ:"Laviolette-Saint-Maurice", chef:false, src:"Qc125", url:"https://qc125.com/1063f.htm", complet:false},
+    {nom:"Élodie Murphy-Gauthier", parti:"PQ", circ:"Laviolette-Saint-Maurice", chef:false, src:"Qc125", url:"https://qc125.com/1063f.htm", complet:false},
+    {nom:"Rébéka Fredette", parti:"QS", circ:"Laviolette-Saint-Maurice", chef:false, profession:"Service à la clientèle, entreprise d'aliments naturels (Trois-Rivières)", src:"couverture de campagne QS Mauricie", url:"https://www.lhebdojournal.com/actualites/quebec-solidaire-complete-son-equipe-en-mauricie/", complet:false},
+    {nom:"Charles Paquin", parti:"PCQ", circ:"Laviolette-Saint-Maurice", chef:false, src:"Qc125", url:"https://qc125.com/1063f.htm", complet:false}
   ];
 
   var COALITION_CONTEXT = "Les sondages de fin de campagne (ex. : projections Qc125) pointent vers un gouvernement minoritaire, le plus souvent péquiste. Le scénario dominant envisagé par les analystes est celui d'ententes ponctuelles (« à la pièce ») plutôt que d'une coalition formelle : le PQ et le PCQ excluent tous deux un pacte mutuel, le PCQ exclut toute coalition formelle mais reste ouvert à des collaborations ponctuelles, et la CAQ laisse la question ouverte.";
@@ -922,7 +935,7 @@
     document.getElementById('enjeuxParties').innerHTML = rows;
   }
 
-  var CIRCS = ['Bellechasse','Camille-Laurin','Mercier','Orford','Trois-Rivières'];
+  var CIRCS = ['Bellechasse','Camille-Laurin','Champlain','Laviolette-Saint-Maurice','Maskinongé','Mercier','Orford','Trois-Rivières'];
 
   function cell(v){ return v ? v : '<span class="muted">—</span>'; }
 
@@ -1046,6 +1059,10 @@
       var open = nav.classList.toggle('open');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+
+    document.getElementById('candFilterCirc').innerHTML = CIRCS.slice().sort().map(function(c){
+      return '<button type="button" class="chip-btn" data-circ-chip="'+c+'" onclick="selectCirc(\''+c+'\')">'+c+'</button>';
+    }).join('');
 
     renderPartis();
     renderEnjeux();
