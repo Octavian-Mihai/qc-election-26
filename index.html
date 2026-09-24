@@ -205,8 +205,19 @@
   /* ---------- gauges (empty score placeholders) ---------- */
   .gauge{display:inline-flex; gap:4px; vertical-align:middle;}
   .gauge i{width:14px; height:14px; border-radius:4px; border:1.5px solid var(--border); display:inline-block;}
+  .gauge i.filled{background:var(--accent); border-color:var(--accent);}
   .gauge-wrap{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
   .gauge-label{font-size:.72rem; color:var(--ink-faint); font-style:italic;}
+  .cell-note{font-size:.85rem; color:var(--ink-soft); max-width:56ch; margin-top:4px;}
+  .cell-source{font-size:.74rem; color:var(--ink-faint);}
+  .cell-source a{color:var(--ink-faint); text-decoration:underline;}
+  .snapshot-note{
+    display:flex; gap:10px; align-items:flex-start;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+    padding:14px 18px; margin:18px 0 28px; font-size:.85rem; color:var(--ink-soft);
+  }
+  .snapshot-note strong{color:var(--ink)}
+  .thin-flag{color:var(--accent); font-weight:600;}
 
   /* ---------- partis page ---------- */
   .dim-row{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 0; border-bottom:1px solid var(--border); flex-wrap:wrap;}
@@ -342,9 +353,12 @@
     <div class="wrap">
       <p class="eyebrow">Élection générale du Québec · 2026</p>
       <h1>Repères Québec 2026</h1>
-      <p class="lede">Squelette méthodologique d'une plateforme comparative pour l'élection générale québécoise de 2026. Choisissez une section ci-dessous — aucune donnée n'est remplie pour l'instant.</p>
+      <p class="lede">Plateforme comparative pour l'élection générale québécoise de 2026. Choisissez une section ci-dessous.</p>
 
-      <div class="status-badge">Statut&nbsp;: squelette méthodologique — aucune donnée de candidat ou de parti n'est incluse</div>
+      <div class="status-badge">Statut&nbsp;: positions des 5 partis documentées et sourcées (recherche du 23 sept. 2026) — profils de candidats à venir</div>
+      <div class="snapshot-note">
+        <span><strong>Instantané de campagne, pas un résultat final.</strong> Les positions ci-dessous sont codées à partir de la couverture de la campagne jusqu'au 23 septembre 2026. Le vote a lieu le 5 octobre 2026 — les partis peuvent encore préciser ou ajuster leurs engagements d'ici là. Chaque position cite sa source ; les cellules marquées <span class="thin-flag">peu documenté</span> reposent sur une couverture plus mince et méritent d'être vérifiées davantage.</span>
+      </div>
 
       <div class="party-row" aria-label="Partis couverts par ce squelette">
         <span class="party-chip">CAQ <small>Coalition Avenir Québec</small></span>
@@ -368,7 +382,7 @@
         <a class="toc-card" href="#candidats" onclick="goTo('candidats')">
           <span class="toc-num">03</span>
           <h3>Candidats par parti</h3>
-          <p>Gabarit de profils de candidats, filtré par parti.</p>
+          <p>Profils complets pour les 5 chefs et qui se présente contre eux ; gabarit vide pour le reste.</p>
         </a>
         <a class="toc-card" href="#methodologie" onclick="goTo('methodologie')">
           <span class="toc-num">04</span>
@@ -384,7 +398,7 @@
     <div class="wrap">
       <p class="eyebrow">Analyse par parti</p>
       <h2 id="partisHeading">—</h2>
-      <p class="section-intro">Sélectionnez un parti pour voir son positionnement sur les six dimensions, ses couches analytiques et son indice « Québec d'abord ». <strong>Aucune donnée n'est codée</strong> — cette page illustre la structure à venir.</p>
+      <p class="section-intro">Sélectionnez un parti pour voir son positionnement sur les six dimensions, ses couches analytiques et son indice « Québec d'abord », codé à partir de la couverture de la campagne 2026 (sources citées sous chaque position).</p>
 
       <div class="filter-row" role="group" aria-label="Filtrer par parti">
         <button type="button" class="chip-btn" data-party-chip="CAQ" onclick="selectParty('CAQ')">CAQ</button>
@@ -399,13 +413,11 @@
 
       <h3>Couches analytiques</h3>
       <div class="layer-tiles" id="partisLayers"></div>
+      <p class="cell-note" style="max-width:none">Contexte de coalition&nbsp;: <span id="coalitionContext"></span></p>
 
       <h3>Indice composite « Québec d'abord »</h3>
-      <div class="stat-tile" style="max-width:300px">
-        <h4>Indice</h4>
-        <div class="value">—</div>
-        <p>À coder — <a class="crosslink" href="#methodologie" onclick="goTo('methodologie')">voir la méthodologie →</a></p>
-      </div>
+      <div class="stat-tile" id="partisIndice"></div>
+      <p class="caption">Indice positionnel et descriptif, pas un jugement de valeur — <a class="crosslink" href="#methodologie" onclick="goTo('methodologie')">voir la méthodologie →</a></p>
 
       <p style="margin-top:30px"><a class="crosslink" href="#candidats" onclick="goTo('candidats')">Voir les candidats de ce parti →</a></p>
     </div>
@@ -437,7 +449,8 @@
     <div class="wrap">
       <p class="eyebrow">Analyse des candidats</p>
       <h2 id="candidatsHeading">—</h2>
-      <p class="section-intro">Gabarit de profils par candidat et par circonscription, filtré par parti. <strong>Aucune ligne n'est remplie.</strong></p>
+      <p class="section-intro">Profils par candidat et par circonscription, filtrés par parti — complets pour les chefs de parti, confirmés (nom/circonscription) mais pas encore documentés pour les autres.</p>
+      <p class="caption" id="candidatsCount"></p>
 
       <div class="filter-row" role="group" aria-label="Filtrer par parti">
         <button type="button" class="chip-btn" data-party-chip="CAQ" onclick="selectParty('CAQ')">CAQ</button>
@@ -447,6 +460,10 @@
         <button type="button" class="chip-btn" data-party-chip="QS" onclick="selectParty('QS')">QS</button>
       </div>
 
+      <div id="candidatsList" style="margin:20px 0 34px"></div>
+
+      <h3>Gabarit complet (toutes circonscriptions)</h3>
+      <p class="section-intro">En-têtes de référence pour les ~100 circonscriptions encore non documentées.</p>
       <div class="table-scroll">
         <table>
           <thead>
@@ -483,8 +500,13 @@
       </ul>
 
       <aside class="note">
-        <h3>Sources prévues</h3>
-        <p>Sites officiels des partis, dépôts publics d'Élections Québec, réseaux sociaux des candidat·e·s. La structure de citation (source, date de consultation, lien individuel) reste à définir au moment du remplissage.</p>
+        <h3>Sources</h3>
+        <p>Chefs de parti : Wikipédia et couverture de campagne (liens sous chaque profil). Autres candidat·e·s : listes par circonscription de Qc125, recoupées avec la couverture de campagne, à la date de clôture des mises en candidature (17 septembre 2026).</p>
+      </aside>
+
+      <aside class="note">
+        <h3>À venir — portée régionale</h3>
+        <p>Prochaine étape demandée&nbsp;: profils complets pour Montréal (~27 circonscriptions), Laval (6), Montérégie/Rive-Sud (~17), Laurentides-Lanaudière/Rive-Nord (~14), Trois-Rivières (déjà couverte via Fréchette) et la région de Québec (~11) — environ 70 à 90 circonscriptions supplémentaires, à traiter par lots dans des passes de recherche ultérieures plutôt qu'en une seule fois.</p>
       </aside>
     </div>
   </section>
@@ -495,6 +517,9 @@
       <p class="eyebrow">Méthodologie</p>
       <h2>Méthodologie et architecture</h2>
       <p class="section-intro">Détails méthodologiques derrière les pages « Partis », « Enjeux » et « Candidats » — grille complète, couches d'analyse, indice composite et architecture d'internationalisation.</p>
+      <div class="snapshot-note">
+        <span><strong>Sources et date de codage.</strong> Les positions affichées sur les pages « Partis » et « Enjeux » ont été codées le 23 septembre 2026 à partir de la couverture journalistique de la campagne (Le Devoir, La Presse, Radio-Canada, Noovo Info, Les Affaires, Le Quotidien, entre autres), avec une source citée sous chaque position. La campagne se poursuit jusqu'au vote du 5 octobre 2026 : ce squelette n'a pas vocation à être mis à jour en continu et devrait être revérifié avant toute utilisation après cette date.</span>
+      </div>
 
       <h3>Grille de notation complète (1–5)</h3>
       <div class="table-scroll">
@@ -653,7 +678,7 @@
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <p><strong>Repères Québec 2026</strong> — squelette méthodologique pour l'élection générale québécoise de 2026. Couvre CAQ, PCQ, PLQ, PQ et QS de façon identique&nbsp;; aucune donnée de candidat ou de parti n'est incluse dans ce document.</p>
+    <p><strong>Repères Québec 2026</strong> — plateforme comparative pour l'élection générale québécoise de 2026. Couvre CAQ, PCQ, PLQ, PQ et QS de façon identique. Positions de partis sourcées, codées le 23 septembre 2026 ; profils de candidats encore à remplir.</p>
   </div>
 </footer>
 
@@ -683,9 +708,155 @@
 
   var state = { party:'CAQ', topic:'immigration' };
 
-  function gaugeHTML(){
-    var t=''; for(var i=0;i<5;i++){ t+='<i></i>'; }
-    return '<span class="gauge" aria-hidden="true">'+t+'</span><span class="gauge-label">score à venir</span>';
+  // Positions codées à partir de la couverture de la campagne 2026 (recherche effectuée le 23 septembre 2026,
+  // campagne en cours jusqu'au 5 octobre — les positions peuvent encore évoluer). Score : 1 = ancrage "Score 1"
+  // de la dimension, 5 = ancrage "Score 5". Chaque cellule cite sa source la plus précise trouvée.
+  var SCORES = {
+    CAQ: {
+      immigration:   {score:2, note:"Maintient le seuil à 45 000/an et rouvre le PEQ, mais propose une « loi sur l'intégration nationale » pour rompre avec le multiculturalisme canadien et étend la loi 101 à la formation professionnelle.", src:"Le Quotidien, 13 sept. 2026", url:"https://www.lequotidien.com/elections-provinciales-2026/2026/09/13/le-quebec-une-nation-autonome-lance-frechette-a-ses-militants-WCQMVRNN6FAORGDJP6ZPZKS3WQ/"},
+      souverainete:  {score:4, note:"Position autonomiste : défend la viabilité du Québec dans le Canada face à PSPP tout en revendiquant davantage de pouvoirs pour une « nation autonome ».", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1006736/frechette-plamondon-ecorchent-viabilite-quebec-souverain"},
+      economie:      {score:3, note:"Rupture avec les baisses d'impôt promises par Legault : aucune nouvelle réduction avant le retour à l'équilibre (2029-2030) ; cadre financier de 9,7 G$ avec un écart de 6 G$ signalé par la presse.", src:"Noovo Info", url:"https://www.noovo.info/nouvelles/politique/elections-quebec/article/pas-de-baisse-dimpots-avant-le-deficit-zero-dit-christine-frechette/"},
+      environnement: {score:2, note:"Doutes exprimés sur le tracé et le coût (jusqu'à 11 G$) du troisième lien, mais maintien du projet (« il faut aller de l'avant ») avec partenariat privé et tracé est.", src:"La Presse", url:"https://www.lapresse.ca/elections-quebecoises/2026-09-15/debat-de-tva/troisieme-lien-il-faut-aller-de-l-avant-avec-le-projet-dit-frechette.php"},
+      sante:         {score:2, note:"Double pratique public-privé pour les médecins et redirection vers le privé après 9 mois d'attente, tout en promettant un médecin de famille pour tous en 4 ans.", src:"La Presse", url:"https://www.lapresse.ca/elections-quebecoises/2026-08-31/la-caq-change-de-cap-concernant-le-prive-en-sante.php"},
+      education:     {score:3, note:"Thème peu abordé dans cette campagne selon la couverture médiatique ; aucune promesse majeure identifiée dans notre recherche.", src:"couverture générale de campagne", url:"", thin:true}
+    },
+    PCQ: {
+      immigration:   {score:1, note:"Seuil maintenu sans hausse, réduction de 20 000 à 10 000 des admissions pour réunification familiale/réfugiés, critère de « compatibilité culturelle » selon les valeurs du pays d'origine, rapatriement des pouvoirs d'Ottawa.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1008773/duhaime-veut-prendre-compte-valeurs-sociales-pays-selection-immigrants"},
+      souverainete:  {score:4, note:"Fédéraliste mais résolument autonomiste face à un « fédéralisme toxique » : mécanisme permanent contre les intrusions d'Ottawa, hymne et constitution québécoise proposés.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1002515/conservateurs-presentent-plateforme-autonomiste-nataliste"},
+      economie:      {score:1, note:"Plan de réduction de l'État de 60,34 G$ sur 5 ans finançant une baisse d'impôt « historique » de 25 G$ ; objectif de figurer parmi les 8 à 12 juridictions les plus compétitives d'Amérique du Nord.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1007573/duhaime-presente-cadre-financier-prevoyant-coupures-incidence-services"},
+      environnement: {score:1, note:"Fin du monopole d'Hydro-Québec, diversification incluant le gaz naturel, retrait du marché du carbone, suspension de la taxe sur l'essence, exploitation des hydrocarbures.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1002515/conservateurs-presentent-plateforme-autonomiste-nataliste"},
+      sante:         {score:1, note:"Élimination de Santé Québec pour réduire la bureaucratie et place accrue au secteur privé.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1002515/conservateurs-presentent-plateforme-autonomiste-nataliste"},
+      education:     {score:1, note:"Levée du moratoire sur les nouvelles écoles privées subventionnées (en vigueur depuis 2008), abolition du rôle des centres de services scolaires, système « à 1000 vitesses » adapté à chaque élève.", src:"Les Affaires", url:"https://www.lesaffaires.com/secteurs/politique/duhaime-veut-un-systeme-a-1000-vitesses-adapte-pratiquement-a-chaque-eleve/"}
+    },
+    PLQ: {
+      immigration:   {score:4, note:"Réclame le plein contrôle du programme des travailleurs étrangers temporaires pour combler les pénuries (ex. 13 000 postes vacants dans la région de Québec) ; critique la réduction proposée par le PQ.", src:"Les Affaires", url:"https://www.lesaffaires.com/secteurs/politique/cinq-chefs-une-election-milliard-veut-plus-de-pouvoirs-en-matiere-dimmigration"},
+      souverainete:  {score:5, note:"« Le fédéralisme, ça marche » : reconnaît que « le Canada est perfectible » et réclame plus de pouvoirs, mais dans une posture constructive plutôt que conflictuelle envers Ottawa.", src:"Radio-Canada", url:"https://ici.radio-canada.ca/info/rad/serie/elections-quebec-2026/690/immigration-francais-austerite-on-a-questionne-charles-milliard-chef-du-parti-liberal-du-quebec"},
+      economie:      {score:2, note:"Réduction d'impôt pour les PME et d'environ 12 000 postes dans la fonction publique ; cadre financier de 12 G$ financé par une efficacité accrue de l'État, équilibre visé en 2029-2030.", src:"La Presse", url:"https://www.lapresse.ca/elections-quebecoises/2026-09-13/cadre-financier-du-plq/des-promesses-de-11-9-milliards-et-un-retour-a-l-equilibre-budgetaire.php"},
+      environnement: {score:3, note:"Position surtout documentée via le troisième lien, dont la réalisation serait conditionnelle à un partenariat public-privé ; peu de politique climatique distincte identifiée dans notre recherche.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/972932/troisieme-lien-serait-conditionnel-appui-prive-sous-gouvernement-parti-liberal", thin:true},
+      sante:         {score:3, note:"S'engage à ne pas couper en santé (croissance maintenue autour de 5 %), sans orientation claire vers une expansion publique ou privée dans notre recherche.", src:"Radio-Canada", url:"https://ici.radio-canada.ca/info/rad/serie/elections-quebec-2026/690/immigration-francais-austerite-on-a-questionne-charles-milliard-chef-du-parti-liberal-du-quebec", thin:true},
+      education:     {score:3, note:"Maintien d'une croissance de plus de 3 % des dépenses et promesse d'états généraux sur l'éducation, sans orientation nette vers le choix ou la gratuité.", src:"Radio-Canada", url:"https://ici.radio-canada.ca/nouvelle/2280177/etats-generaux-education-promesse-ecole-trois-vitesses", thin:true}
+    },
+    PQ: {
+      immigration:   {score:1, note:"Réduction du seuil permanent de 45 000 à 35 000, réduction de moitié de l'immigration temporaire, moratoire sur l'immigration économique permanente.", src:"La Presse", url:"https://www.lapresse.ca/elections-quebecoises/2026-08-29/le-pq-promet-une-diminution-significative-de-l-immigration.php"},
+      souverainete:  {score:1, note:"Engagement à tenir un troisième référendum avant la fin d'un premier mandat, mais pas avant le départ de Donald Trump de la Maison-Blanche (20 janvier 2029) ; 130 M$ prévus au cadre financier.", src:"La Presse", url:"https://www.lapresse.ca/elections-quebecoises/2026-09-04/troisieme-referendum-sur-la-souverainete/je-vais-tenir-parole-promet-paul-st-pierre-plamondon.php"},
+      economie:      {score:3, note:"Réduction de moitié de la TVQ sur l'essence, abolition de la TVQ sur les biens usagés, contre-mesures tarifaires ciblées (non dollar pour dollar) face aux tarifs américains ; retour à l'équilibre dès 2028-2029.", src:"Le Quotidien", url:"https://www.lequotidien.com/elections-provinciales-2026/2026/09/15/le-pq-promet-le-retour-a-lequilibre-budgetaire-un-an-plus-tot-6SJETUMWHRDXHLP6QN3ZO7TA2A/"},
+      environnement: {score:4, note:"Veut remonter les cibles climatiques « sans mesures moralisatrices », mise sur des incitatifs (véhicules électriques, chauffage) plutôt que des mandats, et s'oppose à la construction d'un nouveau troisième lien.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1001435/pq-compte-remonter-cibles-climatiques-mais-mesures-moralisatrices"},
+      sante:         {score:3, note:"Promet d'abolir Santé Québec (l'agence issue de la réforme caquiste), présenté comme une lutte à la bureaucratie plutôt qu'une orientation nette vers le privé ou le public.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1005845/pq-veut-mise-jour-systeme-education", thin:true},
+      education:     {score:3, note:"Cinq chantiers annoncés (culture, civisme, activité physique quotidienne, formation professionnelle, extension de la loi 101 au collégial) ; ne prévoit pas d'abolir les écoles privées mais conditionnerait leur financement à plus de mixité sociale.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1005845/pq-veut-mise-jour-systeme-education"}
+    },
+    QS: {
+      immigration:   {score:5, note:"Seuil proposé de 70 000 immigrants permanents par année (le plus élevé des 5 partis, le double de la cible du PQ), rétablissement complet du PEQ, nouveau volet régional, +100 M$ en francisation.", src:"Le Devoir", url:"https://www.ledevoir.com/actualites/immigration/1005500/quebec-solidaire-veut-rehausser-seuil-accueil-70-000-immigrants-permanents-an"},
+      souverainete:  {score:2, note:"Souverainiste, mais par une démarche d'assemblée constituante avec les Premières Nations et les Inuit plutôt que par un référendum rapide à la manière du PQ.", src:"couverture des priorités des 100 premiers jours de Ruba Ghazal", url:"https://fr.wikipedia.org/wiki/Qu%C3%A9bec_solidaire"},
+      economie:      {score:5, note:"Nouvelle taxe sur les fortunes de plus de 25 M$ pour lever 10,5 G$ sans toucher la classe moyenne ; Pharma Québec (économies de 9,2 G$) ; retour à l'équilibre visé en 2030.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1008362/quebec-solidaire-promet-retour-equilibre-budgetaire-ici-trois-ans"},
+      environnement: {score:5, note:"S'oppose au projet GNL Québec ; a toutefois révisé à la baisse sa cible de réduction des GES, de 55 % à 37,5 % (idéalement 45 %) d'ici 2030 vs 1990 — un recul assumé par la nouvelle direction.", src:"Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1002446/quebec-solidaire-prend-pas-recul-environnement"},
+      sante:         {score:5, note:"Pharma Québec (régime public d'assurance médicaments) et priorité affichée aux soins de proximité.", src:"couverture de campagne QS", url:"https://www.ledevoir.com/politique/quebec/1008632/ruba-ghazal-quebec-solidaire-epreuve-reel"},
+      education:     {score:5, note:"Gratuité scolaire universitaire et création d'un « réseau d'éducation commun », parmi les priorités des 100 premiers jours annoncées par Ghazal.", src:"couverture des priorités des 100 premiers jours de Ruba Ghazal", url:"https://fr.wikipedia.org/wiki/Qu%C3%A9bec_solidaire"}
+    }
+  };
+
+  var LAYER_NOTES = {
+    CAQ: {
+      saillance: "L'éducation est peu abordée cette campagne ; la santé et l'économie (coût de la vie) dominent la communication du parti.",
+      populisme: "Rhétorique de campagne combative (accuse PQ et PCQ de vouloir « la tronçonneuse » et « la hache »), mais aucun signal clair d'antipluralisme ou d'attaque contre les médias/tribunaux relevé.",
+      transparence: "Cadre financier chiffré : 9,7 G$ de promesses sur 5 ans, mais un écart de 6 G$ signalé par la presse économique avant le retour à l'équilibre en 2029-2030.",
+      coalition: "Fréchette laisse planer la possibilité d'ententes après le scrutin, sans position tranchée."
+    },
+    PCQ: {
+      saillance: "L'économie, la santé et l'immigration dominent largement la communication du parti.",
+      populisme: "Signal le plus net des 5 partis : posture explicitement « anti-système » revendiquée (« critiquer, brasser et combattre les élites »), rhétorique anti-dépenses (« l'orgie de dépenses, c'est terminé »). Aucune attaque directe contre les médias ou les tribunaux relevée.",
+      transparence: "Cadre financier chiffré : 52,57 G$ de promesses sur 5 ans, financées par 60,34 G$ de réductions de dépenses ; retour à l'équilibre visé dans un premier mandat.",
+      coalition: "Exclut un gouvernement de coalition formel, mais se dit ouvert à des collaborations ponctuelles avec toutes les formations."
+    },
+    PLQ: {
+      saillance: "L'immigration, la santé/éducation (via l'engagement à ne pas couper) et l'économie reviennent le plus souvent dans la couverture.",
+      populisme: "Aucun signal notable de rhétorique populiste relevé dans notre recherche.",
+      transparence: "Cadre financier chiffré : 12 G$ de promesses, financées notamment par une réduction d'environ 12 000 postes dans la fonction publique ; équilibre visé en 2029-2030.",
+      coalition: "Position axée sur des ententes à la pièce plutôt que sur une alliance formelle, comme la plupart des partis dans un scénario minoritaire."
+    },
+    PQ: {
+      saillance: "Le référendum, l'immigration et la fiscalité (TVQ) dominent la communication du parti.",
+      populisme: "Cadre le débat référendaire en opposant son projet au « camp du pessimisme » — un clivage centré sur un enjeu précis plutôt qu'une opposition peuple/élite généralisée.",
+      transparence: "Cadre financier chiffré : environ 6,5 G$ de nouvelles dépenses sur 4 ans, retour à l'équilibre dès 2028-2029 (surplus de 49 M$ après versements au Fonds des générations).",
+      coalition: "Exclut explicitement un pacte de gouvernement avec le PCQ malgré une « bromance » évoquée par les adversaires."
+    },
+    QS: {
+      saillance: "Le coût de la vie, la santé/pharmacare et l'immigration reviennent le plus souvent dans la communication de Ghazal.",
+      populisme: "Aucun signal notable de rhétorique populiste relevé ; registre de critique économique ciblée (taxation des « fortunes », pas des « ultrariches » en bloc).",
+      transparence: "Cadre financier chiffré : 10,5 G$ de nouveaux revenus (taxe sur les fortunes), 9,2 G$ d'économies via Pharma Québec ; équilibre visé en 2030.",
+      coalition: "Position axée sur des ententes à la pièce ; aucune alliance formelle envisagée publiquement dans notre recherche."
+    }
+  };
+
+  var QUEBEC_DABORD_SYNTHESIS = "Sur cet indice construit à partir des positions ci-dessus (priorité aux intérêts québécois, protectionnisme culturel et linguistique, nationalisme économique, position en immigration), le PCQ et le PQ se positionnent le plus fortement vers la priorité et le protectionnisme — mais selon des logiques distinctes : le PCQ par l'autonomie et un critère de compatibilité culturelle dans la sélection de l'immigration, le PQ par l'indépendance et la réduction des seuils. La CAQ occupe une position intermédiaire, portée par son autonomisme et sa « loi sur l'intégration nationale ». Le PLQ et QS s'en éloignent le plus — le PLQ par une posture fédéraliste coopérative et une immigration présentée comme un levier économique, QS par un seuil d'immigration élevé et une approche interculturelle, tout en demeurant souverainiste sur le plan constitutionnel.";
+
+  // Candidat·e·s confirmé·e·s dans les 5 circonscriptions des chefs de parti (recherche du 23 sept. 2026,
+  // mise en candidature close le 17 sept. 2026). Profils complets pour les 5 chefs ; les autres candidat·e·s
+  // sont confirmé·e·s (nom/circonscription/parti) mais leur profil biographique reste à documenter.
+  var CANDIDATS = [
+    {nom:"Christine Fréchette", parti:"CAQ", circ:"Trois-Rivières", chef:true, age:56, profession:"Consultante en affaires publiques ; présidente de chambre de commerce (2016-2021)",
+      etudes:"Baccalauréat en administration des affaires — économie et commerce international, HEC Montréal (1992) ; maîtrise en relations internationales, Université Laval (1994)",
+      experience:"Ministre de l'Économie, de l'Innovation et de l'Énergie (depuis 2024) ; députée de Sanguinet (depuis 2022) ; candidate défaite à la mairie d'arrondissement à Montréal (Vision Montréal, 2009)",
+      genre:"Femme", interets:"Économie, commerce international, relations Québec-Canada",
+      src:"Wikipédia ; La Presse/Le Quotidien (choix de circonscription)", url:"https://en.wikipedia.org/wiki/Christine_Fr%C3%A9chette", complet:true},
+    {nom:"Éric Duhaime", parti:"PCQ", circ:"Bellechasse", chef:true, age:57, profession:"Chroniqueur et animateur radio (Journal de Montréal, National Post, FM93)",
+      etudes:"Baccalauréat en science politique, Université de Montréal ; maîtrise, École nationale d'administration publique (ÉNAP)",
+      experience:"Chef du PCQ (depuis 2021) ; candidat défait dans Chauveau (2022) et Arthabaska (2025) ; organisateur politique et conseiller (ADQ, Alliance canadienne, Bloc Québécois) avant sa carrière médiatique",
+      genre:"Homme", interets:"Réduction de la taille de l'État, énergie, communications",
+      src:"Wikipédia", url:"https://en.wikipedia.org/wiki/%C3%89ric_Duhaime", complet:true},
+    {nom:"Charles Milliard", parti:"PLQ", circ:"Orford", chef:true, age:47, profession:"Pharmacien ; cadre chez Uniprix (2003-2016) ; PDG de la Fédération des chambres de commerce du Québec (2019-2024)",
+      etudes:"Baccalauréat en pharmacie, certificat en économie, Université Laval (2002) ; MBA, HEC Montréal (2007)",
+      experience:"Première candidature à une élection ; chef du PLQ (élu à la direction en février 2026, après une candidature perdue en 2025)",
+      genre:"Homme", interets:"Économie, PME, santé (pharmacie)",
+      src:"Wikipédia", url:"https://en.wikipedia.org/wiki/Charles_Milliard", complet:true},
+    {nom:"Paul St-Pierre Plamondon", parti:"PQ", circ:"Camille-Laurin", chef:true, age:49, profession:"Avocat (litige, Stikeman Elliott ; associé chez Delegatus) ; auteur et chroniqueur (Les Affaires)",
+      etudes:"Collège André-Grasset ; baccalauréats en droit civil et common law, Université McGill (2001) ; certificat en droit international, Université de Lund ; MBA, Université d'Oxford (2006)",
+      experience:"Chef du PQ (depuis 2020) ; député de Camille-Laurin (depuis 2022) ; candidat à la direction du PQ (2016) ; candidat défait dans Prévost (2018)",
+      genre:"Homme", interets:"Justice, gouvernance, souveraineté et affaires constitutionnelles",
+      src:"Wikipédia", url:"https://en.wikipedia.org/wiki/Paul_St-Pierre_Plamondon", complet:true},
+    {nom:"Ruba Ghazal", parti:"QS", circ:"Mercier", chef:true, age:47, profession:"Comptable professionnelle agréée",
+      etudes:"Études en comptabilité, HEC Montréal et Université de Sherbrooke",
+      experience:"Coporte-parole de Québec solidaire (depuis 2024) ; députée de Mercier (depuis 2018) ; membre fondatrice de QS (2006) ; candidate défaite dans Laurier-Dorion (2007, 2008)",
+      genre:"Femme", interets:"Finances publiques, justice fiscale, immigration",
+      src:"Wikipédia", url:"https://en.wikipedia.org/wiki/Ruba_Ghazal", complet:true},
+
+    {nom:"Jean Pellerin", parti:"PQ", circ:"Trois-Rivières", chef:false, src:"Qc125", url:"https://qc125.com/1116f.htm", complet:false},
+    {nom:"Jonathan Couturier", parti:"PCQ", circ:"Trois-Rivières", chef:false, src:"Qc125", url:"https://qc125.com/1116f.htm", complet:false},
+    {nom:"Valérie Renaud-Martin", parti:"PLQ", circ:"Trois-Rivières", chef:false, src:"Qc125", url:"https://qc125.com/1116f.htm", complet:false},
+    {nom:"Steven Roy Cullen", parti:"QS", circ:"Trois-Rivières", chef:false, src:"Qc125", url:"https://qc125.com/1116f.htm", complet:false},
+
+    {nom:"Stéphanie Lachance", parti:"CAQ", circ:"Bellechasse", chef:false, experience:"Députée sortante de Bellechasse (2 mandats)", src:"Qc125", url:"https://qc125.com/1010f.htm", complet:false},
+    {nom:"Jérôme Couture", parti:"PQ", circ:"Bellechasse", chef:false, src:"Qc125", url:"https://qc125.com/1010f.htm", complet:false},
+    {nom:"Richard Garon", parti:"PLQ", circ:"Bellechasse", chef:false, src:"Qc125", url:"https://qc125.com/1010f.htm", complet:false},
+    {nom:"Raphaël Bédard", parti:"QS", circ:"Bellechasse", chef:false, src:"Qc125", url:"https://qc125.com/1010f.htm", complet:false},
+
+    {nom:"Allison Turner", parti:"CAQ", circ:"Orford", chef:false, src:"Qc125", url:"https://qc125.com/1085f.htm", complet:false},
+    {nom:"Jocelyn Caron", parti:"PQ", circ:"Orford", chef:false, src:"Qc125", url:"https://qc125.com/1085f.htm", complet:false},
+    {nom:"Eve-Lyne Clusiault", parti:"QS", circ:"Orford", chef:false, src:"Qc125", url:"https://qc125.com/1085f.htm", complet:false},
+    {nom:"Benoît Robitaille", parti:"PCQ", circ:"Orford", chef:false, src:"Qc125", url:"https://qc125.com/1085f.htm", complet:false},
+
+    {nom:"Matys Lavigne", parti:"CAQ", circ:"Camille-Laurin", chef:false, src:"Qc125", url:"https://qc125.com/1017f.htm", complet:false},
+    {nom:"Earl Corales", parti:"PLQ", circ:"Camille-Laurin", chef:false, src:"Qc125", url:"https://qc125.com/1017f.htm", complet:false},
+    {nom:"René Gauvreau", parti:"QS", circ:"Camille-Laurin", chef:false, experience:"Ex-député péquiste de Groulx (2008-2012)", src:"La Presse", url:"https://www.lapresse.ca/elections-quebecoises/2026-08-22/camille-laurin/l-ancien-depute-pequiste-rene-gauvreau-se-presente-pour-quebec-solidaire.php", complet:false},
+    {nom:"Jessy Comtois", parti:"PCQ", circ:"Camille-Laurin", chef:false, src:"Qc125", url:"https://qc125.com/1017f.htm", complet:false},
+
+    {nom:"Kelly-Anne Gagné", parti:"CAQ", circ:"Mercier", chef:false, src:"Qc125", url:"https://qc125.com/1076f.htm", complet:false},
+    {nom:"Thierno Diallo", parti:"PLQ", circ:"Mercier", chef:false, src:"Qc125", url:"https://qc125.com/1076f.htm", complet:false},
+    {nom:"Phoudsady Vanny", parti:"PQ", circ:"Mercier", chef:false, src:"Qc125", url:"https://qc125.com/1076f.htm", complet:false},
+    {nom:"François Plamondon", parti:"PCQ", circ:"Mercier", chef:false, src:"Qc125", url:"https://qc125.com/1076f.htm", complet:false}
+  ];
+
+  var COALITION_CONTEXT = "Les sondages de fin de campagne (ex. : projections Qc125) pointent vers un gouvernement minoritaire, le plus souvent péquiste. Le scénario dominant envisagé par les analystes est celui d'ententes ponctuelles (« à la pièce ») plutôt que d'une coalition formelle : le PQ et le PCQ excluent tous deux un pacte mutuel, le PCQ exclut toute coalition formelle mais reste ouvert à des collaborations ponctuelles, et la CAQ laisse la question ouverte.";
+
+  function sourceHTML(cell){
+    if(!cell.url) return '<div class="cell-source">Source : '+cell.src+(cell.thin?' <span class="thin-flag">· peu documenté</span>':'')+'</div>';
+    return '<div class="cell-source">Source : <a href="'+cell.url+'" target="_blank" rel="noopener">'+cell.src+'</a>'+(cell.thin?' <span class="thin-flag">· peu documenté</span>':'')+'</div>';
+  }
+
+  function gaugeHTML(score){
+    var t='';
+    for(var i=1;i<=5;i++){ t += (score && i<=score ? '<i class="filled"></i>' : '<i></i>'); }
+    var label = score ? ('score '+score+'/5') : 'score à venir';
+    return '<span class="gauge" aria-hidden="true">'+t+'</span><span class="gauge-label">'+label+'</span>';
   }
 
   function findParty(code){
@@ -697,22 +868,32 @@
     return DIMENSIONS[0];
   }
 
+  var LAYER_KEYS = ['saillance','populisme','transparence','coalition'];
+
   function renderPartis(){
     var p = findParty(state.party);
     document.getElementById('partisHeading').textContent = p.full + ' (' + p.code + ')';
 
     var dimHTML = DIMENSIONS.map(function(d){
+      var cell = SCORES[p.code][d.id];
       return '<div class="dim-row">'
-        + '<div><strong>'+d.label+'</strong><div class="anchor-col">1&nbsp;· '+d.a1+' &nbsp;—&nbsp; 5&nbsp;· '+d.a5+'</div></div>'
-        + '<div class="gauge-wrap">'+gaugeHTML()+'<a class="crosslink" href="#enjeux" onclick="selectTopic(\''+d.id+'\');goTo(\'enjeux\')">voir cet enjeu →</a></div>'
+        + '<div><strong>'+d.label+'</strong><div class="anchor-col">1&nbsp;· '+d.a1+' &nbsp;—&nbsp; 5&nbsp;· '+d.a5+'</div>'
+        + '<p class="cell-note">'+cell.note+'</p>'+sourceHTML(cell)+'</div>'
+        + '<div class="gauge-wrap">'+gaugeHTML(cell.score)+'<a class="crosslink" href="#enjeux" onclick="selectTopic(\''+d.id+'\');goTo(\'enjeux\')">voir cet enjeu →</a></div>'
         + '</div>';
     }).join('');
     document.getElementById('partisDimensions').innerHTML = dimHTML;
 
-    var layerHTML = LAYERS.map(function(l){
-      return '<div class="stat-tile"><h4>'+l.label+'</h4><div class="value">—</div><p>À coder</p></div>';
+    var ln = LAYER_NOTES[p.code];
+    var layerHTML = LAYERS.map(function(l, i){
+      var key = LAYER_KEYS[i];
+      return '<div class="stat-tile"><h4>'+l.label+'</h4><p style="margin-top:0">'+ln[key]+'</p></div>';
     }).join('');
     document.getElementById('partisLayers').innerHTML = layerHTML;
+
+    document.getElementById('partisIndice').innerHTML =
+      '<p style="margin-bottom:0">'+QUEBEC_DABORD_SYNTHESIS+'</p>';
+    document.getElementById('coalitionContext').textContent = COALITION_CONTEXT;
   }
 
   function renderEnjeux(){
@@ -721,9 +902,14 @@
     document.getElementById('enjeuxAnchors').innerHTML =
       '<div class="anchor-pair"><span><strong>Score 1</strong> — '+d.a1+'</span><span><strong>Score 5</strong> — '+d.a5+'</span></div>';
 
-    var rows = PARTIES.map(function(p){
-      return '<div class="party-line"><span><strong>'+p.code+'</strong> <span class="muted">— '+p.full+'</span></span>'
-        + '<div class="gauge-wrap">'+gaugeHTML()+'<a class="crosslink" href="#partis" onclick="selectParty(\''+p.code+'\');goTo(\'partis\')">détails →</a></div></div>';
+    var sorted = PARTIES.slice().sort(function(a,b){
+      return SCORES[b.code][d.id].score - SCORES[a.code][d.id].score;
+    });
+    var rows = sorted.map(function(p){
+      var cell = SCORES[p.code][d.id];
+      return '<div class="party-line"><div style="flex:1 1 260px"><strong>'+p.code+'</strong> <span class="muted">— '+p.full+'</span>'
+        + '<p class="cell-note">'+cell.note+'</p>'+sourceHTML(cell)+'</div>'
+        + '<div class="gauge-wrap">'+gaugeHTML(cell.score)+'<a class="crosslink" href="#partis" onclick="selectParty(\''+p.code+'\');goTo(\'partis\')">détails →</a></div></div>';
     }).join('');
     document.getElementById('enjeuxParties').innerHTML = rows;
   }
@@ -731,6 +917,29 @@
   function renderCandidats(){
     var p = findParty(state.party);
     document.getElementById('candidatsHeading').textContent = 'Candidats — ' + p.full + ' (' + p.code + ')';
+
+    var list = CANDIDATS.filter(function(c){ return c.parti === p.code; });
+    var cardsHTML = list.map(function(c){
+      if(c.complet){
+        return '<div class="stat-tile" style="margin-bottom:14px">'
+          + '<h4>'+c.nom+' — '+c.circ+(c.chef?' <span class="tag">chef·fe de parti</span>':'')+'</h4>'
+          + '<p class="cell-note" style="max-width:none"><strong>Âge</strong> '+c.age+' · <strong>Genre</strong> '+c.genre+'</p>'
+          + '<p class="cell-note" style="max-width:none"><strong>Profession avant la politique</strong> '+c.profession+'</p>'
+          + '<p class="cell-note" style="max-width:none"><strong>Études</strong> '+c.etudes+'</p>'
+          + '<p class="cell-note" style="max-width:none"><strong>Expérience politique</strong> '+c.experience+'</p>'
+          + '<p class="cell-note" style="max-width:none"><strong>Intérêts de portefeuille probables</strong> '+c.interets+'</p>'
+          + sourceHTML(c) + '</div>';
+      }
+      return '<div class="stat-tile" style="margin-bottom:14px">'
+        + '<h4>'+c.nom+' — '+c.circ+'</h4>'
+        + '<p class="cell-note" style="max-width:none">'+(c.experience?c.experience+' · ':'')+'Profil biographique (âge, profession, études) pas encore documenté dans cette passe de recherche.</p>'
+        + sourceHTML(c) + '</div>';
+    }).join('');
+
+    document.getElementById('candidatsList').innerHTML = cardsHTML || '<p class="cell-note" style="max-width:none">Aucun·e candidat·e confirmé·e dans notre recherche pour ce parti pour l\'instant.</p>';
+    document.getElementById('candidatsCount').textContent = list.length
+      ? ('Candidat·e·s confirmé·e·s dans '+list.length+' circonscription'+(list.length>1?'s':'')+' sur ~125 (voir « à venir » ci-dessous).')
+      : '';
   }
 
   function updatePartyChips(){
