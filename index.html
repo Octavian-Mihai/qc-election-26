@@ -168,7 +168,7 @@
 
   /* ---------- flag ---------- */
   .hero-flag{margin:0 0 18px;}
-  .hero-flag svg{display:block; width:72px; height:54px; border-radius:5px; box-shadow:var(--shadow);}
+  .hero-flag svg{display:block; width:78px; height:52px; border-radius:5px; box-shadow:var(--shadow);}
 
   /* ---------- party badges (drawn monograms, not official logos) ---------- */
   .party-badge{
@@ -773,23 +773,14 @@
     var bg = PARTY_COLORS[code] || 'var(--accent)';
     return '<span class="party-badge'+(big?' lg':'')+'" style="background:'+bg+'">'+code+'</span>';
   }
-  // Fleur-de-lis simplifiée, dessinée à la main (pas d'import externe) : trois pétales + base.
-  var FLEUR_PATH = 'M0,-1.55 C-0.55,-1.55 -0.85,-1.05 -0.6,-0.6 C-0.85,-0.55 -1.05,-0.25 -0.95,0.05'
-    + ' C-1.35,-0.05 -1.75,0.25 -1.65,0.7 C-1.55,1.05 -1.15,1.1 -0.85,0.9'
-    + ' C-0.75,1.15 -0.45,1.25 -0.22,1.05 C-0.3,1.6 -0.55,1.75 -0.55,1.75 L0.55,1.75'
-    + ' C0.55,1.75 0.3,1.6 0.22,1.05 C0.45,1.25 0.75,1.15 0.85,0.9'
-    + ' C1.15,1.1 1.55,1.05 1.65,0.7 C1.75,0.25 1.35,-0.05 0.95,0.05'
-    + ' C1.05,-0.25 0.85,-0.55 0.6,-0.6 C0.85,-1.05 0.55,-1.55 0,-1.55 Z';
-  function fleurSVG(cx, cy){
-    return '<g transform="translate('+cx+','+cy+') scale(0.62)"><path d="'+FLEUR_PATH+'" fill="#fff"/></g>';
-  }
+  // Drapeau officiel du Québec (fleurdelisé), domaine public — artwork vectoriel
+  // repris de Wikimedia Commons (« Flag of Quebec.svg »), un seul tracé de fleur de
+  // lis dupliqué aux quatre coins via <use>.
   var QUEBEC_FLAG_SVG =
-    '<svg viewBox="0 0 12 9" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Drapeau du Québec">'
-    + '<rect width="12" height="9" fill="#003DA5"/>'
-    + '<rect x="5.55" width="0.9" height="9" fill="#fff"/>'
-    + '<rect y="4.05" width="12" height="0.9" fill="#fff"/>'
-    + fleurSVG(2.75,2.25) + fleurSVG(9.25,2.25)
-    + fleurSVG(2.75,6.75) + fleurSVG(9.25,6.75)
+    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 9600 6400" role="img" aria-label="Drapeau du Québec">'
+    + '<path fill="#fff" d="M0 0h9600v6400H0z"/>'
+    + '<g id="b"><path fill="#003da5" d="M4000 0v2400H0V0zM2309 1622v-129h-115c0-66 32-130 66-150 20-17 65-25 104-5 51 29 54 113 28 151 243-45 219-280 136-365-67-69-140-79-196-58-128 46-214 199-218 427h-67c0-207 36-273 130-534 48-123 19-275-65-415-31-50-69-95-112-144-43 49-81 94-112 144-84 140-113 292-65 415 94 261 130 327 130 534h-67c-4-228-90-381-218-427-56-21-129-11-196 58-83 85-107 320 136 365-26-38-23-122 28-151 39-20 84-12 104 5 34 20 66 84 66 150h-115v129h239c-3 67-39 119-106 148 8 28 49 85 105 81 11 60 21 94 71 149 50-55 60-89 71-149 56 4 97-53 105-81-67-29-103-81-106-148z" id="a"/><use xlink:href="#a" x="5600"/></g>'
+    + '<use xlink:href="#b" y="4000"/>'
     + '</svg>';
   var DIMENSIONS = [
     {id:'immigration',    label:'Immigration et identité', a1:'Restrictionniste, nationaliste', a5:"Ouvert, axé sur l'intégration économique"},
