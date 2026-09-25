@@ -568,7 +568,9 @@
       experience:"Aucune candidature électorale antérieure ; a publiquement critiqué le discours du PQ sur l'immigration (septembre 2026)",
       src:"Radio-Canada ; La Presse", url:"https://ici.radio-canada.ca/nouvelle/2275354/gabriel-pallotta-candidat-pq-sherbrooke", complet:false},
     {nom:"Stéphanie Vachon", parti:"QS", circ:"Sherbrooke", chef:false, src:"Qc125", url:"https://qc125.com/1111f.htm", complet:false},
-    {nom:"Jonathan Brault", parti:"PCQ", circ:"Sherbrooke", chef:false, src:"Qc125", url:"https://qc125.com/1111f.htm", complet:false},
+    {nom:"Jonathan Brault", parti:"PCQ", circ:"Sherbrooke", chef:false,
+      experience:"Candidat du Parti conservateur du Canada aux élections fédérales de 2025",
+      src:"ici.radio-canada.ca", url:"https://ici.radio-canada.ca/nouvelle/2278888/sherbrooke-estrie-elections-provinciales-quebec-2026", complet:false},
 
     // Capitale-Nationale (région complète — 11 circonscriptions)
     {nom:"Marie-Josée Morency", parti:"CAQ", circ:"Charlesbourg", chef:false,
@@ -764,7 +766,10 @@
       experience:"Devenu candidat après le retrait de Jeanne Robin et l'exclusion forcée de Vincent Marissal ; priorités de campagne : logement et itinérance",
       src:"pq.org ; Radio-Canada", url:"https://ici.radio-canada.ca/nouvelle/2278244/christian-savard-candidat-pq-taschereau", complet:false},
     {nom:"Étienne Grandmont", parti:"QS", circ:"Taschereau", chef:false, experience:"Député sortant de Taschereau", src:"Qc125", url:"https://qc125.com/1114f.htm", complet:false},
-    {nom:"Eliot Estévez-Verville", parti:"PCQ", circ:"Taschereau", chef:false, src:"Qc125", url:"https://qc125.com/1114f.htm", complet:false},
+    {nom:"Eliot Estévez-Verville", parti:"PCQ", circ:"Taschereau", chef:false, age:19,
+      domaine:"Science politique ou relations internationales (études projetées)", etablissement:"Université Laval",
+      experience:"Membre du conseil d'administration du PCQ depuis neuf mois",
+      src:"carrefourdequebec.com", url:"https://www.carrefourdequebec.com/2026/03/eliot-estevez-verville-se-porte-candidat-dans-taschereau/", complet:false},
 
     {nom:"Françoise Faverjon-Fortin", parti:"CAQ", circ:"Vanier-Les Rivières", chef:false,
       profession:"Ex-vice-présidente (Québec) et vice-présidente Infrastructures et Environnement à Exportation et développement Canada (EDC) ; ensuite présidente et chef de la direction de MedicAlert Canada",
@@ -2281,7 +2286,10 @@
       experience:"Engagement syndical/communautaire pour les travailleurs du secteur public en enseignement supérieur",
       src:"pq.org", url:"https://pq.org/nouvelles/le-parti-quebecois-presente-trois-nouvelles-candidatures/", complet:false},
     {nom:"Marianne Locas-Ouimet", parti:"QS", circ:"Mont-Royal–Outremont", chef:false, src:"Qc125", url:"https://qc125.com/1079f.htm", complet:false},
-    {nom:"Yaron Avsker", parti:"PCQ", circ:"Mont-Royal–Outremont", chef:false, src:"Qc125", url:"https://qc125.com/1079f.htm", complet:false},
+    {nom:"Yaron Avsker", parti:"PCQ", circ:"Mont-Royal–Outremont", chef:false, age:42,
+      diplome:"Titre de comptable professionnel agréé (CPA)",
+      profession:"Directeur des finances chez Omnitrans (logistique et chaîne d'approvisionnement)",
+      src:"thesuburban.com", url:"https://www.thesuburban.com/news/city_news/election-roundup-mont-royal-outremont/article_59334bdc-554b-4d5b-8483-a43af3e58b8c.html", complet:false},
 
     {nom:"Monsef Derraji", parti:"PLQ", circ:"Nelligan", chef:false,
       domaine:"Santé publique", etablissement:"Université de Montréal", diplome:"Doctorat en santé publique",
@@ -2375,7 +2383,9 @@
       experience:"Aucune expérience politique antérieure (homonyme distinct de l'ex-député fédéral Pierre Nantel, candidat péquiste dans Argenteuil)",
       src:"pq.org", url:"https://pq.org/nouvelles/pierre-etienne-nantel-est-officiellement-candidat-du-parti-quebecois-dans-la-circonscription-de-saint-laurent/", complet:false},
     {nom:"Étienne Loiselle-Schiettekatte", parti:"QS", circ:"Saint-Laurent", chef:false, src:"Qc125", url:"https://qc125.com/1107f.htm", complet:false},
-    {nom:"Barry Rolbin", parti:"PCQ", circ:"Saint-Laurent", chef:false, src:"Qc125", url:"https://qc125.com/1107f.htm", complet:false},
+    {nom:"Barry Rolbin", parti:"PCQ", circ:"Saint-Laurent", chef:false,
+      experience:"Membre actif du comité de parents de la Commission scolaire English-Montreal (EMSB)",
+      src:"journaldesvoisins.com", url:"https://journaldesvoisins.com/barry-rolbin-candidat-du-pcq-dans-saint-laurent/", complet:false},
 
     {nom:"Alejandra Zaga Mendez", parti:"QS", circ:"Verdun", chef:false, experience:"Députée sortante de Verdun", src:"Qc125", url:"https://qc125.com/1122f.htm", complet:false},
     {nom:"Roseline Olory", parti:"CAQ", circ:"Verdun", chef:false,
