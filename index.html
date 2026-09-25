@@ -287,6 +287,15 @@
   .anchor-pair strong{color:var(--accent-2);}
   .party-line{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 18px; border:1px solid var(--border); border-radius:10px; margin-bottom:10px; background:var(--surface); flex-wrap:wrap; box-shadow:var(--shadow);}
 
+  /* ---------- quiz page ---------- */
+  .quiz-q{padding:18px 0; border-bottom:1px solid var(--border);}
+  .quiz-q:last-child{border-bottom:none;}
+  .quiz-q .anchor-col{font-size:.82rem; color:var(--ink-soft); margin:.3em 0 12px;}
+  .quiz-progress{font-size:.85rem; color:var(--ink-faint); margin:6px 0 22px;}
+  .quiz-results{margin-top:18px;}
+  .quiz-pct{font-family:"IBM Plex Mono", monospace; font-size:1.3rem; color:var(--accent-2); font-variant-numeric:tabular-nums;}
+  .quiz-empty{font-size:.88rem; color:var(--ink-faint); font-style:italic; padding:14px 0;}
+
   /* ---------- tables ---------- */
   .table-scroll{
     overflow-x:auto; -webkit-overflow-scrolling:touch;
@@ -428,6 +437,7 @@
       <a href="#accueil" onclick="goTo('accueil')">Accueil</a>
       <a href="#partis" onclick="goTo('partis')">Partis</a>
       <a href="#enjeux" onclick="goTo('enjeux')">Enjeux</a>
+      <a href="#quiz" onclick="goTo('quiz')">Quiz</a>
       <a href="#candidats" onclick="goTo('candidats')">Candidats</a>
       <a href="#methodologie" onclick="goTo('methodologie')">Méthodologie</a>
     </nav>
@@ -462,13 +472,18 @@
           <h3>Comparatif par enjeu</h3>
           <p>Qui se positionne comment, enjeu par enjeu — à vous de juger qui sert le mieux l'intérêt du Québec.</p>
         </a>
-        <a class="toc-card" href="#candidats" onclick="goTo('candidats')">
+        <a class="toc-card" href="#quiz" onclick="goTo('quiz')">
           <span class="toc-num">03</span>
+          <h3>Quiz de concordance</h3>
+          <p>Répondez aux six mêmes enjeux et voyez votre pourcentage de concordance avec chaque parti.</p>
+        </a>
+        <a class="toc-card" href="#candidats" onclick="goTo('candidats')">
+          <span class="toc-num">04</span>
           <h3>Candidats par parti</h3>
           <p>Profils complets pour les 5 chefs et qui se présente contre eux ; gabarit vide pour le reste.</p>
         </a>
         <a class="toc-card" href="#methodologie" onclick="goTo('methodologie')">
-          <span class="toc-num">04</span>
+          <span class="toc-num">05</span>
           <h3>Méthodologie</h3>
           <p>Sources, couches d'analyse, indice « Québec d'abord » et architecture i18n.</p>
         </a>
@@ -524,6 +539,28 @@
 
       <div id="enjeuxAnchors"></div>
       <div id="enjeuxParties"></div>
+    </div>
+  </section>
+
+  <!-- ============ PAGE : QUIZ ============ -->
+  <section id="page-quiz" class="page" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Quiz de concordance</p>
+      <h2>Où vous situez-vous ?</h2>
+      <p class="section-intro">Pour chacun des six mêmes enjeux utilisés dans l'analyse par parti, choisissez la position (1 à 5) la plus proche de la vôtre entre les deux ancrages. Votre pourcentage de concordance avec chaque parti est recalculé automatiquement — vous pouvez modifier vos réponses en tout temps.</p>
+
+      <div class="callout">
+        <p><strong>Méthode neutre.</strong> Le pourcentage mesure uniquement l'écart entre votre position (1–5) et la position codée de chaque parti sur le même enjeu — voir <a class="crosslink" href="#methodologie" onclick="goTo('methodologie')">méthodologie</a>. Les partis sont affichés dans un ordre fixe, sans classement ni recommandation.</p>
+      </div>
+
+      <p class="quiz-progress" id="quizProgress"></p>
+
+      <div id="quizQuestions"></div>
+
+      <p style="margin-top:10px"><button type="button" class="chip-btn" onclick="resetQuiz()">Réinitialiser mes réponses</button></p>
+
+      <h3>Votre concordance par parti</h3>
+      <div class="quiz-results" id="quizResults"></div>
     </div>
   </section>
 
@@ -796,9 +833,11 @@
     {label:'Transparence budgétaire'},
     {label:'Compatibilité de coalition'}
   ];
-  var PAGES = ['accueil','partis','enjeux','candidats','methodologie'];
+  var PAGES = ['accueil','partis','enjeux','quiz','candidats','methodologie'];
 
   var state = { party:'CAQ', topic:'immigration', candMode:'parti', circ:'Trois-Rivières' };
+
+  var quizState = { answers:{} };
 
   // Positions codées à partir de la couverture de la campagne 2026 (recherche effectuée le 23 septembre 2026,
   // campagne en cours jusqu'au 5 octobre — les positions peuvent encore évoluer). Score : 1 = ancrage "Score 1"
@@ -952,6 +991,76 @@
     document.getElementById('enjeuxParties').innerHTML = rows;
   }
 
+  function loadQuiz(){
+    try{
+      var raw = localStorage.getItem('qc26-quiz');
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && typeof parsed === 'object') quizState.answers = parsed;
+      }
+    }catch(e){}
+  }
+  function saveQuiz(){
+    try{ localStorage.setItem('qc26-quiz', JSON.stringify(quizState.answers)); }catch(e){}
+  }
+
+  function answerQuiz(dimId, score){
+    quizState.answers[dimId] = score;
+    saveQuiz();
+    renderQuiz();
+  }
+
+  function resetQuiz(){
+    quizState.answers = {};
+    saveQuiz();
+    renderQuiz();
+  }
+
+  // Concordance = 100 - (écart entre votre réponse et la position du parti) * 25,
+  // l'écart maximal possible sur une échelle 1-5 étant 4. Moyenne sur les enjeux répondus.
+  function computeMatches(){
+    var answered = DIMENSIONS.filter(function(d){ return quizState.answers[d.id]; });
+    var out = {};
+    PARTIES.forEach(function(p){
+      if(!answered.length){ out[p.code] = null; return; }
+      var total = 0;
+      answered.forEach(function(d){
+        var diff = Math.abs(quizState.answers[d.id] - SCORES[p.code][d.id].score);
+        total += 100 - diff * 25;
+      });
+      out[p.code] = Math.round(total / answered.length);
+    });
+    return out;
+  }
+
+  function renderQuiz(){
+    var answeredCount = DIMENSIONS.filter(function(d){ return quizState.answers[d.id]; }).length;
+    document.getElementById('quizProgress').textContent = answeredCount + ' / ' + DIMENSIONS.length + ' enjeux répondus';
+
+    document.getElementById('quizQuestions').innerHTML = DIMENSIONS.map(function(d){
+      var current = quizState.answers[d.id];
+      var btns = '';
+      for(var i=1;i<=5;i++){
+        btns += '<button type="button" class="chip-btn'+(current===i?' active':'')+'" aria-pressed="'+(current===i?'true':'false')+'" onclick="answerQuiz(\''+d.id+'\','+i+')">'+i+'</button>';
+      }
+      return '<div class="quiz-q">'
+        + '<strong>'+d.label+'</strong>'
+        + '<div class="anchor-col">1&nbsp;· '+d.a1+' &nbsp;—&nbsp; 5&nbsp;· '+d.a5+'</div>'
+        + '<div class="filter-row" role="group" aria-label="'+d.label+'">'+btns+'</div>'
+        + '</div>';
+    }).join('');
+
+    var matches = computeMatches();
+    if(!answeredCount){
+      document.getElementById('quizResults').innerHTML = '<p class="quiz-empty">Répondez à au moins un enjeu ci-dessus pour voir votre concordance.</p>';
+    } else {
+      document.getElementById('quizResults').innerHTML = PARTIES.map(function(p){
+        var pct = matches[p.code];
+        return '<div class="party-line"><div><strong>'+partyBadge(p.code)+' '+p.full+'</strong></div>'
+          + '<div class="quiz-pct">'+(pct===null?'—':pct+'&nbsp;%')+'</div></div>';
+      }).join('');
+    }
+  }
 
   function cell(v){ return v ? v : '<span class="muted">—</span>'; }
 
@@ -1131,6 +1240,8 @@
 
     renderPartis();
     renderEnjeux();
+    loadQuiz();
+    renderQuiz();
     renderCandidats();
     updatePartyChips();
     updateTopicChips();
