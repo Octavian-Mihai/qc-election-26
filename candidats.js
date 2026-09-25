@@ -472,7 +472,9 @@
       experience:"A travaillé dans plusieurs commissions scolaires ; ex-conseillère municipale ; ex-présidente d'arrondissement",
       src:"pq.org", url:"https://pq.org/nouvelles/nathalie-boisclair-est-officiellement-la-candidate-du-parti-quebecois-dans-la-circonscription-de-daniel-johnson/", complet:false},
     {nom:"Tony Martel", parti:"QS", circ:"Daniel-Johnson", chef:false, src:"Qc125", url:"https://qc125.com/1050f.htm", complet:false},
-    {nom:"Marc Distexhe", parti:"PCQ", circ:"Daniel-Johnson", chef:false, src:"Qc125", url:"https://qc125.com/1050f.htm", complet:false},
+    {nom:"Marc Distexhe", parti:"PCQ", circ:"Daniel-Johnson", chef:false,
+      profession:"Technicien frigoriste (parcours diversifié : industrie musicale, coaching d'affaires, optimisation de systèmes)",
+      src:"conservateur.quebec", url:"https://conservateur.quebec/candidat/johnson/", complet:false},
 
     {nom:"Claudine Leroux", parti:"CAQ", circ:"Granby", chef:false,
       domaine:"Biologie",
@@ -603,7 +605,9 @@
       experience:"Aucune expérience politique antérieure",
       src:"Radio-Canada ; Le Devoir", url:"https://www.ledevoir.com/politique/quebec/1002791/pq-presente-journaliste-choi-radio-x-charlevoix-cote-beaupre", complet:false},
     {nom:"Dulce Vivar", parti:"QS", circ:"Charlevoix–Côte-de-Beaupré", chef:false, src:"Qc125", url:"https://qc125.com/1023f.htm", complet:false},
-    {nom:"Caroline Simard", parti:"PCQ", circ:"Charlevoix–Côte-de-Beaupré", chef:false, src:"Qc125", url:"https://qc125.com/1023f.htm", complet:false},
+    {nom:"Caroline Simard", parti:"PCQ", circ:"Charlevoix–Côte-de-Beaupré", chef:false,
+      experience:"Ancienne députée provinciale (PLQ) de Charlevoix–Côte-de-Beaupré de 2014 à 2018",
+      src:"ici.radio-canada.ca", url:"https://ici.radio-canada.ca/nouvelle/2278879/duhaime-conservateur-charlevoix-caroline", complet:false},
 
     {nom:"Christian Lachance", parti:"CAQ", circ:"Chauveau", chef:false,
       domaine:"Administration des affaires",
@@ -1099,7 +1103,10 @@
       experience:"Conseiller municipal pour le district de Havre-aux-Maisons/Pointe-aux-Loups ; membre des Rangers canadiens",
       src:"plq.org", url:"https://plq.org/equipe/gil-theriault/", complet:false},
     {nom:"Zachary Jean", parti:"QS", circ:"Îles-de-la-Madeleine", chef:false, src:"Qc125", url:"https://qc125.com/1045f.htm", complet:false},
-    {nom:"Evan Leblanc", parti:"PCQ", circ:"Îles-de-la-Madeleine", chef:false, src:"Qc125", url:"https://qc125.com/1045f.htm", complet:false},
+    {nom:"Evan Leblanc", parti:"PCQ", circ:"Îles-de-la-Madeleine", chef:false, age:44,
+      profession:"Travaille dans le transport pour Postes Canada (anciennement en signalisation, construction et charpenterie)",
+      experience:"Candidat du PCQ dans Îles-de-la-Madeleine en 2022 (5e position, 1,11 % des voix)",
+      src:"leradar.qc.ca", url:"https://www.leradar.qc.ca/2026/09/04/evan-leblanc-revient-pour-les-conservateurs/", complet:false},
 
     {nom:"Pascal Bérubé", parti:"PQ", circ:"Matane-Matapédia-Mitis", chef:false, age:51,
       domaine:"Sciences de l'éducation", etablissement:"Cégep de Matane ; UQAR", diplome:"DEC sciences humaines (Cégep de Matane) ; baccalauréat en sciences de l'éducation (UQAR, 1998)",
