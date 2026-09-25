@@ -11,7 +11,7 @@ Plateforme comparative pour l'élection générale québécoise de 2026 (5 octob
 - PLQ (127 candidat·e·s) ✅ terminé
 - CAQ (127 candidat·e·s) ✅ terminé
 - PCQ (127 candidat·e·s) ⏳ à faire
-- QS (127 candidat·e·s) ⏳ à faire
+- QS (127 candidat·e·s) ✅ terminé
 
 Voir « À venir » ci-dessous pour la méthode et l'état précis de la suite.
 
@@ -35,15 +35,15 @@ Ouvrir [`index.html`](index.html) dans un navigateur, ou consulter la version pu
 
 ## À venir
 
-Les 127 circonscriptions et les 5 partis sont couverts au niveau gabarit (nom, circonscription, parti confirmés pour chaque candidat·e). Travail en cours pour approfondir les biographies (âge, domaine d'études, établissement, diplôme, profession, expérience politique) parti par parti, dans cet ordre : PQ ✅ → PLQ ✅ → CAQ ✅ → **PCQ (prochain)** → QS.
+Les 127 circonscriptions et les 5 partis sont couverts au niveau gabarit (nom, circonscription, parti confirmés pour chaque candidat·e). Travail en cours pour approfondir les biographies (âge, domaine d'études, établissement, diplôme, profession, expérience politique) parti par parti, dans cet ordre : PQ ✅ → PLQ ✅ → CAQ ✅ → PCQ (116/127) → QS ✅. Il reste à compléter le PCQ (11 candidat·e·s sans bio, faute de source fiable trouvée jusqu'ici). La méthode est maintenant établie pour les 5 partis.
 
-**Méthode établie (à réutiliser pour PCQ et QS) :**
+**Méthode établie (à réutiliser pour le reste du PCQ) :**
 1. Chaque parti a des pages de biographie individuelles sur son propre site (aucune bio fiable sur qc125.com, qui ne contient que des projections électorales) :
    - PQ : `https://pq.org/nos-candidats/<prenom-nom-slug>/` (ou chercher le lien exact sur `https://pq.org/nos-candidats/`)
    - PLQ : `https://plq.org/equipe/<prenom-nom-slug>/`
    - CAQ : `https://coalitionavenirquebec.org/fr/blog/equipe/<prenom-nom-slug>/`
    - PCQ : `https://conservateur.quebec/candidat/<circonscription-slug>/` (URL basée sur la circonscription, pas le nom — ex. `/candidat/trois-rivieres/`). Attention aux noms de circonscription à trait d'union long (–) : le convertir en trait d'union simple (-) avant de slugifier, sinon l'URL devinée échoue (ex. `charlevoix–côte-de-beaupré` → `charlevoix-cote-de-beaupre`, pas `charlevoixcote-de-beaupre`). Plusieurs fiches PCQ sont encore à blanc (« À venir… ») — dans ce cas, chercher une source de presse à la place plutôt que d'inventer.
-   - QS : structure du site à vérifier au démarrage de cette étape (pas encore explorée).
+   - QS : `https://quebecsolidaire.net/equipe/<code4lettres>` (code à 4 lettres par circonscription, propre au site — pas dérivé du nom ni de la circonscription ; le trouver via la liste complète rendue en JS sur `https://quebecsolidaire.net/equipe`, ex. `trri` pour Trois-Rivières, `chmp` pour Champlain). Plusieurs fiches QS sont encore sans biographie publiée (« La biographie sera disponible sous peu ») — dans ce cas, chercher une source de presse à la place plutôt que d'inventer.
 2. Slugifier le nom (ou la circonscription pour PCQ) : minuscules, accents retirés, espaces/apostrophes → traits d'union.
 3. Déléguer la recherche à des agents en arrière-plan par lots de ~16 candidat·e·s (WebFetch sur chaque page devinée ; si 404, repli sur WebSearch). Consigne stricte donnée aux agents : ne jamais inventer une donnée manquante — laisser le champ absent plutôt que d'écrire « non documenté » (le rendu HTML affiche déjà un tiret « — » via la fonction `cell()` pour les champs vides).
 4. Intégrer les résultats dans le tableau `CANDIDATS` (désormais dans [`candidats.js`](candidats.js), pas `index.html`) en ajoutant seulement les champs confirmés (`age`, `domaine`, `etablissement`, `diplome`, `profession`, `experience`) ; garder `complet:false` sauf pour les 6 chef·fes de parti.
