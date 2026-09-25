@@ -550,7 +550,7 @@
       <p class="section-intro">Pour chacun des six mêmes enjeux utilisés dans l'analyse par parti, choisissez la position (1 à 5) la plus proche de la vôtre entre les deux ancrages. Votre pourcentage de concordance avec chaque parti est recalculé automatiquement — vous pouvez modifier vos réponses en tout temps.</p>
 
       <div class="callout">
-        <p><strong>Méthode neutre.</strong> Le pourcentage mesure uniquement l'écart entre votre position (1–5) et la position codée de chaque parti sur le même enjeu — voir <a class="crosslink" href="#methodologie" onclick="goTo('methodologie')">méthodologie</a>. Les partis sont affichés dans un ordre fixe, sans classement ni recommandation.</p>
+        <p><strong>Méthode neutre.</strong> Le pourcentage mesure uniquement l'écart entre votre position (1–5) et la position codée de chaque parti sur le même enjeu — voir <a class="crosslink" href="#methodologie" onclick="goTo('methodologie')">méthodologie</a>. Les partis sont triés du plus au moins concordant selon vos réponses ; ceci reste descriptif et n'est pas une recommandation de vote.</p>
       </div>
 
       <p class="quiz-progress" id="quizProgress"></p>
@@ -1054,7 +1054,10 @@
     if(!answeredCount){
       document.getElementById('quizResults').innerHTML = '<p class="quiz-empty">Répondez à au moins un enjeu ci-dessus pour voir votre concordance.</p>';
     } else {
-      document.getElementById('quizResults').innerHTML = PARTIES.map(function(p){
+      var sortedParties = PARTIES.slice().sort(function(a,b){
+        return matches[b.code] - matches[a.code];
+      });
+      document.getElementById('quizResults').innerHTML = sortedParties.map(function(p){
         var pct = matches[p.code];
         return '<div class="party-line"><div><strong>'+partyBadge(p.code)+' '+p.full+'</strong></div>'
           + '<div class="quiz-pct">'+(pct===null?'—':pct+'&nbsp;%')+'</div></div>';
