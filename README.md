@@ -3,6 +3,10 @@
 Plateforme comparative pour l'élection générale québécoise de 2026 (5 octobre 2026), couvrant les cinq principaux partis : CAQ, PCQ, PLQ, PQ et QS.
 
 
+## Screenshots
+
+![Repères Québec 2026 home page](docs/screenshots/qc.png)
+
 ## Architecture
 
 ```mermaid
