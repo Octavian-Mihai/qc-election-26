@@ -1,8 +1,23 @@
 # Repères Québec 2026
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for an architecture diagram.
-
 Plateforme comparative pour l'élection générale québécoise de 2026 (5 octobre 2026), couvrant les cinq principaux partis : CAQ, PCQ, PLQ, PQ et QS.
+
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Data[("candidats.js<br/>parties · positions · 127 ridings · candidates")]
+    HTML["index.html<br/>markup + inline JS/CSS"]
+    Browser([Browser])
+    Pages[GitHub Pages / static host]
+
+    Data -->|loaded via script tag| HTML
+    HTML --> Pages --> Browser
+    Browser -->|filter by party, region, riding, dimension| HTML
+```
+
+More detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 ## Statut
 
