@@ -1,0 +1,11 @@
+!table
+!version 300
+!charset WindowsLatin1
+!edit_version 450
+
+Definition Table
+  Type NATIVE Charset "WindowsLatin1"
+  Fields 3
+    CO_CEP Smallint ;
+    NM_CEP Char (50) ;
+    NMTRI_CEP Char (50) ;

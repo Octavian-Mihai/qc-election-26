@@ -403,6 +403,23 @@
   .theme-toggle button svg{width:15px; height:15px; display:block;}
   .theme-toggle button:hover{color:var(--ink);}
   .theme-toggle button.active{background:var(--accent); color:var(--accent-contrast);}
+
+  /* ---------- résultats ---------- */
+  .res-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:22px 0;}
+  .res-map-wrap{background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:10px; position:relative;}
+  .res-map-wrap svg{width:100%; height:auto; max-height:640px; display:block;}
+  .res-map-wrap path{stroke:var(--surface); stroke-width:1.2; vector-effect:non-scaling-stroke; cursor:pointer;}
+  .res-map-wrap path:hover,.res-map-wrap path.sel{stroke:var(--ink); stroke-width:2.2;}
+  .res-tip{min-height:3.2em; margin:10px 2px 0; font-size:.9rem; color:var(--ink-soft);}
+  .res-tip strong{color:var(--ink);}
+  .res-legend{display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:8px; font-size:.82rem; color:var(--ink-soft); align-items:center;}
+  .res-legend i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-1px;}
+  .res-ramp{display:inline-block; width:120px; height:10px; border-radius:3px; vertical-align:middle; margin:0 6px;}
+  .res-bar{display:flex; height:22px; border-radius:6px; overflow:hidden; margin:6px 0 2px;}
+  .res-bar span{display:block; height:100%;}
+  td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono", monospace; white-space:nowrap;}
+  th.sortable{cursor:pointer;}
+  th.sortable:hover{color:var(--accent-2);}
 </style>
 
 <script>
@@ -439,6 +456,7 @@
       <a href="#enjeux" onclick="goTo('enjeux')">Enjeux</a>
       <a href="#quiz" onclick="goTo('quiz')">Quiz</a>
       <a href="#candidats" onclick="goTo('candidats')">Candidats</a>
+      <a href="#resultats" onclick="goTo('resultats')">Résultats</a>
       <a href="#methodologie" onclick="goTo('methodologie')">Méthodologie</a>
     </nav>
   </div>
@@ -620,6 +638,40 @@
     </div>
   </section>
 
+  <!-- ============ PAGE : RÉSULTATS ============ -->
+  <section id="page-resultats" class="page" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Résultats du scrutin du 5 octobre 2026</p>
+      <h2>Qui a gagné, et par combien ?</h2>
+      <p class="section-intro">Résultats officiels d'Élections Québec pour les 127 circonscriptions : gagnant·e, marge de victoire, vote populaire et cartes. <span id="resMaj"></span></p>
+
+      <div class="res-grid" id="resTiles"></div>
+
+      <h3>Sièges et vote populaire</h3>
+      <div class="table-scroll"><table id="resSeatsTable"></table></div>
+
+      <h3>Carte des gagnants</h3>
+      <p class="section-intro">Chaque circonscription est colorée selon le parti gagnant ; plus la teinte est foncée, plus la marge est grande (pleine intensité à 30 points d'écart ou plus). Survolez ou touchez une circonscription pour le détail.</p>
+      <div class="res-map-wrap"><div id="resMapWinner"></div></div>
+      <div class="res-legend" id="resLegendWinner"></div>
+
+      <h3>Carte du vote par parti</h3>
+      <div class="filter-row" role="group" aria-label="Parti affiché sur la carte" id="resPartyRow"></div>
+      <div class="res-map-wrap"><div id="resMapParty"></div></div>
+      <div class="res-legend" id="resLegendParty"></div>
+      <div class="filter-row" role="group" aria-label="Zone de la carte">
+        <button type="button" class="chip-btn active" id="resZoomQc" onclick="setResZoom('qc')">Tout le Québec</button>
+        <button type="button" class="chip-btn" id="resZoomMtl" onclick="setResZoom('mtl')">Grand Montréal</button>
+      </div>
+      <p class="res-tip" id="resTip" aria-live="polite">Survolez une circonscription.</p>
+
+      <h3>Marges de victoire</h3>
+      <div class="callout"><p id="resHighlights"></p></div>
+      <div class="filter-row" role="group" aria-label="Filtrer par parti gagnant" id="resWinnerFilter"></div>
+      <div class="table-scroll"><table id="resMarginTable"></table></div>
+    </div>
+  </section>
+
   <!-- ============ PAGE : MÉTHODOLOGIE ============ -->
   <section id="page-methodologie" class="page" hidden>
     <div class="wrap">
@@ -792,6 +844,7 @@
 </footer>
 
 <script src="candidats.js"></script>
+<script src="resultats.js"></script>
 <script>
   var PARTIES = [
     {code:'CAQ', full:'Coalition Avenir Québec'},
@@ -833,7 +886,7 @@
     {label:'Transparence budgétaire'},
     {label:'Compatibilité de coalition'}
   ];
-  var PAGES = ['accueil','partis','enjeux','quiz','candidats','methodologie'];
+  var PAGES = ['accueil','partis','enjeux','quiz','candidats','resultats','methodologie'];
 
   var state = { party:'CAQ', topic:'immigration', candMode:'parti', circ:'Trois-Rivières' };
 
@@ -1188,6 +1241,136 @@
     updateTopicChips();
   }
 
+
+  // ---------- Résultats ----------
+  var RES_COLORS = {PQ:'#1F78D1', PLQ:'#E4032E', PCQ:'#5B2C8F', CAQ:'#00A9C9', QS:'#FF7900', AUT:'#8896AC'};
+  var RES_NAMES = {PQ:'Parti Québécois', PLQ:'Parti libéral du Québec', PCQ:'Parti conservateur du Québec', CAQ:'Coalition Avenir Québec', QS:'Québec solidaire', AUT:'Autres'};
+  var resState = {party:'PQ', zoom:'qc', winner:'ALL', sort:'margePct', dir:1};
+  function fmtN(n){ return n.toLocaleString('fr-CA'); }
+  function fmtP(n, d){ return n.toFixed(d==null?1:d).replace('.',',')+' %'; }
+
+  function resTally(){
+    var t = {};
+    Object.keys(RES_COLORS).forEach(function(k){ t[k] = {votes:0, seats:0}; });
+    RESULTATS.rows.forEach(function(r){
+      r.c.forEach(function(c){ t[c[0]].votes += c[2]; });
+      t[r.avance[0]].seats++;
+    });
+    return t;
+  }
+
+  function resMapSvg(fillFn, opFn){
+    var m = RESULTATS.meta, vb = resState.zoom==='mtl' ? m.mtl.join(' ') : '0 0 '+m.w+' '+m.h;
+    return '<svg viewBox="'+vb+'" role="img" aria-label="Carte des circonscriptions du Québec">'
+      + RESULTATS.rows.map(function(r){
+          return '<path d="'+r.d+'" fill="'+fillFn(r)+'" fill-opacity="'+opFn(r)+'" data-code="'+r.code+'"/>';
+        }).join('') + '</svg>';
+  }
+
+  function resTipHtml(r){
+    var w = r.c[0], s = r.c[1];
+    return '<strong>'+r.nom+'</strong> — '+w[0]+' ('+w[1]+', '+fmtP(w[3])+') devant '+s[0]+' ('+s[1]+', '+fmtP(s[3])+') · marge '+fmtN(r.marge)+' votes ('+fmtP(r.margePct)+') · participation '+fmtP(r.part);
+  }
+
+  function renderResMaps(){
+    var byCode = {}; RESULTATS.rows.forEach(function(r){ byCode[r.code] = r; });
+    var p = resState.party, max = Math.max.apply(null, RESULTATS.rows.map(function(r){ return r.pct[p]; }));
+    document.getElementById('resMapWinner').innerHTML = resMapSvg(
+      function(r){ return RES_COLORS[r.avance[0]]; },
+      function(r){ return (0.4 + 0.6*Math.min(r.margePct/30,1)).toFixed(2); });
+    document.getElementById('resMapParty').innerHTML = resMapSvg(
+      function(){ return RES_COLORS[p]; },
+      function(r){ return (0.08 + 0.92*r.pct[p]/max).toFixed(2); });
+    var min = Math.min.apply(null, RESULTATS.rows.map(function(r){ return r.pct[p]; }));
+    document.getElementById('resLegendParty').innerHTML = '<span>'+RES_NAMES[p]+' :</span><span>'+fmtP(min)+'<span class="res-ramp" style="background:linear-gradient(90deg,'+RES_COLORS[p]+'14,'+RES_COLORS[p]+')"></span>'+fmtP(max)+'</span><span>(plus faible → plus fort score dans une circonscription)</span>';
+    ['resMapWinner','resMapParty'].forEach(function(id){
+      var box = document.getElementById(id);
+      function show(e){
+        var t = e.target.closest && e.target.closest('path'); if(!t) return;
+        document.getElementById('resTip').innerHTML = resTipHtml(byCode[t.getAttribute('data-code')]);
+      }
+      box.addEventListener('mouseover', show);
+      box.addEventListener('click', show);
+    });
+  }
+
+  function setResZoom(z){
+    resState.zoom = z;
+    document.getElementById('resZoomQc').classList.toggle('active', z==='qc');
+    document.getElementById('resZoomMtl').classList.toggle('active', z==='mtl');
+    renderResMaps();
+  }
+  function setResParty(p){
+    resState.party = p;
+    document.querySelectorAll('[data-res-party]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-res-party')===p); });
+    renderResMaps();
+  }
+  function setResWinner(w){
+    resState.winner = w;
+    document.querySelectorAll('[data-res-winner]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-res-winner')===w); });
+    renderResMargins();
+  }
+  function sortResBy(k){
+    if(resState.sort===k) resState.dir = -resState.dir; else { resState.sort = k; resState.dir = (k==='nom'||k==='gagnant') ? 1 : -1; if(k==='margePct'||k==='marge') resState.dir = 1; }
+    renderResMargins();
+  }
+
+  function renderResMargins(){
+    var k = resState.sort, d = resState.dir;
+    var rows = RESULTATS.rows.filter(function(r){ return resState.winner==='ALL' || r.avance[0]===resState.winner; });
+    rows.sort(function(a,b){
+      var x = k==='nom' ? a.nom : k==='gagnant' ? a.avance[0] : a[k], y = k==='nom' ? b.nom : k==='gagnant' ? b.avance[0] : b[k];
+      return (typeof x==='string' ? x.localeCompare(y,'fr') : x-y) * d;
+    });
+    function th(key, label, num){
+      return '<th class="sortable'+(num?' num':'')+'" onclick="sortResBy(\''+key+'\')">'+label+(resState.sort===key ? (resState.dir>0?' ▲':' ▼') : '')+'</th>';
+    }
+    document.getElementById('resMarginTable').innerHTML =
+      '<thead><tr>'+th('nom','Circonscription')+th('gagnant','Gagnant·e')+'<th>Deuxième</th>'+th('marge','Marge (votes)',1)+th('margePct','Marge (pts)',1)+th('part','Participation',1)+'</tr></thead><tbody>'
+      + rows.map(function(r){
+          return '<tr><td>'+r.nom+'</td><td>'+partyBadge(r.avance[0]==='AUT'?'—':r.avance[0])+' '+r.c[0][1]+' <small>('+fmtP(r.c[0][3])+')</small></td>'
+            + '<td>'+r.avance[1]+' <small>'+r.c[1][1]+' ('+fmtP(r.c[1][3])+')</small></td>'
+            + '<td class="num">'+fmtN(r.marge)+'</td><td class="num">'+r.margePct.toFixed(1).replace('.',',')+'</td><td class="num">'+fmtP(r.part)+'</td></tr>';
+        }).join('') + '</tbody>';
+  }
+
+  function renderResultats(){
+    var m = RESULTATS.meta, t = resTally(), rows = RESULTATS.rows;
+    document.getElementById('resMaj').textContent = 'Résultats finaux, mis à jour le '+new Date(m.maj.replace(',','.')).toLocaleString('fr-CA',{dateStyle:'long',timeStyle:'short'})+'.';
+    var order = ['PQ','PLQ','PCQ','QS','CAQ','AUT'].sort(function(a,b){ return t[b].seats-t[a].seats || t[b].votes-t[a].votes; });
+    var win = order[0];
+    var closest = rows.slice().sort(function(a,b){ return a.marge-b.marge; });
+    var big = rows.slice().sort(function(a,b){ return b.margePct-a.margePct; });
+    var gap = rows.filter(function(r){ return r.avance[0]!==order[0]; });
+    document.getElementById('resTiles').innerHTML = [
+      ['Parti en tête', win, t[win].seats+' sièges sur 127 ('+Math.round(t[win].seats/127*100)+' %)'],
+      ['Majorité', t[win].seats>=64?'Majoritaire':'Minoritaire', win+' : '+Math.abs(t[win].seats-64)+' siège'+(Math.abs(t[win].seats-64)>1?'s':'')+(t[win].seats>=64?' au-dessus du':' sous le')+' seuil de 64'],
+      ['Participation', fmtP(m.participation), fmtN(m.exerce)+' votants sur '+fmtN(m.inscrits)],
+      ['Votes valides', fmtN(m.valides), fmtN(m.rejetes)+' bulletins rejetés']
+    ].map(function(x,i){
+      return '<div class="stat-tile"><h4>'+x[0]+'</h4><div class="value" style="color:var(--ink)">'+x[1]+'</div><p>'+x[2]+'</p></div>';
+    }).join('');
+    document.getElementById('resSeatsTable').innerHTML =
+      '<thead><tr><th>Parti</th><th class="num">Sièges</th><th class="num">Votes</th><th class="num">% du vote</th><th class="num">% des sièges</th></tr></thead><tbody>'
+      + order.map(function(k){
+          return '<tr><td><span class="res-legend" style="margin:0"><span><i style="background:'+RES_COLORS[k]+'"></i>'+RES_NAMES[k]+'</span></span></td><td class="num">'+t[k].seats+'</td><td class="num">'+fmtN(t[k].votes)+'</td><td class="num">'+fmtP(t[k].votes/m.valides*100)+'</td><td class="num">'+fmtP(t[k].seats/127*100)+'</td></tr>';
+        }).join('') + '</tbody>';
+    document.getElementById('resLegendWinner').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ'].map(function(k){
+      return '<span><i style="background:'+RES_COLORS[k]+'"></i>'+k+' ('+t[k].seats+')</span>';
+    }).join('') + '<span>Teinte pâle = course serrée</span>';
+    document.getElementById('resPartyRow').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ'].map(function(k){
+      return '<button type="button" class="chip-btn'+(k===resState.party?' active':'')+'" data-res-party="'+k+'" onclick="setResParty(\''+k+'\')">'+k+'</button>';
+    }).join('');
+    document.getElementById('resWinnerFilter').innerHTML = ['ALL','PQ','PLQ','PCQ','QS','CAQ'].filter(function(k){ return k==='ALL' || t[k].seats>0; }).map(function(k){
+      return '<button type="button" class="chip-btn'+(k===resState.winner?' active':'')+'" data-res-winner="'+k+'" onclick="setResWinner(\''+k+'\')">'+(k==='ALL'?'Toutes les circonscriptions':'Gagnées par '+k)+'</button>';
+    }).join('');
+    var lm = function(r){ return r.nom+' ('+r.avance[0]+', '+fmtN(r.marge)+' votes)'; };
+    document.getElementById('resHighlights').innerHTML =
+      '<strong>Courses les plus serrées :</strong> '+closest.slice(0,5).map(lm).join(' ; ')+'.<br><strong>Plus grandes victoires (en points) :</strong> '+big.slice(0,5).map(function(r){ return r.nom+' ('+r.avance[0]+', '+r.margePct.toFixed(1).replace('.',',')+' pts)'; }).join(' ; ')+'.<br><strong>Courses décidées par moins de 5 points :</strong> '+rows.filter(function(r){ return r.margePct<5; }).length+' sur 127.';
+    renderResMaps();
+    renderResMargins();
+  }
+
   function showPage(id){
     if(PAGES.indexOf(id) === -1) id = 'accueil';
     PAGES.forEach(function(p){
@@ -1246,6 +1429,7 @@
     loadQuiz();
     renderQuiz();
     renderCandidats();
+    renderResultats();
     updatePartyChips();
     updateTopicChips();
 
