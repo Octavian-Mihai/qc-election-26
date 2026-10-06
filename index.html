@@ -412,6 +412,13 @@
   .res-ctl{position:absolute; top:14px; right:14px; display:flex; flex-direction:column; gap:6px; z-index:2;}
   .res-ctl button{width:34px; height:34px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--ink); font-size:1.15rem; line-height:1; cursor:pointer; box-shadow:var(--shadow);}
   .res-ctl button:hover{border-color:var(--accent-2);}
+  :root{--water:var(--surface); --water-edge:var(--border); --water-ink:var(--ink-faint);}
+  .res-map-wrap path.res-water{fill:var(--water); stroke:var(--water-edge); stroke-width:.6; pointer-events:none; cursor:grab;}
+  .res-map-wrap text{pointer-events:none; font-family:inherit; paint-order:stroke; stroke:var(--surface); stroke-width:3px; stroke-linejoin:round; vector-effect:non-scaling-stroke; fill:var(--ink); text-anchor:middle;}
+  .res-map-wrap text.eau{fill:var(--water-ink); font-style:italic;}
+  .res-map-wrap text.lieu{font-weight:700; letter-spacing:.02em;}
+  .res-map-wrap text.ville{font-weight:600; fill:var(--ink-soft);}
+  .res-map-wrap text.circ{fill:var(--ink-soft); stroke-width:2.5px;}
   .res-map-wrap path{stroke:var(--surface); stroke-width:1.2; vector-effect:non-scaling-stroke; cursor:pointer;}
   .res-map-wrap path:hover,.res-map-wrap path.sel{stroke:var(--ink); stroke-width:2.2;}
   .res-tip{min-height:3.2em; margin:10px 2px 0; font-size:.9rem; color:var(--ink-soft);}
@@ -669,6 +676,7 @@
         <button type="button" class="chip-btn" id="resZoomQcv" onclick="setResZoom('qcv')">Québec et Chaudière-Appalaches</button>
       </div>
       <p class="section-intro" style="font-size:.85rem">Les deux cartes sont synchronisées : molette ou pincement pour zoomer, glisser pour déplacer, clic ou toucher sur une circonscription pour le détail.</p>
+      <p class="section-intro" style="font-size:.78rem; color:var(--ink-faint)">Contours des circonscriptions : Élections Québec. Cours d'eau : © contributeurs OpenStreetMap (licence ODbL).</p>
       <p class="res-tip" id="resTip" aria-live="polite">Survolez une circonscription.</p>
 
       <h3>Marges de victoire</h3>
@@ -1270,7 +1278,7 @@
     return '<svg viewBox="'+resState.vb.join(' ')+'" role="img" aria-label="Carte interactive des circonscriptions du Québec">'
       + RESULTATS.rows.map(function(r){
           return '<path d="'+r.d+'" fill="'+fillFn(r)+'" fill-opacity="'+opFn(r)+'" data-code="'+r.code+'"/>';
-        }).join('') + '</svg>';
+        }).join('') + '<path class="res-water" d="'+RESULTATS.eau+'"/><g class="res-labels"></g></svg>';
   }
 
   function resPreset(z){
@@ -1279,12 +1287,30 @@
   }
   function resApplyView(){
     var v = resState.vb.join(' ');
-    document.querySelectorAll('.res-map-wrap svg').forEach(function(sv){ sv.setAttribute('viewBox', v); });
+    document.querySelectorAll('.res-map-wrap svg').forEach(function(sv){ sv.setAttribute('viewBox', v); resLabels(sv); });
     ['qc','mtl','qcv'].forEach(function(z){
       var p = resPreset(z), on = p.every(function(x,i){ return Math.abs(x-resState.vb[i]) < 1; });
       var b = document.getElementById({qc:'resZoomQc',mtl:'resZoomMtl',qcv:'resZoomQcv'}[z]);
       if(b) b.classList.toggle('active', on);
     });
+  }
+  // Étiquettes de lieux (fleuve, îles, villes) et noms de circonscriptions, selon le niveau de zoom.
+  function resLabels(sv){
+    var g = sv.querySelector('.res-labels'); if(!g) return;
+    var vb = resState.vb, rc = sv.getBoundingClientRect(); if(!rc.width) return;
+    var k = Math.min(rc.width/vb[2], rc.height/vb[3]), out = '';
+    function inView(x,y){ return x>vb[0] && x<vb[0]+vb[2] && y>vb[1] && y<vb[1]+vb[3]; }
+    RESULTATS.lieux.forEach(function(l){
+      if(vb[2] > l[4] || !inView(l[1],l[2])) return;
+      out += '<text class="'+l[5]+'" x="'+l[1]+'" y="'+l[2]+'" font-size="'+(l[3]/k).toFixed(1)+'">'+l[0]+'</text>';
+    });
+    if(vb[2] < 300){
+      var fs = (10/k).toFixed(1);
+      RESULTATS.rows.forEach(function(r){
+        if(inView(r.lx, r.ly)) out += '<text class="circ" x="'+r.lx+'" y="'+r.ly+'" font-size="'+fs+'">'+r.nom+'</text>';
+      });
+    }
+    g.innerHTML = out;
   }
   // Convertit un point écran en coordonnées de la carte (tient compte du letterboxing de l'SVG).
   function resToMap(sv, px, py){
@@ -1377,6 +1403,7 @@
       function(r){ return (0.08 + 0.92*r.pct[p]/max).toFixed(2); });
     var min = Math.min.apply(null, RESULTATS.rows.map(function(r){ return r.pct[p]; }));
     document.getElementById('resLegendParty').innerHTML = '<span>'+RES_NAMES[p]+' :</span><span>'+fmtP(min)+'<span class="res-ramp" style="background:linear-gradient(90deg,'+RES_COLORS[p]+'14,'+RES_COLORS[p]+')"></span>'+fmtP(max)+'</span><span>(plus faible → plus fort score dans une circonscription)</span>';
+    resApplyView();
   }
 
   function setResZoom(z){
@@ -1469,6 +1496,7 @@
     nav.classList.remove('open');
     document.getElementById('navToggle').setAttribute('aria-expanded','false');
     window.scrollTo(0,0);
+    if(id==='resultats' && typeof resApplyView==='function') resApplyView();
   }
 
   function goTo(id){
