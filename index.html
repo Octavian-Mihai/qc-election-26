@@ -690,6 +690,10 @@
       <h3>Sièges et vote populaire</h3>
       <div class="table-scroll"><table id="resSeatsTable"></table></div>
 
+      <h3>Résultats par région</h3>
+      <p class="section-intro">Regroupement des circonscriptions par région, tel qu'utilisé pour les fiches de candidat·e·s (13 groupes, certaines régions étant regroupées). Cliquez une ligne pour zoomer la carte sur la région.</p>
+      <div class="table-scroll"><table id="resRegionTable"></table></div>
+
       <h3>Trouver une circonscription</h3>
       <div class="res-search">
         <input type="search" id="resSearch" placeholder="Nom de la circonscription…" autocomplete="off" aria-label="Rechercher une circonscription" oninput="resSearchInput()" onkeydown="resSearchKey(event)">
@@ -1546,6 +1550,43 @@
     if(resState.selected) document.querySelectorAll('.res-map-wrap path[data-code="'+resState.selected+'"]').forEach(function(q){ q.classList.add('sel'); });
   }
 
+
+  // ---------- Résultats par région ----------
+  function resRegionAgg(){
+    var by = {}, parties = ['PQ','PLQ','PCQ','QS','CAQ'];
+    RESULTATS.rows.forEach(function(r){
+      var g = by[r.reg] || (by[r.reg] = {nom:r.reg, n:0, seats:{PQ:0,PLQ:0,PCQ:0,QS:0,CAQ:0}, votes:{PQ:0,PLQ:0,PCQ:0,QS:0,CAQ:0,AUT:0}, valid:0});
+      g.n++; g.valid += r.valides; g.seats[r.avance[0]]++;
+      r.c.forEach(function(c){ g.votes[c[0]] += c[2]; });
+    });
+    return Object.keys(by).map(function(k){ return by[k]; }).sort(function(a,b){ return b.n - a.n || a.nom.localeCompare(b.nom,'fr'); });
+  }
+  function renderResRegions(){
+    var parties = ['PQ','PLQ','PCQ','QS','CAQ'], rows = resRegionAgg();
+    var head = '<thead><tr><th>Région</th><th class="num">Circ.</th>'+parties.map(function(p){ return '<th class="num"><span class="res-legend" style="margin:0"><span><i style="background:'+RES_COLORS[p]+'"></i>'+p+'</span></span></th>'; }).join('')+'<th>Répartition des sièges</th><th>Vote : parti en tête</th></tr></thead>';
+    var body = rows.map(function(g){
+      var lead = parties.slice().sort(function(a,b){ return g.votes[b]-g.votes[a]; })[0];
+      var bar = parties.map(function(p){ return g.seats[p] ? '<span title="'+p+' : '+g.seats[p]+'" style="width:'+(g.seats[p]/g.n*100)+'%; background:'+RES_COLORS[p]+'"></span>' : ''; }).join('');
+      return '<tr class="res-row" tabindex="0" onclick="resZoomRegion(\''+g.nom.replace(/'/g,"\\'")+'\')" onkeydown="if(event.key===\'Enter\')this.click()"><td>'+g.nom+'</td><td class="num">'+g.n+'</td>'
+        + parties.map(function(p){ return '<td class="num">'+(g.seats[p]||'·')+'</td>'; }).join('')
+        + '<td style="min-width:140px"><div class="res-bar">'+bar+'</div></td>'
+        + '<td>'+lead+' <small>('+fmtP(g.votes[lead]/g.valid*100)+')</small></td></tr>';
+    }).join('');
+    document.getElementById('resRegionTable').innerHTML = head+'<tbody>'+body+'</tbody>';
+  }
+  function resZoomRegion(nom){
+    var x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+    RESULTATS.rows.filter(function(r){ return r.reg===nom; }).forEach(function(r){
+      var b = resBounds(r); x0=Math.min(x0,b[0]); y0=Math.min(y0,b[1]); x1=Math.max(x1,b[2]); y1=Math.max(y1,b[3]);
+    });
+    var pad = 0.08, w=(x1-x0)*(1+2*pad), h=(y1-y0)*(1+2*pad), asp=1.55;
+    if(w/h < asp) w = h*asp; else h = w/asp;
+    var cx=(x0+x1)/2, cy=(y0+y1)/2;
+    resState.vb = [cx-w/2, cy-h/2, w, h];
+    resApplyView();
+    document.getElementById('resMapWinner').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
   // ---------- Recherche d'une circonscription ----------
   var resBBox = {};
   function resBounds(r){
@@ -1660,6 +1701,7 @@
     var lm = function(r){ return r.nom+' ('+r.avance[0]+', '+fmtN(r.marge)+' votes)'; };
     document.getElementById('resHighlights').innerHTML =
       '<strong>Courses les plus serrées :</strong> '+closest.slice(0,5).map(lm).join(' ; ')+'.<br><strong>Plus grandes victoires (en points) :</strong> '+big.slice(0,5).map(function(r){ return r.nom+' ('+r.avance[0]+', '+r.margePct.toFixed(1).replace('.',',')+' pts)'; }).join(' ; ')+'.<br><strong>Courses décidées par moins de 5 points :</strong> '+rows.filter(function(r){ return r.margePct<5; }).length+' sur 127.';
+    renderResRegions();
     renderResMaps();
     renderResMargins();
     resSelect(RESULTATS.rows.slice().sort(function(a,b){ return a.marge-b.marge; })[0].code);
