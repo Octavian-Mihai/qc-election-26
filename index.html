@@ -435,6 +435,14 @@
   .res-detail .bio{margin:12px 0 0; padding:10px 12px; background:var(--code-bg); border-radius:8px; font-size:.86rem; color:var(--ink-soft);}
   .res-detail .bio strong{color:var(--ink);}
   .res-detail .actions{margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;}
+  .res-search{position:relative; max-width:420px; margin:6px 0 18px;}
+  .res-search input{width:100%; box-sizing:border-box; padding:10px 14px; font:inherit; color:var(--ink); background:var(--surface); border:1px solid var(--border); border-radius:10px;}
+  .res-search input:focus{outline:2px solid var(--accent-2); outline-offset:1px;}
+  .res-suggest{position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:5; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); max-height:280px; overflow:auto;}
+  .res-suggest button{display:flex; justify-content:space-between; gap:10px; width:100%; text-align:left; padding:9px 14px; font:inherit; font-size:.9rem; background:none; border:0; border-bottom:1px solid var(--border); color:var(--ink); cursor:pointer;}
+  .res-suggest button:last-child{border-bottom:0;}
+  .res-suggest button:hover,.res-suggest button.on{background:var(--code-bg);}
+  .res-suggest small{color:var(--ink-soft);}
   tr.res-row{cursor:pointer;}
   tr.res-row:hover td{background:var(--code-bg);}
   .res-tip{min-height:3.2em; margin:10px 2px 0; font-size:.9rem; color:var(--ink-soft);}
@@ -682,12 +690,18 @@
       <h3>Sièges et vote populaire</h3>
       <div class="table-scroll"><table id="resSeatsTable"></table></div>
 
+      <h3>Trouver une circonscription</h3>
+      <div class="res-search">
+        <input type="search" id="resSearch" placeholder="Nom de la circonscription…" autocomplete="off" aria-label="Rechercher une circonscription" oninput="resSearchInput()" onkeydown="resSearchKey(event)">
+        <div class="res-suggest" id="resSuggest" hidden></div>
+      </div>
+
       <h3>Carte des gagnants</h3>
       <p class="section-intro">Chaque circonscription est colorée selon le parti gagnant ; plus la teinte est foncée, plus la marge est grande (pleine intensité à 30 points d'écart ou plus). Survolez ou touchez une circonscription pour le détail.</p>
       <div class="res-map-wrap"><div class="res-ctl"><button type="button" aria-label="Zoom avant" onclick="resZoomBy(1.6)">+</button><button type="button" aria-label="Zoom arrière" onclick="resZoomBy(1/1.6)">−</button><button type="button" aria-label="Réinitialiser la vue" title="Réinitialiser" onclick="setResZoom('qc')">⟲</button></div><div id="resMapWinner"></div></div>
       <div class="res-legend" id="resLegendWinner"></div>
 
-      <h3>Carte du vote par parti</h3>
+      <h3>Carte du vote, de la participation et des marges</h3>
       <div class="filter-row" role="group" aria-label="Parti affiché sur la carte" id="resPartyRow"></div>
       <div class="res-map-wrap"><div class="res-ctl"><button type="button" aria-label="Zoom avant" onclick="resZoomBy(1.6)">+</button><button type="button" aria-label="Zoom arrière" onclick="resZoomBy(1/1.6)">−</button><button type="button" aria-label="Réinitialiser la vue" title="Réinitialiser" onclick="setResZoom('qc')">⟲</button></div><div id="resMapParty"></div></div>
       <div class="res-legend" id="resLegendParty"></div>
@@ -1328,14 +1342,16 @@
     var vb = resState.vb, rc = sv.getBoundingClientRect(); if(!rc.width) return;
     var k = Math.min(rc.width/vb[2], rc.height/vb[3]), out = '';
     function inView(x,y){ return x>vb[0] && x<vb[0]+vb[2] && y>vb[1] && y<vb[1]+vb[3]; }
+    var shown = {};
     RESULTATS.lieux.forEach(function(l){
       if(vb[2] > l[4] || !inView(l[1],l[2])) return;
+      shown[l[0]] = 1;
       out += '<text class="'+l[5]+'" x="'+l[1]+'" y="'+l[2]+'" font-size="'+(l[3]/k).toFixed(1)+'">'+l[0]+'</text>';
     });
     if(vb[2] < 300){
       var fs = (10/k).toFixed(1);
       RESULTATS.rows.forEach(function(r){
-        if(inView(r.lx, r.ly)) out += '<text class="circ" x="'+r.lx+'" y="'+r.ly+'" font-size="'+fs+'">'+r.nom+'</text>';
+        if(!shown[r.nom] && inView(r.lx, r.ly)) out += '<text class="circ" x="'+r.lx+'" y="'+r.ly+'" font-size="'+fs+'">'+r.nom+'</text>';
       });
     }
     g.innerHTML = out;
@@ -1481,18 +1497,73 @@
     return '<strong>'+r.nom+'</strong> — '+w[0]+' ('+w[1]+', '+fmtP(w[3])+') devant '+s[0]+' ('+s[1]+', '+fmtP(s[3])+') · marge '+fmtN(r.marge)+' votes ('+fmtP(r.margePct)+') · participation '+fmtP(r.part);
   }
 
+  var RES_LAYERS = {
+    PART:  {color:'#2F7F6F', label:'Participation', val:function(r){ return r.part; }, unit:'taux de participation'},
+    MARGE: {color:'#B8860B', label:'Marge de victoire', val:function(r){ return r.margePct; }, unit:'écart entre le·la gagnant·e et le·la deuxième (points)'}
+  };
+  function resLayerInfo(p){
+    var L = RES_LAYERS[p];
+    return L || {color:RES_COLORS[p], label:RES_NAMES[p], val:function(r){ return r.pct[p]; }, unit:'vote obtenu dans la circonscription'};
+  }
   function renderResMaps(){
-    var p = resState.party, max = Math.max.apply(null, RESULTATS.rows.map(function(r){ return r.pct[p]; }));
+    var p = resState.party, L = resLayerInfo(p);
+    var vals = RESULTATS.rows.map(L.val), max = Math.max.apply(null, vals), min = Math.min.apply(null, vals);
     document.getElementById('resMapWinner').innerHTML = resMapSvg(
       function(r){ return RES_COLORS[r.avance[0]]; },
       function(r){ return (0.4 + 0.6*Math.min(r.margePct/30,1)).toFixed(2); });
+    // Participation : l'échelle part du minimum (sinon toutes les circonscriptions paraîtraient presque identiques).
+    var lo = RES_LAYERS[p] && p==='PART' ? min : 0, span = (max-lo) || 1;
     document.getElementById('resMapParty').innerHTML = resMapSvg(
-      function(){ return RES_COLORS[p]; },
-      function(r){ return (0.08 + 0.92*r.pct[p]/max).toFixed(2); });
-    var min = Math.min.apply(null, RESULTATS.rows.map(function(r){ return r.pct[p]; }));
-    document.getElementById('resLegendParty').innerHTML = '<span>'+RES_NAMES[p]+' :</span><span>'+fmtP(min)+'<span class="res-ramp" style="background:linear-gradient(90deg,'+RES_COLORS[p]+'14,'+RES_COLORS[p]+')"></span>'+fmtP(max)+'</span><span>(plus faible → plus fort score dans une circonscription)</span>';
+      function(){ return L.color; },
+      function(r){ return (0.08 + 0.92*(L.val(r)-lo)/span).toFixed(2); });
+    var suffix = p==='MARGE' ? ' pts' : ' %';
+    var f = function(v){ return v.toFixed(1).replace('.',',')+suffix; };
+    document.getElementById('resLegendParty').innerHTML = '<span><strong>'+L.label+'</strong> — '+L.unit+' :</span><span>'+f(min)+'<span class="res-ramp" style="background:linear-gradient(90deg,'+L.color+'14,'+L.color+')"></span>'+f(max)+'</span>';
     resApplyView();
-    if(resState.selected) document.querySelectorAll('.res-map-wrap path[data-code="'+resState.selected+'"]').forEach(function(p){ p.classList.add('sel'); });
+    if(resState.selected) document.querySelectorAll('.res-map-wrap path[data-code="'+resState.selected+'"]').forEach(function(q){ q.classList.add('sel'); });
+  }
+
+  // ---------- Recherche d'une circonscription ----------
+  var resBBox = {};
+  function resBounds(r){
+    if(resBBox[r.code]) return resBBox[r.code];
+    var re = /(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g, m, x0=1e9, y0=1e9, x1=-1e9, y1=-1e9;
+    while((m = re.exec(r.d))){ var x=+m[1], y=+m[2]; if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
+    return (resBBox[r.code] = [x0,y0,x1,y1]);
+  }
+  function resZoomTo(code){
+    var r = RES_BY_CODE[code]; if(!r) return;
+    var b = resBounds(r), w = Math.max(b[2]-b[0], 40), h = Math.max(b[3]-b[1], 28), pad = 0.18;
+    var asp = 1.55;   // rapport largeur/hauteur approximatif du cadre de la carte
+    var vw = w*(1+2*pad), vh = h*(1+2*pad);
+    if(vw/vh < asp) vw = vh*asp; else vh = vw/asp;
+    var cx = (b[0]+b[2])/2, cy = (b[1]+b[3])/2;
+    resState.vb = [cx-vw/2, cy-vh/2, vw, vh];
+    resApplyView();
+  }
+  function resGoTo(code){
+    resSelect(code);
+    resZoomTo(code);
+    document.getElementById('resSuggest').hidden = true;
+    document.getElementById('resMapWinner').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+  function resSearchMatches(){
+    var q = normTxt(document.getElementById('resSearch').value);
+    if(!q) return [];
+    return RESULTATS.rows.filter(function(r){ return normTxt(r.nom).indexOf(q) !== -1; })
+      .sort(function(a,b){ return (normTxt(a.nom).indexOf(q)===0 ? 0 : 1) - (normTxt(b.nom).indexOf(q)===0 ? 0 : 1) || a.nom.localeCompare(b.nom,'fr'); })
+      .slice(0, 8);
+  }
+  function resSearchInput(){
+    var box = document.getElementById('resSuggest'), list = resSearchMatches();
+    box.hidden = !list.length;
+    box.innerHTML = list.map(function(r, i){
+      return '<button type="button" class="'+(i===0?'on':'')+'" onclick="resGoTo('+r.code+')"><span>'+r.nom+'</span><small>'+r.avance[0]+'</small></button>';
+    }).join('');
+  }
+  function resSearchKey(e){
+    if(e.key==='Enter'){ var l = resSearchMatches(); if(l.length) resGoTo(l[0].code); }
+    else if(e.key==='Escape'){ document.getElementById('resSuggest').hidden = true; }
   }
 
   function setResZoom(z){
@@ -1557,8 +1628,8 @@
     document.getElementById('resLegendWinner').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ'].map(function(k){
       return '<span><i style="background:'+RES_COLORS[k]+'"></i>'+k+' ('+t[k].seats+')</span>';
     }).join('') + '<span>Teinte pâle = course serrée</span>';
-    document.getElementById('resPartyRow').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ'].map(function(k){
-      return '<button type="button" class="chip-btn'+(k===resState.party?' active':'')+'" data-res-party="'+k+'" onclick="setResParty(\''+k+'\')">'+k+'</button>';
+    document.getElementById('resPartyRow').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ','PART','MARGE'].map(function(k){
+      return '<button type="button" class="chip-btn'+(k===resState.party?' active':'')+'" data-res-party="'+k+'" onclick="setResParty(\''+k+'\')">'+(RES_LAYERS[k]?RES_LAYERS[k].label:k)+'</button>';
     }).join('');
     document.getElementById('resWinnerFilter').innerHTML = ['ALL','PQ','PLQ','PCQ','QS','CAQ'].filter(function(k){ return k==='ALL' || t[k].seats>0; }).map(function(k){
       return '<button type="button" class="chip-btn'+(k===resState.winner?' active':'')+'" data-res-winner="'+k+'" onclick="setResWinner(\''+k+'\')">'+(k==='ALL'?'Toutes les circonscriptions':'Gagnées par '+k)+'</button>';
