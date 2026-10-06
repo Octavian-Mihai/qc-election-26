@@ -421,6 +421,22 @@
   .res-map-wrap text.circ{fill:var(--ink-soft); stroke-width:2.5px;}
   .res-map-wrap path{stroke:var(--surface); stroke-width:1.2; vector-effect:non-scaling-stroke; cursor:pointer;}
   .res-map-wrap path:hover,.res-map-wrap path.sel{stroke:var(--ink); stroke-width:2.2;}
+  .res-detail{background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:16px 18px; margin:14px 0 6px;}
+  .res-detail h4{margin:0 0 4px; font-size:1.05rem;}
+  .res-detail .res-sub{font-size:.85rem; color:var(--ink-soft); margin:0 0 12px;}
+  .res-detail .cand-line{display:grid; grid-template-columns:auto 1fr auto; gap:6px 12px; align-items:center; padding:7px 0; border-top:1px solid var(--border); font-size:.92rem;}
+  .res-detail .cand-line:first-of-type{border-top:0;}
+  .res-detail .cand-line .nm{font-weight:600; color:var(--ink);}
+  .res-detail .cand-line .nm small{display:block; font-weight:400; color:var(--ink-soft);}
+  .res-detail .cand-line .nums{text-align:right; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono", monospace; white-space:nowrap;}
+  .res-detail .cand-line .bar{grid-column:2 / 4; height:6px; border-radius:3px; background:var(--code-bg); overflow:hidden;}
+  .res-detail .cand-line .bar i{display:block; height:100%;}
+  .res-detail .cand-line.win .nm::after{content:" ✓ élu·e"; font-weight:500; font-size:.78rem; color:var(--accent-2);}
+  .res-detail .bio{margin:12px 0 0; padding:10px 12px; background:var(--code-bg); border-radius:8px; font-size:.86rem; color:var(--ink-soft);}
+  .res-detail .bio strong{color:var(--ink);}
+  .res-detail .actions{margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;}
+  tr.res-row{cursor:pointer;}
+  tr.res-row:hover td{background:var(--code-bg);}
   .res-tip{min-height:3.2em; margin:10px 2px 0; font-size:.9rem; color:var(--ink-soft);}
   .res-tip strong{color:var(--ink);}
   .res-legend{display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:8px; font-size:.82rem; color:var(--ink-soft); align-items:center;}
@@ -481,11 +497,11 @@
       <div class="hero-flag" aria-hidden="true" id="heroFlag"></div>
       <p class="eyebrow">Élection générale du Québec · 2026</p>
       <h1>Repères Québec 2026</h1>
-      <p class="lede">Plateforme comparative pour l'élection générale québécoise de 2026. Choisissez une section ci-dessous.</p>
+      <p class="lede">Plateforme comparative pour l'élection générale québécoise du 5 octobre 2026 : positions des partis, candidat·e·s et résultats officiels du scrutin. Choisissez une section ci-dessous.</p>
 
-      <div class="status-badge">Statut&nbsp;: positions des 5 partis documentées et sourcées (recherche du 23 sept. 2026) — profils de candidats à venir</div>
+      <div class="status-badge">Statut&nbsp;: résultats officiels du scrutin du 5 octobre 2026 intégrés — positions des 5 partis codées avant le vote (23 sept. 2026)</div>
       <div class="snapshot-note">
-        <span><strong>Instantané de campagne, pas un résultat final.</strong> Les positions ci-dessous sont codées à partir de la couverture de la campagne jusqu'au 23 septembre 2026. Le vote a lieu le 5 octobre 2026 — les partis peuvent encore préciser ou ajuster leurs engagements d'ici là. Chaque position cite sa source ; les cellules marquées <span class="thin-flag">peu documenté</span> reposent sur une couverture plus mince et méritent d'être vérifiées davantage.</span>
+        <span><strong>Deux types de données, deux dates.</strong> Les positions des partis sont un instantané de la campagne, codé le 23 septembre 2026 à partir de la couverture médiatique — <em>avant</em> le vote ; elles n'ont pas été mises à jour depuis et ne reflètent pas d'éventuels changements postérieurs. Les résultats viennent d'Élections Québec (scrutin du 5 octobre 2026, résultats finaux) : voir la page <a class="crosslink" href="#resultats" onclick="goTo('resultats')">Résultats</a>. Chaque position cite sa source ; les cellules marquées <span class="thin-flag">peu documenté</span> reposent sur une couverture plus mince et méritent d'être vérifiées davantage.</span>
       </div>
 
       <div class="party-row" aria-label="Partis couverts par ce squelette" id="introPartyRow"></div>
@@ -509,10 +525,15 @@
         <a class="toc-card" href="#candidats" onclick="goTo('candidats')">
           <span class="toc-num">04</span>
           <h3>Candidats par parti</h3>
-          <p>Profils complets pour les 5 chefs et qui se présente contre eux ; gabarit vide pour le reste.</p>
+          <p>Les 635 candidat·e·s des 127 circonscriptions, avec biographie lorsque l'information publique le permettait.</p>
+        </a>
+        <a class="toc-card" href="#resultats" onclick="goTo('resultats')">
+          <span class="toc-num">05</span>
+          <h3>Résultats du scrutin</h3>
+          <p>Qui a gagné chaque circonscription et par quelle marge : sièges, vote populaire, cartes interactives et détail par circonscription.</p>
         </a>
         <a class="toc-card" href="#methodologie" onclick="goTo('methodologie')">
-          <span class="toc-num">05</span>
+          <span class="toc-num">06</span>
           <h3>Méthodologie</h3>
           <p>Sources, couches d'analyse, indice « Québec d'abord » et architecture i18n.</p>
         </a>
@@ -677,7 +698,8 @@
       </div>
       <p class="section-intro" style="font-size:.85rem">Les deux cartes sont synchronisées : molette ou pincement pour zoomer, glisser pour déplacer, clic ou toucher sur une circonscription pour le détail.</p>
       <p class="section-intro" style="font-size:.78rem; color:var(--ink-faint)">Contours des circonscriptions : Élections Québec. Cours d'eau : © contributeurs OpenStreetMap (licence ODbL).</p>
-      <p class="res-tip" id="resTip" aria-live="polite">Survolez une circonscription.</p>
+      <p class="res-tip" id="resTip" aria-live="polite">Survolez une circonscription ; cliquez ou touchez-la pour le détail ci-dessous.</p>
+      <div class="res-detail" id="resDetail" aria-live="polite"></div>
 
       <h3>Marges de victoire</h3>
       <div class="callout"><p id="resHighlights"></p></div>
@@ -830,6 +852,12 @@
       </ol>
       <p class="method" style="margin-bottom:26px">Construction envisagée&nbsp;: moyenne des quatre sous-composantes, dérivées du codage des dimensions « souveraineté » et « immigration et identité » (recodées selon le sens de cet axe) et des couches ci-dessus. Le sens de chaque sous-composante devra être vérifié pour que l'indice reste cohérent — une position restrictionniste en immigration correspond à un score de 1 sur la dimension, mais à une valeur élevée sur cette composante.</p>
 
+      <h3>Résultats du scrutin</h3>
+      <p><strong>Source.</strong> Résultats officiels d'Élections Québec pour le scrutin du 5 octobre 2026 (127 circonscriptions, résultats finaux), et contours officiels des circonscriptions 2026 (format MapInfo, reprojetés et simplifiés). Les cours d'eau (fleuve, estuaire, golfe, rivières, lacs) viennent d'OpenStreetMap (© contributeurs OpenStreetMap, ODbL) et sont dessinés en blanc par-dessus les circonscriptions, dont les contours officiels couvrent aussi l'eau.</p>
+      <p><strong>Marge de victoire.</strong> Écart entre le·la gagnant·e et le·la deuxième, en votes et en points de pourcentage du vote valide. « Autres » regroupe tous les partis et candidatures indépendantes hors CAQ, PCQ, PLQ, PQ et QS.</p>
+      <p><strong>Approximations de la carte.</strong> Le fjord du Saguenay suit le contour du Parc marin du Saguenay–Saint-Laurent ; en amont de Saint-Fulgence, la largeur de la rivière est estimée. Dans le golfe du Saint-Laurent, un raccord manuel comble l'écart entre deux contours OpenStreetMap. La carte est illustrative : les chiffres, eux, sont ceux d'Élections Québec.</p>
+      <p><strong>Lien avec les fiches de candidat·e·s.</strong> Le détail d'une circonscription affiche la biographie du·de la gagnant·e seulement si son nom correspond à celui de notre fiche pour le même parti et la même circonscription ; en cas de remplacement de dernière minute, aucune biographie n'est affichée plutôt qu'une fiche erronée.</p>
+
       <h3>Architecture i18n</h3>
       <p class="section-intro">Le français est aujourd'hui la seule langue active. La structure ci-dessous est pensée pour accueillir d'autres langues plus tard, sans réécriture du contenu ni de la logique d'affichage.</p>
 
@@ -853,7 +881,7 @@
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <p><strong>Repères Québec 2026</strong> — plateforme comparative pour l'élection générale québécoise de 2026. Couvre CAQ, PCQ, PLQ, PQ et QS de façon identique. Positions de partis sourcées, codées le 23 septembre 2026 ; profils de candidats encore à remplir.</p>
+    <p><strong>Repères Québec 2026</strong> — plateforme comparative pour l'élection générale québécoise de 2026. Couvre CAQ, PCQ, PLQ, PQ et QS de façon identique. Positions de partis sourcées, codées le 23 septembre 2026 (avant le vote) ; candidat·e·s des 127 circonscriptions ; résultats officiels du 5 octobre 2026 (Élections Québec).</p>
   </div>
 </footer>
 
@@ -1378,14 +1406,74 @@
     function show(e){
       if(e.type==='click' && box.justDragged) return;
       var t = e.target.closest && e.target.closest('path'); if(!t) return;
-      if(e.type==='click'){
-        document.querySelectorAll('.res-map-wrap path.sel').forEach(function(p){ p.classList.remove('sel'); });
-        document.querySelectorAll('.res-map-wrap path[data-code="'+t.getAttribute('data-code')+'"]').forEach(function(p){ p.classList.add('sel'); });
-      }
-      document.getElementById('resTip').innerHTML = resTipHtml(RES_BY_CODE[t.getAttribute('data-code')]);
+      var code = t.getAttribute('data-code');
+      if(e.type==='click'){ resSelect(code); return; }
+      document.getElementById('resTip').innerHTML = resTipHtml(RES_BY_CODE[code]);
     }
     box.addEventListener('mouseover', show);
     box.addEventListener('click', show);
+  }
+
+
+  // ---------- Détail d'une circonscription ----------
+  function normTxt(s){ return String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[–—‐-]/g,' ').replace(/[’']/g,"'").replace(/\s+/g,' ').trim(); }
+  function lev(a,b){
+    var m=a.length, n=b.length, d=[], i, j;
+    for(i=0;i<=m;i++){ d[i]=[i]; }
+    for(j=1;j<=n;j++){ d[0][j]=j; }
+    for(i=1;i<=m;i++) for(j=1;j<=n;j++) d[i][j]=Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+    return d[m][n];
+  }
+  // Fiche CANDIDATS correspondant à un·e candidat·e des résultats : même circonscription, même parti, nom quasi identique.
+  function resFindCandidate(r, c){
+    var circ = normTxt(r.nom);
+    for(var i=0;i<CANDIDATS.length;i++){
+      var x = CANDIDATS[i];
+      if(x.parti===c[0] && normTxt(x.circ)===circ && lev(normTxt(x.nom), normTxt(c[1])) <= 3) return x;
+    }
+    return null;
+  }
+  function resCircName(r){
+    for(var i=0;i<CIRCS.length;i++){ if(normTxt(CIRCS[i])===normTxt(r.nom)) return CIRCS[i]; }
+    return r.nom;
+  }
+  function resDetailHtml(r){
+    var max = r.c[0][3] || 1, w = r.c[0], s = r.c[1];
+    var lineFn = function(c, i){
+      var col = RES_COLORS[c[0]], cand = c[0]!=='AUT' ? resFindCandidate(r, c) : null;
+      var badge = c[0]==='AUT' ? '<span class="party-badge" style="background:'+RES_COLORS.AUT+'">Autre</span>' : partyBadge(c[0]);
+      return '<div class="cand-line'+(i===0?' win':'')+'">'+badge+'<span class="nm">'+c[1]+(cand&&cand.profession?'<small>'+cand.profession+'</small>':'')+'</span><span class="nums">'+fmtN(c[2])+' · '+fmtP(c[3])+'</span><span class="bar"><i style="width:'+(c[3]/max*100).toFixed(1)+'%; background:'+col+'"></i></span></div>';
+    };
+    var main = r.c.filter(function(c){ return c[0]!=='AUT'; }), autres = r.c.filter(function(c){ return c[0]==='AUT'; });
+    var lines = main.map(function(c){ return lineFn(c, r.c.indexOf(c)); }).join('');
+    if(autres.length) lines += '<details style="margin-top:8px"><summary style="cursor:pointer; font-size:.88rem; color:var(--ink-soft)">Autres candidatures ('+autres.length+') — '+fmtN(autres.reduce(function(t,c){ return t+c[2]; },0))+' votes</summary>'+autres.map(function(c){ return lineFn(c, r.c.indexOf(c)); }).join('')+'</details>';
+    var wc = w[0]!=='AUT' ? resFindCandidate(r, w) : null, bio = '';
+    if(wc){
+      var bits = [];
+      if(wc.age) bits.push(wc.age+' ans');
+      if(wc.diplome) bits.push(wc.diplome);
+      if(wc.experience) bits.push(wc.experience);
+      if(bits.length) bio = '<p class="bio"><strong>À propos de '+w[1]+' :</strong> '+bits.join(' — ')+(wc.src?' <em>(source : '+wc.src+')</em>':'')+'</p>';
+    }
+    return '<h4>'+r.nom+'</h4>'
+      + '<p class="res-sub">'+w[0]+' l\'emporte par '+fmtN(r.marge)+' votes ('+r.margePct.toFixed(1).replace('.',',')+' points) sur '+s[0]+'. Participation '+fmtP(r.part)+' — '+fmtN(r.votants)+' votants sur '+fmtN(r.inscrits)+' inscrits ; '+fmtN(r.valides)+' votes valides.</p>'
+      + lines + bio
+      + '<div class="actions"><button type="button" class="chip-btn" onclick="resOpenCandidats('+r.code+')">Voir les candidat·e·s de cette circonscription</button></div>';
+  }
+  function resSelect(code, fromTable){
+    var r = RES_BY_CODE[code]; if(!r) return;
+    resState.selected = code;
+    document.querySelectorAll('.res-map-wrap path.sel').forEach(function(p){ p.classList.remove('sel'); });
+    document.querySelectorAll('.res-map-wrap path[data-code="'+code+'"]').forEach(function(p){ p.classList.add('sel'); });
+    document.getElementById('resTip').innerHTML = resTipHtml(r);
+    document.getElementById('resDetail').innerHTML = resDetailHtml(r);
+    if(fromTable) document.getElementById('resDetail').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+  function resOpenCandidats(code){
+    var r = RES_BY_CODE[code]; if(!r) return;
+    setCandMode('circonscription');
+    selectCirc(resCircName(r));
+    goTo('candidats');
   }
 
   function resTipHtml(r){
@@ -1404,6 +1492,7 @@
     var min = Math.min.apply(null, RESULTATS.rows.map(function(r){ return r.pct[p]; }));
     document.getElementById('resLegendParty').innerHTML = '<span>'+RES_NAMES[p]+' :</span><span>'+fmtP(min)+'<span class="res-ramp" style="background:linear-gradient(90deg,'+RES_COLORS[p]+'14,'+RES_COLORS[p]+')"></span>'+fmtP(max)+'</span><span>(plus faible → plus fort score dans une circonscription)</span>';
     resApplyView();
+    if(resState.selected) document.querySelectorAll('.res-map-wrap path[data-code="'+resState.selected+'"]').forEach(function(p){ p.classList.add('sel'); });
   }
 
   function setResZoom(z){
@@ -1438,7 +1527,7 @@
     document.getElementById('resMarginTable').innerHTML =
       '<thead><tr>'+th('nom','Circonscription')+th('gagnant','Gagnant·e')+'<th>Deuxième</th>'+th('marge','Marge (votes)',1)+th('margePct','Marge (pts)',1)+th('part','Participation',1)+'</tr></thead><tbody>'
       + rows.map(function(r){
-          return '<tr><td>'+r.nom+'</td><td>'+partyBadge(r.avance[0]==='AUT'?'—':r.avance[0])+' '+r.c[0][1]+' <small>('+fmtP(r.c[0][3])+')</small></td>'
+          return '<tr class="res-row" tabindex="0" onclick="resSelect('+r.code+',true)" onkeydown="if(event.key===\'Enter\')resSelect('+r.code+',true)"><td>'+r.nom+'</td><td>'+partyBadge(r.avance[0]==='AUT'?'—':r.avance[0])+' '+r.c[0][1]+' <small>('+fmtP(r.c[0][3])+')</small></td>'
             + '<td>'+r.avance[1]+' <small>'+r.c[1][1]+' ('+fmtP(r.c[1][3])+')</small></td>'
             + '<td class="num">'+fmtN(r.marge)+'</td><td class="num">'+r.margePct.toFixed(1).replace('.',',')+'</td><td class="num">'+fmtP(r.part)+'</td></tr>';
         }).join('') + '</tbody>';
@@ -1479,6 +1568,7 @@
       '<strong>Courses les plus serrées :</strong> '+closest.slice(0,5).map(lm).join(' ; ')+'.<br><strong>Plus grandes victoires (en points) :</strong> '+big.slice(0,5).map(function(r){ return r.nom+' ('+r.avance[0]+', '+r.margePct.toFixed(1).replace('.',',')+' pts)'; }).join(' ; ')+'.<br><strong>Courses décidées par moins de 5 points :</strong> '+rows.filter(function(r){ return r.margePct<5; }).length+' sur 127.';
     renderResMaps();
     renderResMargins();
+    resSelect(RESULTATS.rows.slice().sort(function(a,b){ return a.marge-b.marge; })[0].code);
     bindResMap(document.getElementById('resMapWinner'));
     bindResMap(document.getElementById('resMapParty'));
     resApplyView();
