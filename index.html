@@ -407,7 +407,11 @@
   /* ---------- résultats ---------- */
   .res-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:22px 0;}
   .res-map-wrap{background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:10px; position:relative;}
-  .res-map-wrap svg{width:100%; height:auto; max-height:640px; display:block;}
+  .res-map-wrap svg{width:100%; height:min(72vh,600px); display:block; touch-action:none; cursor:grab; user-select:none;}
+  .res-map-wrap svg.dragging{cursor:grabbing;}
+  .res-ctl{position:absolute; top:14px; right:14px; display:flex; flex-direction:column; gap:6px; z-index:2;}
+  .res-ctl button{width:34px; height:34px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--ink); font-size:1.15rem; line-height:1; cursor:pointer; box-shadow:var(--shadow);}
+  .res-ctl button:hover{border-color:var(--accent-2);}
   .res-map-wrap path{stroke:var(--surface); stroke-width:1.2; vector-effect:non-scaling-stroke; cursor:pointer;}
   .res-map-wrap path:hover,.res-map-wrap path.sel{stroke:var(--ink); stroke-width:2.2;}
   .res-tip{min-height:3.2em; margin:10px 2px 0; font-size:.9rem; color:var(--ink-soft);}
@@ -652,17 +656,19 @@
 
       <h3>Carte des gagnants</h3>
       <p class="section-intro">Chaque circonscription est colorée selon le parti gagnant ; plus la teinte est foncée, plus la marge est grande (pleine intensité à 30 points d'écart ou plus). Survolez ou touchez une circonscription pour le détail.</p>
-      <div class="res-map-wrap"><div id="resMapWinner"></div></div>
+      <div class="res-map-wrap"><div class="res-ctl"><button type="button" aria-label="Zoom avant" onclick="resZoomBy(1.6)">+</button><button type="button" aria-label="Zoom arrière" onclick="resZoomBy(1/1.6)">−</button><button type="button" aria-label="Réinitialiser la vue" title="Réinitialiser" onclick="setResZoom('qc')">⟲</button></div><div id="resMapWinner"></div></div>
       <div class="res-legend" id="resLegendWinner"></div>
 
       <h3>Carte du vote par parti</h3>
       <div class="filter-row" role="group" aria-label="Parti affiché sur la carte" id="resPartyRow"></div>
-      <div class="res-map-wrap"><div id="resMapParty"></div></div>
+      <div class="res-map-wrap"><div class="res-ctl"><button type="button" aria-label="Zoom avant" onclick="resZoomBy(1.6)">+</button><button type="button" aria-label="Zoom arrière" onclick="resZoomBy(1/1.6)">−</button><button type="button" aria-label="Réinitialiser la vue" title="Réinitialiser" onclick="setResZoom('qc')">⟲</button></div><div id="resMapParty"></div></div>
       <div class="res-legend" id="resLegendParty"></div>
       <div class="filter-row" role="group" aria-label="Zone de la carte">
         <button type="button" class="chip-btn active" id="resZoomQc" onclick="setResZoom('qc')">Tout le Québec</button>
         <button type="button" class="chip-btn" id="resZoomMtl" onclick="setResZoom('mtl')">Grand Montréal</button>
+        <button type="button" class="chip-btn" id="resZoomQcv" onclick="setResZoom('qcv')">Québec et Chaudière-Appalaches</button>
       </div>
+      <p class="section-intro" style="font-size:.85rem">Les deux cartes sont synchronisées : molette ou pincement pour zoomer, glisser pour déplacer, clic ou toucher sur une circonscription pour le détail.</p>
       <p class="res-tip" id="resTip" aria-live="polite">Survolez une circonscription.</p>
 
       <h3>Marges de victoire</h3>
@@ -1245,7 +1251,8 @@
   // ---------- Résultats ----------
   var RES_COLORS = {PQ:'#1F78D1', PLQ:'#E4032E', PCQ:'#5B2C8F', CAQ:'#00A9C9', QS:'#FF7900', AUT:'#8896AC'};
   var RES_NAMES = {PQ:'Parti Québécois', PLQ:'Parti libéral du Québec', PCQ:'Parti conservateur du Québec', CAQ:'Coalition Avenir Québec', QS:'Québec solidaire', AUT:'Autres'};
-  var resState = {party:'PQ', zoom:'qc', winner:'ALL', sort:'margePct', dir:1};
+  var RES_BY_CODE = {}; RESULTATS.rows.forEach(function(r){ RES_BY_CODE[r.code] = r; });
+  var resState = {party:'PQ', vb:[0,0,RESULTATS.meta.w,RESULTATS.meta.h], winner:'ALL', sort:'margePct', dir:1};
   function fmtN(n){ return n.toLocaleString('fr-CA'); }
   function fmtP(n, d){ return n.toFixed(d==null?1:d).replace('.',',')+' %'; }
 
@@ -1260,11 +1267,99 @@
   }
 
   function resMapSvg(fillFn, opFn){
-    var m = RESULTATS.meta, vb = resState.zoom==='mtl' ? m.mtl.join(' ') : '0 0 '+m.w+' '+m.h;
-    return '<svg viewBox="'+vb+'" role="img" aria-label="Carte des circonscriptions du Québec">'
+    return '<svg viewBox="'+resState.vb.join(' ')+'" role="img" aria-label="Carte interactive des circonscriptions du Québec">'
       + RESULTATS.rows.map(function(r){
           return '<path d="'+r.d+'" fill="'+fillFn(r)+'" fill-opacity="'+opFn(r)+'" data-code="'+r.code+'"/>';
         }).join('') + '</svg>';
+  }
+
+  function resPreset(z){
+    var m = RESULTATS.meta;
+    return z==='mtl' ? m.mtl.slice() : z==='qcv' ? m.qcv.slice() : [0,0,m.w,m.h];
+  }
+  function resApplyView(){
+    var v = resState.vb.join(' ');
+    document.querySelectorAll('.res-map-wrap svg').forEach(function(sv){ sv.setAttribute('viewBox', v); });
+    ['qc','mtl','qcv'].forEach(function(z){
+      var p = resPreset(z), on = p.every(function(x,i){ return Math.abs(x-resState.vb[i]) < 1; });
+      var b = document.getElementById({qc:'resZoomQc',mtl:'resZoomMtl',qcv:'resZoomQcv'}[z]);
+      if(b) b.classList.toggle('active', on);
+    });
+  }
+  // Convertit un point écran en coordonnées de la carte (tient compte du letterboxing de l'SVG).
+  function resToMap(sv, px, py){
+    var rc = sv.getBoundingClientRect(), vb = resState.vb;
+    var k = Math.min(rc.width/vb[2], rc.height/vb[3]);
+    var ox = (rc.width - vb[2]*k)/2, oy = (rc.height - vb[3]*k)/2;
+    return {x: vb[0] + (px-rc.left-ox)/k, y: vb[1] + (py-rc.top-oy)/k, k:k};
+  }
+  function resZoomAt(f, mx, my){
+    var vb = resState.vb, full = resPreset('qc');
+    var nw = Math.min(full[2]*1.1, Math.max(full[2]*0.015, vb[2]/f)), g = nw/vb[2];
+    resState.vb = [mx-(mx-vb[0])*g, my-(my-vb[1])*g, nw, vb[3]*g];
+    resApplyView();
+  }
+  function resZoomBy(f){
+    var vb = resState.vb; resZoomAt(f, vb[0]+vb[2]/2, vb[1]+vb[3]/2);
+  }
+
+  function bindResMap(box){
+    var ptrs = {}, drag = null, pinch = null;
+    function sv(){ return box.querySelector('svg'); }
+    box.addEventListener('wheel', function(e){
+      e.preventDefault();
+      var p = resToMap(sv(), e.clientX, e.clientY);
+      resZoomAt(Math.exp(-e.deltaY*0.0018), p.x, p.y);
+    }, {passive:false});
+    box.addEventListener('pointerdown', function(e){
+      ptrs[e.pointerId] = {x:e.clientX, y:e.clientY};
+      var ids = Object.keys(ptrs);
+      if(ids.length===1){ drag = {x:e.clientX, y:e.clientY, moved:false}; }
+      else if(ids.length===2){
+        var a = ptrs[ids[0]], b = ptrs[ids[1]];
+        pinch = {d:Math.hypot(a.x-b.x,a.y-b.y)}; drag = null;
+      }
+    });
+    box.addEventListener('pointermove', function(e){
+      if(!ptrs[e.pointerId]) return;
+      var prev = ptrs[e.pointerId]; ptrs[e.pointerId] = {x:e.clientX, y:e.clientY};
+      var ids = Object.keys(ptrs);
+      if(ids.length===2 && pinch){
+        var a = ptrs[ids[0]], b = ptrs[ids[1]], d = Math.hypot(a.x-b.x,a.y-b.y);
+        var c = resToMap(sv(), (a.x+b.x)/2, (a.y+b.y)/2);
+        if(pinch.d>0) resZoomAt(d/pinch.d, c.x, c.y);
+        pinch.d = d; return;
+      }
+      if(drag){
+        if(!drag.moved && Math.hypot(e.clientX-drag.x, e.clientY-drag.y) < 5) return;
+        if(!drag.moved){ drag.moved = true; try{ box.setPointerCapture(e.pointerId); }catch(_){} sv().classList.add('dragging'); }
+        var k = resToMap(sv(), 0, 0).k;
+        resState.vb[0] -= (e.clientX-prev.x)/k; resState.vb[1] -= (e.clientY-prev.y)/k;
+        resApplyView();
+      }
+    });
+    function end(e){
+      delete ptrs[e.pointerId];
+      if(Object.keys(ptrs).length<2) pinch = null;
+      if(Object.keys(ptrs).length===0){
+        var s = sv(); if(s) s.classList.remove('dragging');
+        if(drag && drag.moved){ box.justDragged = true; setTimeout(function(){ box.justDragged = false; }, 0); }
+        drag = null;
+      }
+    }
+    box.addEventListener('pointerup', end);
+    box.addEventListener('pointercancel', end);
+    function show(e){
+      if(e.type==='click' && box.justDragged) return;
+      var t = e.target.closest && e.target.closest('path'); if(!t) return;
+      if(e.type==='click'){
+        document.querySelectorAll('.res-map-wrap path.sel').forEach(function(p){ p.classList.remove('sel'); });
+        document.querySelectorAll('.res-map-wrap path[data-code="'+t.getAttribute('data-code')+'"]').forEach(function(p){ p.classList.add('sel'); });
+      }
+      document.getElementById('resTip').innerHTML = resTipHtml(RES_BY_CODE[t.getAttribute('data-code')]);
+    }
+    box.addEventListener('mouseover', show);
+    box.addEventListener('click', show);
   }
 
   function resTipHtml(r){
@@ -1273,7 +1368,6 @@
   }
 
   function renderResMaps(){
-    var byCode = {}; RESULTATS.rows.forEach(function(r){ byCode[r.code] = r; });
     var p = resState.party, max = Math.max.apply(null, RESULTATS.rows.map(function(r){ return r.pct[p]; }));
     document.getElementById('resMapWinner').innerHTML = resMapSvg(
       function(r){ return RES_COLORS[r.avance[0]]; },
@@ -1283,22 +1377,11 @@
       function(r){ return (0.08 + 0.92*r.pct[p]/max).toFixed(2); });
     var min = Math.min.apply(null, RESULTATS.rows.map(function(r){ return r.pct[p]; }));
     document.getElementById('resLegendParty').innerHTML = '<span>'+RES_NAMES[p]+' :</span><span>'+fmtP(min)+'<span class="res-ramp" style="background:linear-gradient(90deg,'+RES_COLORS[p]+'14,'+RES_COLORS[p]+')"></span>'+fmtP(max)+'</span><span>(plus faible → plus fort score dans une circonscription)</span>';
-    ['resMapWinner','resMapParty'].forEach(function(id){
-      var box = document.getElementById(id);
-      function show(e){
-        var t = e.target.closest && e.target.closest('path'); if(!t) return;
-        document.getElementById('resTip').innerHTML = resTipHtml(byCode[t.getAttribute('data-code')]);
-      }
-      box.addEventListener('mouseover', show);
-      box.addEventListener('click', show);
-    });
   }
 
   function setResZoom(z){
-    resState.zoom = z;
-    document.getElementById('resZoomQc').classList.toggle('active', z==='qc');
-    document.getElementById('resZoomMtl').classList.toggle('active', z==='mtl');
-    renderResMaps();
+    resState.vb = resPreset(z);
+    resApplyView();
   }
   function setResParty(p){
     resState.party = p;
@@ -1369,6 +1452,9 @@
       '<strong>Courses les plus serrées :</strong> '+closest.slice(0,5).map(lm).join(' ; ')+'.<br><strong>Plus grandes victoires (en points) :</strong> '+big.slice(0,5).map(function(r){ return r.nom+' ('+r.avance[0]+', '+r.margePct.toFixed(1).replace('.',',')+' pts)'; }).join(' ; ')+'.<br><strong>Courses décidées par moins de 5 points :</strong> '+rows.filter(function(r){ return r.margePct<5; }).length+' sur 127.';
     renderResMaps();
     renderResMargins();
+    bindResMap(document.getElementById('resMapWinner'));
+    bindResMap(document.getElementById('resMapParty'));
+    resApplyView();
   }
 
   function showPage(id){
