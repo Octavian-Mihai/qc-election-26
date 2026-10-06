@@ -900,7 +900,6 @@
 </footer>
 
 <script src="candidats.js"></script>
-<script src="resultats.js"></script>
 <script>
   var PARTIES = [
     {code:'CAQ', full:'Coalition Avenir Québec'},
@@ -1301,8 +1300,32 @@
   // ---------- Résultats ----------
   var RES_COLORS = {PQ:'#1F78D1', PLQ:'#E4032E', PCQ:'#5B2C8F', CAQ:'#00A9C9', QS:'#FF7900', AUT:'#8896AC'};
   var RES_NAMES = {PQ:'Parti Québécois', PLQ:'Parti libéral du Québec', PCQ:'Parti conservateur du Québec', CAQ:'Coalition Avenir Québec', QS:'Québec solidaire', AUT:'Autres'};
-  var RES_BY_CODE = {}; RESULTATS.rows.forEach(function(r){ RES_BY_CODE[r.code] = r; });
-  var resState = {party:'PQ', vb:[0,0,RESULTATS.meta.w,RESULTATS.meta.h], winner:'ALL', sort:'margePct', dir:1};
+  // resultats.js (~840 Ko : résultats + contours + cours d'eau) n'est chargé qu'à la première visite de la page Résultats.
+  var RES_BY_CODE = {};
+  var resState = {party:'PQ', vb:[0,0,0,0], winner:'ALL', sort:'margePct', dir:1};
+  var resLoad = {state:'idle', queue:[]};
+  function resEnsureLoaded(cb){
+    if(resLoad.state==='ready'){ cb(); return; }
+    resLoad.queue.push(cb);
+    if(resLoad.state==='loading') return;
+    resLoad.state = 'loading';
+    var el = document.getElementById('resTiles');
+    if(el) el.innerHTML = '<p class="section-intro">Chargement des résultats et des cartes…</p>';
+    var sc = document.createElement('script');
+    sc.src = 'resultats.js';
+    sc.onload = function(){
+      RESULTATS.rows.forEach(function(r){ RES_BY_CODE[r.code] = r; });
+      resState.vb = [0,0,RESULTATS.meta.w,RESULTATS.meta.h];
+      resLoad.state = 'ready';
+      renderResultats();
+      resLoad.queue.splice(0).forEach(function(f){ f(); });
+    };
+    sc.onerror = function(){
+      resLoad.state = 'idle';
+      if(el) el.innerHTML = '<p class="section-intro">Impossible de charger les résultats (resultats.js). Vérifiez votre connexion et rechargez la page.</p>';
+    };
+    document.head.appendChild(sc);
+  }
   function fmtN(n){ return n.toLocaleString('fr-CA'); }
   function fmtP(n, d){ return n.toFixed(d==null?1:d).replace('.',',')+' %'; }
 
@@ -1657,7 +1680,7 @@
     nav.classList.remove('open');
     document.getElementById('navToggle').setAttribute('aria-expanded','false');
     window.scrollTo(0,0);
-    if(id==='resultats' && typeof resApplyView==='function') resApplyView();
+    if(id==='resultats') resEnsureLoaded(resApplyView);
   }
 
   function goTo(id){
@@ -1704,7 +1727,6 @@
     loadQuiz();
     renderQuiz();
     renderCandidats();
-    renderResultats();
     updatePartyChips();
     updateTopicChips();
 
