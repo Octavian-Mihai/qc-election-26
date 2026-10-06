@@ -715,6 +715,13 @@
       <div class="table-scroll"><table id="resProjTable"></table></div>
       <p class="caption">Résultats de 2022 transposés sur la carte électorale de 2026 et projections par circonscription : <a href="https://qc125.com/" target="_blank" rel="noopener">Qc125</a> (Philippe J. Fournier ; transposition de Kyle Hutton), relevés sur les pages de circonscription le 6 octobre 2026. Ce sont des estimations tierces, pas des données officielles. Les parts de vote 2022 à l'échelle du Québec sont celles d'Élections Québec.</p>
 
+      <h3>Ville et campagne : deux Québec</h3>
+      <p class="section-intro" id="resDensLead"></p>
+      <div class="table-scroll"><table id="resDensTable"></table></div>
+      <div class="filter-row" role="group" aria-label="Parti du nuage de points" id="resDensParty"></div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:14px 10px 6px"><div id="resDensChart"></div></div>
+      <p class="caption">Chaque point est une circonscription. Densité = électeurs inscrits par km² de superficie terrestre (contours officiels, plans d'eau OpenStreetMap retranchés) ; échelle logarithmique. Cliquez un point pour le détail. La densité d'électeurs est un indicateur approximatif de l'urbanité, pas une mesure officielle de population.</p>
+
       <h3>Résultats par région</h3>
       <p class="section-intro">Regroupement des circonscriptions par région, tel qu'utilisé pour les fiches de candidat·e·s (13 groupes, certaines régions étant regroupées). Cliquez une ligne pour zoomer la carte sur la région.</p>
       <div class="table-scroll"><table id="resRegionTable"></table></div>
@@ -1562,6 +1569,7 @@
     MARGE: {color:'#B8860B', label:'Marge de victoire', val:function(r){ return r.margePct; }, unit:'écart entre le·la gagnant·e et le·la deuxième (points)'},
     ENP:   {color:'#6B5B95', label:'Fragmentation du vote', val:function(r){ return r.enp; }, unit:'nombre effectif de partis (plus il est élevé, plus le vote est dispersé)'},
     SECOND:{color:'#888', label:'2e place', val:function(r){ return r.margePct; }, unit:''},
+    DENS:  {color:'#4B5D7A', label:'Densité d\'électeurs', val:function(r){ return Math.log10(r.dens); }, unit:'électeurs inscrits par km² (échelle logarithmique)'},
     FLIP:  {color:'#888', label:'Sièges changés de main', val:function(r){ return 0; }, unit:''}
   };
   function resLayerInfo(p){
@@ -1578,12 +1586,12 @@
       function(r){ return RES_COLORS[r.avance[0]]; },
       function(r){ return (0.4 + 0.6*Math.min(r.margePct/30,1)).toFixed(2); });
     // Participation : l'échelle part du minimum (sinon toutes les circonscriptions paraîtraient presque identiques).
-    var lo = (p==='PART' || p==='ENP') ? min : 0, span = (max-lo) || 1;
+    var lo = (p==='PART' || p==='ENP' || p==='DENS') ? min : 0, span = (max-lo) || 1;
     document.getElementById('resMapParty').innerHTML = resMapSvg(
       function(){ return L.color; },
       function(r){ return (0.08 + 0.92*(L.val(r)-lo)/span).toFixed(2); });
-    var suffix = p==='MARGE' ? ' pts' : p==='ENP' ? '' : ' %';
-    var f = function(v){ return v.toFixed(p==='ENP'?2:1).replace('.',',')+suffix; };
+    var suffix = p==='MARGE' ? ' pts' : (p==='ENP' || p==='DENS') ? '' : ' %';
+    var f = function(v){ if(p==='DENS'){ v = Math.pow(10, v); return (v<10 ? v.toFixed(1) : fmtN(Math.round(v))).replace('.',',')+' /km²'; } return v.toFixed(p==='ENP'?2:1).replace('.',',')+suffix; };
     document.getElementById('resLegendParty').innerHTML = '<span><strong>'+L.label+'</strong> — '+L.unit+' :</span><span>'+f(min)+'<span class="res-ramp" style="background:linear-gradient(90deg,'+L.color+'14,'+L.color+')"></span>'+f(max)+'</span>';
     resApplyView();
     if(resState.selected) document.querySelectorAll('.res-map-wrap path[data-code="'+resState.selected+'"]').forEach(function(q){ q.classList.add('sel'); });
@@ -1619,11 +1627,20 @@
     var t = resTally(), m = RESULTATS.meta, P = ['PQ','PLQ','PCQ','QS','CAQ'], rows = RESULTATS.rows;
     var votes = {}; P.forEach(function(p){ votes[p] = t[p].votes; });
     var prop = resProportional(votes, m.valides);
+    // Votes « sans effet » : tous les votes d'un parti perdant, plus l'excédent du gagnant au-delà du vote nécessaire (2e + 1).
+    var waste = {}, tvotes = {}; P.forEach(function(p){ waste[p] = 0; tvotes[p] = 0; });
+    rows.forEach(function(r){
+      r.c.forEach(function(c, i){
+        if(waste[c[0]] === undefined) return;
+        tvotes[c[0]] += c[2];
+        waste[c[0]] += i===0 ? Math.max(0, c[2] - (r.c[1][2]+1)) : c[2];
+      });
+    });
     var gall = Math.sqrt(P.reduce(function(s,p){ var d = votes[p]/m.valides*100 - t[p].seats/127*100; return s+d*d; }, 0)/2);
     var order = P.slice().sort(function(a,b){ return votes[b]-votes[a]; });
     var maxPct = Math.max.apply(null, P.map(function(p){ return Math.max(votes[p]/m.valides*100, t[p].seats/127*100); }));
     document.getElementById('resVsSeatsTable').innerHTML =
-      '<thead><tr><th>Parti</th><th>Part du vote et des sièges</th><th class="num">Votes par siège</th><th class="num">Sièges si proportionnel*</th></tr></thead><tbody>'
+      '<thead><tr><th>Parti</th><th>Part du vote et des sièges</th><th class="num">Votes par siège</th><th class="num">Votes sans effet**</th><th class="num">Sièges si proportionnel*</th></tr></thead><tbody>'
       + order.map(function(p){
           var v = votes[p]/m.valides*100, s = t[p].seats/127*100;
           return '<tr><td><span class="res-legend" style="margin:0"><span><i style="background:'+RES_COLORS[p]+'"></i>'+p+'</span></span></td>'
@@ -1631,11 +1648,12 @@
             + '<span>Vote '+fmtP(v)+'</span><span class="res-bar" style="margin:0; height:10px; background:var(--code-bg)"><span style="width:'+(v/maxPct*100)+'%; background:'+RES_COLORS[p]+'; opacity:.45"></span></span>'
             + '<span>Sièges '+fmtP(s)+'</span><span class="res-bar" style="margin:0; height:10px; background:var(--code-bg)"><span style="width:'+(s/maxPct*100)+'%; background:'+RES_COLORS[p]+'"></span></span></div></td>'
             + '<td class="num">'+(t[p].seats ? fmtN(Math.round(votes[p]/t[p].seats)) : 'aucun siège')+'</td>'
+            + '<td class="num">'+fmtP(waste[p]/tvotes[p]*100,0)+'</td>'
             + '<td class="num">'+prop[p]+' <small>('+(prop[p]-t[p].seats>=0?'+':'−')+Math.abs(prop[p]-t[p].seats)+')</small></td></tr>';
         }).join('') + '</tbody>';
     var win = order.slice().sort(function(a,b){ return t[b].seats-t[a].seats; })[0];
     document.getElementById('resInsightLead').innerHTML = 'Le mode de scrutin uninominal à un tour récompense le premier arrivé dans chaque circonscription : le '+win+' obtient '+fmtP(t[win].seats/127*100,0)+' des sièges avec '+fmtP(votes[win]/m.valides*100)+' du vote, alors que la CAQ, avec '+fmtP(votes.CAQ/m.valides*100)+' ('+fmtN(votes.CAQ)+' votes), ne fait élire personne. L\'indice de Gallagher (écart global entre parts de votes et de sièges) est de <strong>'+gall.toFixed(1).replace('.',',')+'</strong> ; plus il est élevé, plus le résultat s\'éloigne de la proportionnalité.';
-    document.getElementById('resVsSeatsNote').textContent = '* Hypothèse d\'école, pas une prédiction : 127 sièges répartis selon la méthode du plus fort reste (quota de Hare) d\'après le vote valide de chaque parti (autres candidatures exclues). Les électeurs voteraient probablement autrement dans un autre système.';
+    document.getElementById('resVsSeatsNote').textContent = '** Part des votes du parti qui n\'ont servi à élire personne : tous les votes obtenus dans les circonscriptions perdues, plus, dans celles gagnées, les votes en excédent du nombre nécessaire pour l\'emporter (votes du·de la deuxième + 1). * Hypothèse d\'école, pas une prédiction : 127 sièges répartis selon la méthode du plus fort reste (quota de Hare) d\'après le vote valide de chaque parti (autres candidatures exclues). Les électeurs voteraient probablement autrement dans un autre système.';
 
     // Circonscriptions à surveiller
     var close = rows.slice().sort(function(a,b){ return a.marge-b.marge; });
@@ -1743,6 +1761,53 @@
           var pw = r.wproj, aw = r.avance[0];
           return '<tr class="res-row" tabindex="0" onclick="resGoTo('+r.code+')" onkeydown="if(event.key===\'Enter\')this.click()"><td>'+r.nom+'</td><td>'+partyBadge(pw)+' '+fmtP(r.proj[pw][0],0)+' <small>('+aw+' '+(r.proj[aw]?fmtP(r.proj[aw][0],0):'—')+')</small></td><td>'+partyBadge(aw==='AUT'?'—':aw)+' '+r.c[0][1]+' <small>'+fmtP(r.c[0][3])+'</small></td><td class="num">'+sgn(r.proj[pw][0]-r.proj[aw][0],0)+' pts</td></tr>';
         }).join('') + '</tbody>';
+  }
+
+
+  // ---------- Ville et campagne ----------
+  var densState = {party:'PQ'};
+  function renderResDensity(){
+    var P = ['PQ','PLQ','PCQ','QS','CAQ'], rows = RESULTATS.rows.slice().sort(function(a,b){ return a.dens - b.dens; });
+    var groups = [
+      {nom:'Régions éloignées et rurales', sl: rows.slice(0,42)},
+      {nom:'Banlieues et villes moyennes', sl: rows.slice(42,85)},
+      {nom:'Grands centres urbains', sl: rows.slice(85)}
+    ];
+    var median = function(a){ var b = a.slice().sort(function(x,y){ return x-y; }), m = Math.floor(b.length/2); return b.length%2 ? b[m] : (b[m-1]+b[m])/2; };
+    var mean = function(a){ return a.reduce(function(x,y){ return x+y; },0)/a.length; };
+    var fd = function(v){ return v<10 ? v.toFixed(1).replace('.',',') : fmtN(Math.round(v)); };
+    document.getElementById('resDensTable').innerHTML = '<thead><tr><th>Groupe de circonscriptions</th><th class="num">Circ.</th><th class="num">Densité médiane</th><th class="num">Participation moy.</th>'
+      + P.map(function(p){ return '<th class="num"><span class="res-legend" style="margin:0"><span><i style="background:'+RES_COLORS[p]+'"></i>'+p+'</span></span><br><small>sièges (vote moy.)</small></th>'; }).join('') + '</tr></thead><tbody>'
+      + groups.map(function(g){
+          var seats = {}; P.forEach(function(p){ seats[p] = 0; }); g.sl.forEach(function(r){ seats[r.avance[0]]++; });
+          return '<tr><td>'+g.nom+'</td><td class="num">'+g.sl.length+'</td><td class="num">'+fd(median(g.sl.map(function(r){ return r.dens; })))+' /km²</td><td class="num">'+fmtP(mean(g.sl.map(function(r){ return r.part; })))+'</td>'
+            + P.map(function(p){ return '<td class="num"><strong>'+(seats[p]||'·')+'</strong> <small>('+fmtP(mean(g.sl.map(function(r){ return r.pct[p]; })),0)+')</small></td>'; }).join('') + '</tr>';
+        }).join('') + '</tbody>';
+    var seatsOf = function(g, p){ return g.sl.filter(function(r){ return r.avance[0]===p; }).length; };
+    document.getElementById('resDensLead').innerHTML = 'En classant les 127 circonscriptions selon leur densité d\'électeurs au km², on obtient trois groupes de taille presque égale. Dans les <strong>grands centres urbains</strong>, le PLQ l\'emporte dans '+seatsOf(groups[2],'PLQ')+' circonscriptions sur '+groups[2].sl.length+' et QS dans '+seatsOf(groups[2],'QS')+' ; dans les <strong>régions éloignées et rurales</strong>, le PQ en gagne '+seatsOf(groups[0],'PQ')+' sur '+groups[0].sl.length+' et le PCQ '+seatsOf(groups[0],'PCQ')+', le PLQ '+seatsOf(groups[0],'PLQ')+'. La participation est la plus basse dans les centres urbains ('+fmtP(mean(groups[2].sl.map(function(r){ return r.part; })))+').';
+    document.getElementById('resDensParty').innerHTML = P.map(function(p){ return '<button type="button" class="chip-btn'+(p===densState.party?' active':'')+'" data-dens-party="'+p+'" onclick="setDensParty(\''+p+'\')">'+p+'</button>'; }).join('');
+    renderResDensChart(groups);
+  }
+  function setDensParty(p){
+    densState.party = p;
+    document.querySelectorAll('[data-dens-party]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-dens-party')===p); });
+    renderResDensChart();
+  }
+  function renderResDensChart(groups){
+    var p = densState.party, rows = RESULTATS.rows, W = 760, H = 340, L = 46, R = 14, T = 12, B = 52;
+    var xs = rows.map(function(r){ return Math.log10(r.dens); }), x0 = Math.floor(Math.min.apply(null, xs)), x1 = Math.ceil(Math.max.apply(null, xs));
+    var ymax = Math.ceil(Math.max.apply(null, rows.map(function(r){ return r.pct[p]; }))/10)*10;
+    var X = function(v){ return L + (v-x0)/(x1-x0)*(W-L-R); }, Y = function(v){ return T + (1 - v/ymax)*(H-T-B); };
+    var svg = '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%; height:auto; display:block" role="img" aria-label="Part du vote selon la densité d\'électeurs">';
+    for(var yv=0; yv<=ymax; yv+=10) svg += '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(yv)+'" y2="'+Y(yv)+'" stroke="var(--border)" stroke-width="1"/><text x="'+(L-8)+'" y="'+(Y(yv)+4)+'" text-anchor="end" style="font-size:11px; fill:var(--ink-soft); stroke:none">'+yv+' %</text>';
+    for(var xv=x0; xv<=x1; xv++) svg += '<line x1="'+X(xv)+'" x2="'+X(xv)+'" y1="'+T+'" y2="'+(H-B)+'" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 4"/><text x="'+X(xv)+'" y="'+(H-B+18)+'" text-anchor="middle" style="font-size:11px; fill:var(--ink-soft); stroke:none">'+(xv>=0 ? fmtN(Math.pow(10,xv)) : String(Math.pow(10,xv)).replace('.',','))+'</text>';
+    svg += '<text x="'+((L+W-R)/2)+'" y="'+(H-10)+'" text-anchor="middle" style="font-size:12px; fill:var(--ink-soft); stroke:none">Électeurs inscrits par km² (échelle logarithmique) →</text>';
+    svg += '<text transform="rotate(-90)" x="'+(-(T+(H-T-B)/2))+'" y="12" text-anchor="middle" style="font-size:12px; fill:var(--ink-soft); stroke:none">Part du vote : '+p+'</text>';
+    rows.forEach(function(r){
+      var win = r.avance[0]===p;
+      svg += '<circle cx="'+X(Math.log10(r.dens)).toFixed(1)+'" cy="'+Y(r.pct[p]).toFixed(1)+'" r="'+(win?5:3.6)+'" fill="'+RES_COLORS[p]+'" fill-opacity="'+(win?0.95:0.4)+'" stroke="'+(win?'var(--ink)':'none')+'" stroke-width="1" style="cursor:pointer" onclick="resGoTo('+r.code+')"><title>'+r.nom+' — '+p+' '+fmtP(r.pct[p])+(win?' (élu·e)':'')+'</title></circle>';
+    });
+    document.getElementById('resDensChart').innerHTML = svg + '</svg><p class="caption" style="margin:4px 8px 6px">Cercle plein avec contour : circonscription gagnée par '+p+' ; cercle pâle : perdue.</p>';
   }
 
   // ---------- Résultats par région ----------
@@ -1886,7 +1951,7 @@
     document.getElementById('resLegendWinner').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ'].map(function(k){
       return '<span><i style="background:'+RES_COLORS[k]+'"></i>'+k+' ('+t[k].seats+')</span>';
     }).join('') + '<span>Teinte pâle = course serrée</span>';
-    document.getElementById('resPartyRow').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ','FLIP','SECOND','ENP','PART','MARGE'].map(function(k){
+    document.getElementById('resPartyRow').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ','FLIP','SECOND','ENP','DENS','PART','MARGE'].map(function(k){
       return '<button type="button" class="chip-btn'+(k===resState.party?' active':'')+'" data-res-party="'+k+'" onclick="setResParty(\''+k+'\')">'+(RES_LAYERS[k]?RES_LAYERS[k].label:k)+'</button>';
     }).join('');
     document.getElementById('resWinnerFilter').innerHTML = ['ALL','PQ','PLQ','PCQ','QS','CAQ'].filter(function(k){ return k==='ALL' || t[k].seats>0; }).map(function(k){
@@ -1898,6 +1963,7 @@
     renderResInsights();
     renderResChange();
     renderResProj();
+    renderResDensity();
     renderResRegions();
     renderResMaps();
     renderResMargins();
