@@ -699,6 +699,22 @@
       <p class="section-intro" id="resPlayLead"></p>
       <div class="table-scroll"><table id="resPlayTable"></table></div>
 
+      <h3>Qu'est-ce qui a changé depuis 2022 ?</h3>
+      <p class="section-intro" id="resChangeLead"></p>
+      <div class="table-scroll"><table id="resChangeTable"></table></div>
+      <h3>D'où viennent les sièges</h3>
+      <p class="section-intro">Pour chaque parti gagnant en 2026 (colonnes), le parti qui l'avait emporté en 2022 dans la même circonscription, sur la carte électorale de 2026 (lignes).</p>
+      <div class="table-scroll"><table id="resFlowTable"></table></div>
+      <h3>Les plus fortes variations</h3>
+      <div class="table-scroll"><table id="resSwingTable"></table></div>
+
+      <h3>Les projections avaient-elles raison ?</h3>
+      <p class="section-intro" id="resProjLead"></p>
+      <div class="table-scroll"><table id="resProjBias"></table></div>
+      <h4 style="margin:18px 0 6px">Les plus grandes surprises</h4>
+      <div class="table-scroll"><table id="resProjTable"></table></div>
+      <p class="caption">Résultats de 2022 transposés sur la carte électorale de 2026 et projections par circonscription : <a href="https://qc125.com/" target="_blank" rel="noopener">Qc125</a> (Philippe J. Fournier ; transposition de Kyle Hutton), relevés sur les pages de circonscription le 6 octobre 2026. Ce sont des estimations tierces, pas des données officielles. Les parts de vote 2022 à l'échelle du Québec sont celles d'Élections Québec.</p>
+
       <h3>Résultats par région</h3>
       <p class="section-intro">Regroupement des circonscriptions par région, tel qu'utilisé pour les fiches de candidat·e·s (13 groupes, certaines régions étant regroupées). Cliquez une ligne pour zoomer la carte sur la région.</p>
       <div class="table-scroll"><table id="resRegionTable"></table></div>
@@ -716,6 +732,7 @@
 
       <h3>Carte du vote, de la participation et des marges</h3>
       <div class="filter-row" role="group" aria-label="Parti affiché sur la carte" id="resPartyRow"></div>
+      <div class="filter-row" role="group" aria-label="Type de valeur pour un parti" id="resModeRow"><button type="button" class="chip-btn active" data-res-mode="share" onclick="setResMode('share')">Part du vote en 2026</button><button type="button" class="chip-btn" data-res-mode="delta" onclick="setResMode('delta')">Variation depuis 2022</button></div>
       <div class="res-map-wrap"><div class="res-ctl"><button type="button" aria-label="Zoom avant" onclick="resZoomBy(1.6)">+</button><button type="button" aria-label="Zoom arrière" onclick="resZoomBy(1/1.6)">−</button><button type="button" aria-label="Réinitialiser la vue" title="Réinitialiser" onclick="setResZoom('qc')">⟲</button></div><div id="resMapParty"></div></div>
       <div class="res-legend" id="resLegendParty"></div>
       <div class="filter-row" role="group" aria-label="Zone de la carte">
@@ -881,6 +898,7 @@
 
       <h3>Résultats du scrutin</h3>
       <p><strong>Source.</strong> Résultats officiels d'Élections Québec pour le scrutin du 5 octobre 2026 (127 circonscriptions, résultats finaux), et contours officiels des circonscriptions 2026 (format MapInfo, reprojetés et simplifiés). Les cours d'eau (fleuve, estuaire, golfe, rivières, lacs) viennent d'OpenStreetMap (© contributeurs OpenStreetMap, ODbL) et sont dessinés en blanc par-dessus les circonscriptions, dont les contours officiels couvrent aussi l'eau.</p>
+      <p><strong>Comparaison avec 2022 et projections.</strong> Les résultats de 2022 recalculés sur la carte de 2026 et les projections par circonscription viennent de <a href="https://qc125.com/" target="_blank" rel="noopener">Qc125</a> (Philippe J. Fournier ; transposition de Kyle Hutton), relevés manuellement sur les 127 pages de circonscription le 6 octobre 2026. Ce sont des estimations de tiers, pas des données officielles : le « gagnant·e de 2022 » d'une circonscription est le parti ayant la plus forte part transposée, et le total obtenu (CAQ 93, PLQ 20, QS 11, PQ 3) concorde avec celui publié par Radio-Canada. Les parts de vote 2022 à l'échelle du Québec sont celles d'Élections Québec. Les projections sont celles affichées avant le scrutin ; elles servent à mesurer l'écart avec les résultats, pas à les remplacer.</p>
       <p><strong>Marge de victoire.</strong> Écart entre le·la gagnant·e et le·la deuxième, en votes et en points de pourcentage du vote valide. « Autres » regroupe tous les partis et candidatures indépendantes hors CAQ, PCQ, PLQ, PQ et QS.</p>
       <p><strong>Approximations de la carte.</strong> Le fjord du Saguenay suit le contour du Parc marin du Saguenay–Saint-Laurent ; entre Chicoutimi et Saint-Fulgence, la largeur du fjord est estimée à partir de l'axe de la rivière. Dans le golfe du Saint-Laurent, un raccord manuel comble l'écart entre deux contours OpenStreetMap. La carte est illustrative : les chiffres, eux, sont ceux d'Élections Québec.</p>
       <p><strong>Lien avec les fiches de candidat·e·s.</strong> Le détail d'une circonscription affiche la biographie du·de la gagnant·e seulement si son nom correspond à celui de notre fiche pour le même parti et la même circonscription ; en cas de remplacement de dernière minute, aucune biographie n'est affichée plutôt qu'une fiche erronée.</p>
@@ -1315,7 +1333,7 @@
   var RES_NAMES = {PQ:'Parti Québécois', PLQ:'Parti libéral du Québec', PCQ:'Parti conservateur du Québec', CAQ:'Coalition Avenir Québec', QS:'Québec solidaire', AUT:'Autres'};
   // resultats.js (~840 Ko : résultats + contours + cours d'eau) n'est chargé qu'à la première visite de la page Résultats.
   var RES_BY_CODE = {};
-  var resState = {party:'PQ', vb:[0,0,0,0], winner:'ALL', sort:'margePct', dir:1};
+  var resState = {mode:'share', party:'PQ', vb:[0,0,0,0], winner:'ALL', sort:'margePct', dir:1};
   var resLoad = {state:'idle', queue:[]};
   function resEnsureLoaded(cb){
     if(resLoad.state==='ready'){ cb(); return; }
@@ -1327,7 +1345,7 @@
     var sc = document.createElement('script');
     sc.src = 'resultats.js';
     sc.onload = function(){
-      RESULTATS.rows.forEach(function(r){ RES_BY_CODE[r.code] = r; r.enp = resEnp(r); });
+      RESULTATS.rows.forEach(function(r){ RES_BY_CODE[r.code] = r; r.enp = resEnp(r); r.w22 = argmax(r.p22); r.wproj = argmax(r.proj, function(x){ return x[0]; }); r.flip = r.w22 !== r.avance[0]; });
       resState.vb = [0,0,RESULTATS.meta.w,RESULTATS.meta.h];
       resLoad.state = 'ready';
       renderResultats();
@@ -1509,8 +1527,14 @@
     }
     return '<h4>'+r.nom+'</h4>'
       + '<p class="res-sub">'+w[0]+' l\'emporte par '+fmtN(r.marge)+' votes ('+r.margePct.toFixed(1).replace('.',',')+' points) sur '+s[0]+'. Le·la gagnant·e est élu·e avec '+fmtP(w[3])+' du vote ; nombre effectif de partis : '+r.enp.toFixed(2).replace('.',',')+'. Participation '+fmtP(r.part)+' — '+fmtN(r.votants)+' votants sur '+fmtN(r.inscrits)+' inscrits ; '+fmtN(r.valides)+' votes valides.</p>'
-      + lines + bio
+      + lines + bio + resSince(r)
       + '<div class="actions"><button type="button" class="chip-btn" onclick="resOpenCandidats('+r.code+')">Voir les candidat·e·s de cette circonscription</button></div>';
+  }
+  function resSince(r){
+    var P = ['PQ','PLQ','PCQ','QS','CAQ'];
+    var since = P.map(function(p){ var d = r.pct[p]-r.p22[p]; return '<span style="white-space:nowrap">'+p+' '+fmtP(r.p22[p])+' → '+fmtP(r.pct[p])+' <span style="color:'+(d>=0?RES_GAIN:RES_LOSS)+'">('+sgn(d)+')</span></span>'; }).join(' · ');
+    var proj = P.map(function(p){ return p+' '+fmtP(r.proj[p][0],0); }).join(' · ');
+    return '<p class="bio" style="margin-top:10px"><strong>Depuis 2022</strong> (résultats 2022 sur la carte de 2026, Qc125) : '+since+'.'+(r.flip?' <strong>Le siège a changé de main</strong> ('+r.w22+' → '+r.avance[0]+').':' Le siège est resté au même parti ('+r.w22+').')+'<br><strong>Projection Qc125 :</strong> '+proj+' — '+(r.wproj===r.avance[0]?'la projection désignait le·la bon·ne gagnant·e.':'la projection donnait '+r.wproj+' gagnant·e.')+'</p>';
   }
   function resSelect(code, fromTable){
     var r = RES_BY_CODE[code]; if(!r) return;
@@ -1537,7 +1561,8 @@
     PART:  {color:'#2F7F6F', label:'Participation', val:function(r){ return r.part; }, unit:'taux de participation'},
     MARGE: {color:'#B8860B', label:'Marge de victoire', val:function(r){ return r.margePct; }, unit:'écart entre le·la gagnant·e et le·la deuxième (points)'},
     ENP:   {color:'#6B5B95', label:'Fragmentation du vote', val:function(r){ return r.enp; }, unit:'nombre effectif de partis (plus il est élevé, plus le vote est dispersé)'},
-    SECOND:{color:'#888', label:'2e place', val:function(r){ return r.margePct; }, unit:''}
+    SECOND:{color:'#888', label:'2e place', val:function(r){ return r.margePct; }, unit:''},
+    FLIP:  {color:'#888', label:'Sièges changés de main', val:function(r){ return 0; }, unit:''}
   };
   function resLayerInfo(p){
     var L = RES_LAYERS[p];
@@ -1546,6 +1571,8 @@
   function renderResMaps(){
     var p = resState.party, L = resLayerInfo(p);
     if(p==='SECOND'){ renderResSecond(); return; }
+    if(p==='FLIP'){ renderResFlip(); return; }
+    if(resState.mode==='delta' && !RES_LAYERS[p]){ renderResDelta(); return; }
     var vals = RESULTATS.rows.map(L.val), max = Math.max.apply(null, vals), min = Math.min.apply(null, vals);
     document.getElementById('resMapWinner').innerHTML = resMapSvg(
       function(r){ return RES_COLORS[r.avance[0]]; },
@@ -1608,7 +1635,7 @@
         }).join('') + '</tbody>';
     var win = order.slice().sort(function(a,b){ return t[b].seats-t[a].seats; })[0];
     document.getElementById('resInsightLead').innerHTML = 'Le mode de scrutin uninominal à un tour récompense le premier arrivé dans chaque circonscription : le '+win+' obtient '+fmtP(t[win].seats/127*100,0)+' des sièges avec '+fmtP(votes[win]/m.valides*100)+' du vote, alors que la CAQ, avec '+fmtP(votes.CAQ/m.valides*100)+' ('+fmtN(votes.CAQ)+' votes), ne fait élire personne. L\'indice de Gallagher (écart global entre parts de votes et de sièges) est de <strong>'+gall.toFixed(1).replace('.',',')+'</strong> ; plus il est élevé, plus le résultat s\'éloigne de la proportionnalité.';
-    document.getElementById('resVsSeatsNote').textContent = '* Hypothèse d\'école, pas une prédiction : 127 sièges répartis selon la méthode du plus fort reste (quota de Hare) d'après le vote valide de chaque parti (autres candidatures exclues). Les électeurs voteraient probablement autrement dans un autre système.';
+    document.getElementById('resVsSeatsNote').textContent = '* Hypothèse d\'école, pas une prédiction : 127 sièges répartis selon la méthode du plus fort reste (quota de Hare) d\'après le vote valide de chaque parti (autres candidatures exclues). Les électeurs voteraient probablement autrement dans un autre système.';
 
     // Circonscriptions à surveiller
     var close = rows.slice().sort(function(a,b){ return a.marge-b.marge; });
@@ -1621,6 +1648,100 @@
       + close.slice(0,15).map(function(r){
           var flip = Math.floor(r.marge/2)+1;
           return '<tr class="res-row" tabindex="0" onclick="resGoTo('+r.code+')" onkeydown="if(event.key===\'Enter\')this.click()"><td>'+r.nom+'</td><td>'+partyBadge(r.avance[0]==='AUT'?'—':r.avance[0])+' '+r.c[0][1]+'</td><td>'+r.avance[1]+' <small>'+r.c[1][1]+'</small></td><td class="num">'+fmtN(r.marge)+' votes</td><td class="num">'+fmtN(flip)+' <small>('+fmtP(flip/r.valides*100,2)+')</small></td></tr>';
+        }).join('') + '</tbody>';
+  }
+
+
+  var RES_GAIN = '#1B8A6B', RES_LOSS = '#C2553A';
+  function setResMode(m){
+    resState.mode = m;
+    document.querySelectorAll('[data-res-mode]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-res-mode')===m); });
+    renderResMaps();
+  }
+  // Variation de la part du vote d'un parti par rapport à 2022 (résultats 2022 transposés sur la carte de 2026).
+  function renderResDelta(){
+    var p = resState.party, rows = RESULTATS.rows;
+    var d = function(r){ return r.pct[p] - r.p22[p]; };
+    var max = Math.max.apply(null, rows.map(function(r){ return Math.abs(d(r)); })) || 1;
+    document.getElementById('resMapWinner').innerHTML = resMapSvg(
+      function(r){ return RES_COLORS[r.avance[0]]; },
+      function(r){ return (0.4 + 0.6*Math.min(r.margePct/30,1)).toFixed(2); });
+    document.getElementById('resMapParty').innerHTML = resMapSvg(
+      function(r){ return d(r) >= 0 ? RES_GAIN : RES_LOSS; },
+      function(r){ return (0.1 + 0.9*Math.abs(d(r))/max).toFixed(2); });
+    var gv = rows.map(d).filter(function(v){ return v >= 0; }), lv = rows.map(d).filter(function(v){ return v < 0; });
+    var f = function(v){ return (v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.',',')+' pts'; };
+    var rng = function(a){ return f(a.reduce(function(x,y){ return Math.abs(x)<Math.abs(y)?x:y; }))+' à '+f(a.reduce(function(x,y){ return Math.abs(x)>Math.abs(y)?x:y; })); };
+    document.getElementById('resLegendParty').innerHTML = '<span><strong>'+RES_NAMES[p]+'</strong> — variation de la part du vote depuis 2022 :</span>'
+      + (lv.length ? '<span><i style="background:'+RES_LOSS+'"></i>baisse dans '+lv.length+' circonscriptions ('+rng(lv)+')</span>' : '')
+      + (gv.length ? '<span><i style="background:'+RES_GAIN+'"></i>hausse dans '+gv.length+' circonscriptions ('+rng(gv)+')</span>' : '')
+      + '<span>Teinte plus intense = variation plus forte</span>';
+    resApplyView();
+    if(resState.selected) document.querySelectorAll('.res-map-wrap path[data-code="'+resState.selected+'"]').forEach(function(q){ q.classList.add('sel'); });
+  }
+  // Sièges ayant changé de parti par rapport à 2022 (carte de 2026).
+  function renderResFlip(){
+    var rows = RESULTATS.rows, n = rows.filter(function(r){ return r.flip; }).length, by = {};
+    rows.forEach(function(r){ if(r.flip) by[r.avance[0]] = (by[r.avance[0]]||0)+1; });
+    document.getElementById('resMapWinner').innerHTML = resMapSvg(
+      function(r){ return RES_COLORS[r.avance[0]]; },
+      function(r){ return (0.4 + 0.6*Math.min(r.margePct/30,1)).toFixed(2); });
+    document.getElementById('resMapParty').innerHTML = resMapSvg(
+      function(r){ return r.flip ? RES_COLORS[r.avance[0]] : '#9AA7BD'; },
+      function(r){ return r.flip ? '1' : '0.28'; });
+    document.getElementById('resLegendParty').innerHTML = '<span><strong>'+n+' circonscriptions</strong> sur 127 ont changé de parti depuis 2022 (gagnant·e 2022 sur la carte de 2026) ; nouveau parti :</span>'
+      + ['PQ','PLQ','PCQ','QS','CAQ'].filter(function(k){ return by[k]; }).map(function(k){ return '<span><i style="background:'+RES_COLORS[k]+'"></i>'+k+' ('+by[k]+')</span>'; }).join('')
+      + '<span><i style="background:#9AA7BD; opacity:.4"></i>inchangées ('+(127-n)+')</span>';
+    resApplyView();
+    if(resState.selected) document.querySelectorAll('.res-map-wrap path[data-code="'+resState.selected+'"]').forEach(function(q){ q.classList.add('sel'); });
+  }
+
+  // ---------- Depuis 2022 et projections ----------
+  function argmax(o, f){ var b=null, v=-1e9; Object.keys(o).forEach(function(k){ var x = f ? f(o[k]) : o[k]; if(x>v){ v=x; b=k; } }); return b; }
+  function sgn(v, d){ return (v>=0?'+':'−')+Math.abs(v).toFixed(d==null?1:d).replace('.',','); }
+  function renderResChange(){
+    var m = RESULTATS.meta, rows = RESULTATS.rows, P = ['PQ','PLQ','PCQ','QS','CAQ'], t = resTally();
+    var s22 = {PQ:0,PLQ:0,PCQ:0,QS:0,CAQ:0}; rows.forEach(function(r){ s22[r.w22]++; });
+    var order = P.slice().sort(function(a,b){ return t[b].votes - t[a].votes; });
+    var flips = rows.filter(function(r){ return r.flip; }).length;
+    document.getElementById('resChangeLead').innerHTML = 'Sur la carte électorale de 2026, la CAQ aurait gagné '+s22.CAQ+' circonscriptions en 2022 ; en 2026, elle n\'en gagne aucune. <strong>'+flips+' circonscriptions sur 127</strong> ont changé de parti ('+Math.round(flips/127*100)+' %). Le Parti québécois passe de '+fmtP(m.n22.PQ)+' à '+fmtP(t.PQ.votes/m.valides*100)+' du vote, et la CAQ de '+fmtP(m.n22.CAQ)+' à '+fmtP(t.CAQ.votes/m.valides*100)+'.';
+    document.getElementById('resChangeTable').innerHTML =
+      '<thead><tr><th>Parti</th><th class="num">Vote 2022</th><th class="num">Vote 2026</th><th class="num">Variation</th><th class="num">Sièges 2022*</th><th class="num">Sièges 2026</th><th class="num">Variation</th></tr></thead><tbody>'
+      + order.map(function(p){
+          var v26 = t[p].votes/m.valides*100, dv = v26 - m.n22[p], ds = t[p].seats - s22[p];
+          return '<tr><td><span class="res-legend" style="margin:0"><span><i style="background:'+RES_COLORS[p]+'"></i>'+p+'</span></span></td><td class="num">'+fmtP(m.n22[p])+'</td><td class="num">'+fmtP(v26)+'</td><td class="num" style="color:'+(dv>=0?RES_GAIN:RES_LOSS)+'">'+sgn(dv)+' pts</td><td class="num">'+s22[p]+'</td><td class="num">'+t[p].seats+'</td><td class="num" style="color:'+(ds>=0?RES_GAIN:RES_LOSS)+'">'+(ds===0?'0':sgn(ds,0))+'</td></tr>';
+        }).join('') + '</tbody><caption style="caption-side:bottom; text-align:left; padding:8px 14px; font-size:.78rem; color:var(--ink-soft)">* Gagnant·e de 2022 recalculé sur la carte de 2026 d\'après les résultats transposés par Qc125 (vote 2022 à l\'échelle du Québec : Élections Québec). Sur l\'ancienne carte, le résultat officiel de 2022 était : CAQ '+m.s22.CAQ+', PLQ '+m.s22.PLQ+', QS '+m.s22.QS+', PQ '+m.s22.PQ+', PCQ '+m.s22.PCQ+'.</caption>';
+    // Matrice 2022 -> 2026
+    var rowsP = P.filter(function(p){ return s22[p] > 0; }), flow = {};
+    rows.forEach(function(r){ flow[r.w22+'>'+r.avance[0]] = (flow[r.w22+'>'+r.avance[0]]||0)+1; });
+    var colsP = P.filter(function(p){ return t[p].seats > 0; });
+    document.getElementById('resFlowTable').innerHTML =
+      '<thead><tr><th>Gagnant·e en 2022 ↓ / 2026 →</th>'+colsP.map(function(p){ return '<th class="num"><span class="res-legend" style="margin:0"><span><i style="background:'+RES_COLORS[p]+'"></i>'+p+'</span></span></th>'; }).join('')+'<th class="num">Total 2022</th></tr></thead><tbody>'
+      + rowsP.map(function(a){
+          return '<tr><td><span class="res-legend" style="margin:0"><span><i style="background:'+RES_COLORS[a]+'"></i>'+a+'</span></span></td>'+colsP.map(function(b){ var n = flow[a+'>'+b]||0; return '<td class="num"'+(a===b?' style="color:var(--ink-faint)"':'')+'>'+(n||'·')+'</td>'; }).join('')+'<td class="num">'+s22[a]+'</td></tr>';
+        }).join('') + '<tr><td><strong>Total 2026</strong></td>'+colsP.map(function(b){ return '<td class="num"><strong>'+t[b].seats+'</strong></td>'; }).join('')+'<td class="num">127</td></tr></tbody>';
+    // Plus fortes variations
+    var dPQ = rows.slice().sort(function(a,b){ return (b.pct.PQ-b.p22.PQ) - (a.pct.PQ-a.p22.PQ); }).slice(0,5);
+    var dCAQ = rows.slice().sort(function(a,b){ return (a.pct.CAQ-a.p22.CAQ) - (b.pct.CAQ-b.p22.CAQ); }).slice(0,5);
+    var dPCQ = rows.slice().sort(function(a,b){ return (b.pct.PCQ-b.p22.PCQ) - (a.pct.PCQ-a.p22.PCQ); }).slice(0,5);
+    var cell = function(r, p){ return '<td><a class="crosslink" href="javascript:void(0)" onclick="resGoTo('+r.code+')">'+r.nom+'</a> <small>'+fmtP(r.p22[p])+' → '+fmtP(r.pct[p])+' ('+sgn(r.pct[p]-r.p22[p])+' pts)</small></td>'; };
+    document.getElementById('resSwingTable').innerHTML = '<thead><tr><th>Plus forte hausse du PQ</th><th>Plus forte hausse du PCQ</th><th>Plus forte baisse de la CAQ</th></tr></thead><tbody>'
+      + [0,1,2,3,4].map(function(i){ return '<tr>'+cell(dPQ[i],'PQ')+cell(dPCQ[i],'PCQ')+cell(dCAQ[i],'CAQ')+'</tr>'; }).join('') + '</tbody>';
+  }
+  function renderResProj(){
+    var rows = RESULTATS.rows, P = ['PQ','PLQ','PCQ','QS','CAQ'];
+    var right = rows.filter(function(r){ return r.wproj === r.avance[0]; }).length;
+    var bias = {}, mae = {};
+    P.forEach(function(p){ var d = rows.map(function(r){ return r.proj[p][0] - r.pct[p]; }); bias[p] = d.reduce(function(a,b){ return a+b; },0)/127; mae[p] = d.reduce(function(a,b){ return a+Math.abs(b); },0)/127; });
+    var wrong = rows.filter(function(r){ return r.wproj !== r.avance[0]; });
+    document.getElementById('resProjLead').innerHTML = 'La projection de Qc125 affichée pour chaque circonscription désignait le·la bon·ne gagnant·e dans <strong>'+right+' circonscriptions sur 127</strong> ('+Math.round(right/127*100)+' %) ; elle s\'est trompée dans '+wrong.length+'. Le tableau ci-dessous compare, pour chaque parti, la part de vote projetée à la part obtenue (moyenne sur les 127 circonscriptions).';
+    document.getElementById('resProjBias').innerHTML = '<thead><tr><th>Parti</th><th class="num">Écart moyen (projeté − obtenu)</th><th class="num">Erreur absolue moyenne</th></tr></thead><tbody>'
+      + P.map(function(p){ return '<tr><td><span class="res-legend" style="margin:0"><span><i style="background:'+RES_COLORS[p]+'"></i>'+p+'</span></span></td><td class="num">'+sgn(bias[p])+' pts</td><td class="num">'+mae[p].toFixed(1).replace('.',',')+' pts</td></tr>'; }).join('') + '</tbody>';
+    var sur = wrong.slice().sort(function(a,b){ return (b.proj[b.wproj][0]-b.proj[b.avance[0]][0]) - (a.proj[a.wproj][0]-a.proj[a.avance[0]][0]); }).slice(0,12);
+    document.getElementById('resProjTable').innerHTML = '<thead><tr><th>Circonscription</th><th>Projeté (Qc125)</th><th>Résultat</th><th class="num">Avance projetée</th></tr></thead><tbody>'
+      + sur.map(function(r){
+          var pw = r.wproj, aw = r.avance[0];
+          return '<tr class="res-row" tabindex="0" onclick="resGoTo('+r.code+')" onkeydown="if(event.key===\'Enter\')this.click()"><td>'+r.nom+'</td><td>'+partyBadge(pw)+' '+fmtP(r.proj[pw][0],0)+' <small>('+aw+' '+(r.proj[aw]?fmtP(r.proj[aw][0],0):'—')+')</small></td><td>'+partyBadge(aw==='AUT'?'—':aw)+' '+r.c[0][1]+' <small>'+fmtP(r.c[0][3])+'</small></td><td class="num">'+sgn(r.proj[pw][0]-r.proj[aw][0],0)+' pts</td></tr>';
         }).join('') + '</tbody>';
   }
 
@@ -1765,7 +1886,7 @@
     document.getElementById('resLegendWinner').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ'].map(function(k){
       return '<span><i style="background:'+RES_COLORS[k]+'"></i>'+k+' ('+t[k].seats+')</span>';
     }).join('') + '<span>Teinte pâle = course serrée</span>';
-    document.getElementById('resPartyRow').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ','SECOND','ENP','PART','MARGE'].map(function(k){
+    document.getElementById('resPartyRow').innerHTML = ['PQ','PLQ','PCQ','QS','CAQ','FLIP','SECOND','ENP','PART','MARGE'].map(function(k){
       return '<button type="button" class="chip-btn'+(k===resState.party?' active':'')+'" data-res-party="'+k+'" onclick="setResParty(\''+k+'\')">'+(RES_LAYERS[k]?RES_LAYERS[k].label:k)+'</button>';
     }).join('');
     document.getElementById('resWinnerFilter').innerHTML = ['ALL','PQ','PLQ','PCQ','QS','CAQ'].filter(function(k){ return k==='ALL' || t[k].seats>0; }).map(function(k){
@@ -1775,6 +1896,8 @@
     document.getElementById('resHighlights').innerHTML =
       '<strong>Courses les plus serrées :</strong> '+closest.slice(0,5).map(lm).join(' ; ')+'.<br><strong>Plus grandes victoires (en points) :</strong> '+big.slice(0,5).map(function(r){ return r.nom+' ('+r.avance[0]+', '+r.margePct.toFixed(1).replace('.',',')+' pts)'; }).join(' ; ')+'.<br><strong>Courses décidées par moins de 5 points :</strong> '+rows.filter(function(r){ return r.margePct<5; }).length+' sur 127.';
     renderResInsights();
+    renderResChange();
+    renderResProj();
     renderResRegions();
     renderResMaps();
     renderResMargins();
