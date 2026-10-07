@@ -487,6 +487,20 @@
     padding:10px 14px; margin:0 0 26px; font-size:.86rem; color:var(--ink-soft);
   }
   .archive-note strong{color:var(--ink);}
+
+  .meth-defs{margin:18px 0 8px; display:grid; grid-template-columns:minmax(150px,230px) 1fr; gap:0 24px;}
+  .meth-defs dt{font-weight:600; color:var(--ink); padding:12px 0; border-top:1px solid var(--border);}
+  .meth-defs dd{margin:0; padding:12px 0; border-top:1px solid var(--border); color:var(--ink-soft); font-size:.94rem;}
+  .meth-list{color:var(--ink-soft); padding-left:1.2em; max-width:75ch;}
+  .meth-list li{margin-bottom:.5em;}
+  .meth-archive{border:1px solid var(--border); border-radius:12px; background:var(--surface); padding:4px 18px 18px; margin-top:12px;}
+  .meth-archive summary{cursor:pointer; font-weight:600; padding:12px 0; color:var(--ink);}
+  @media (max-width:600px){
+    .meth-defs{grid-template-columns:1fr; gap:0;}
+    .meth-defs dt{padding:14px 0 2px; border-top:1px solid var(--border);}
+    .meth-defs dd{padding:0 0 12px; border-top:0;}
+    .meth-archive{padding:2px 12px 14px;}
+  }
   .home-sub{margin-top:2.2em;}
   .archive-links{display:flex; flex-wrap:wrap; gap:8px;}
   .archive-links a{
@@ -516,7 +530,7 @@
     .page{padding-block:24px 48px;}
     .wrap{padding-inline:16px;}
     .res-jump{margin-inline:-16px; padding-inline:16px;}
-    #page-resultats h3,#page-analyses h3,#page-cartes h3{margin-top:2.2em;}
+    #page-resultats h3,#page-analyses h3,#page-cartes h3,#page-methodologie h3{margin-top:2.2em;}
     .chip-btn{min-height:40px;}
     .filter-row{gap:8px; margin:14px 0 20px;}
     .res-grid{gap:10px; margin:16px 0;}
@@ -902,12 +916,87 @@
   <section id="page-methodologie" class="page" hidden>
     <div class="wrap">
       <p class="eyebrow">Méthodologie</p>
-      <h2>Méthodologie et architecture</h2>
-      <p class="section-intro">Détails méthodologiques derrière les pages « Partis », « Enjeux » et « Candidats » — grille complète, couches d'analyse, indice composite et architecture d'internationalisation.</p>
+      <h2>D'où viennent les chiffres</h2>
+      <p class="section-intro">Ce qui est officiel, ce qui vient d'un tiers, ce qui est calculé ici, et les limites à garder en tête en lisant les pages Résultats, Analyses et Cartes.</p>
+
+      <nav class="res-jump" aria-label="Sections de la page">
+        <button type="button" class="chip-btn" onclick="resJump('mt-sources')">Sources</button>
+        <button type="button" class="chip-btn" onclick="resJump('mt-mesures')">Mesures</button>
+        <button type="button" class="chip-btn" onclick="resJump('mt-2022')">2022 et projections</button>
+        <button type="button" class="chip-btn" onclick="resJump('mt-cartes')">Cartes</button>
+        <button type="button" class="chip-btn" onclick="resJump('mt-limites')">Limites</button>
+        <button type="button" class="chip-btn" onclick="resJump('mt-archive')">Archive</button>
+      </nav>
+
+      <h3 id="mt-sources">Sources et statut des données</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Donnée</th><th>Provenance</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td>Résultats par circonscription : votes, gagnant·e, deuxième, participation, bulletins rejetés</td><td>Élections Québec, scrutin du 5 octobre 2026 (127 circonscriptions)</td><td><strong>Officiel</strong> — résultats finaux, dernière mise à jour affichée sur la page Résultats</td></tr>
+            <tr><td>Contours des circonscriptions</td><td>Élections Québec, carte électorale 2026 (format MapInfo, reprojetés et simplifiés)</td><td><strong>Officiel</strong>, simplifié pour l'affichage</td></tr>
+            <tr><td>Cours d'eau (fleuve, golfe, rivières, lacs)</td><td>OpenStreetMap (© contributeurs, licence ODbL)</td><td>Tiers, dessiné par-dessus les contours</td></tr>
+            <tr><td>Résultats de 2022 sur la carte de 2026, projections par circonscription</td><td>Qc125 (Philippe J. Fournier ; transposition de Kyle Hutton)</td><td><strong>Estimation de tiers</strong>, relevée manuellement le 6 octobre 2026</td></tr>
+            <tr><td>Parts de vote 2022 à l'échelle du Québec</td><td>Élections Québec</td><td>Officiel</td></tr>
+            <tr><td>Marges, indices, regroupements, densité, sièges « proportionnels »</td><td>Calculés dans ce site à partir des sources ci-dessus</td><td><strong>Calcul propre</strong> — formules ci-dessous</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="caption">Les noms de partis suivent Élections Québec. « Autres » regroupe toutes les candidatures hors CAQ, PCQ, PLQ, PQ et QS (autres partis et indépendant·e·s).</p>
+
+      <h3 id="mt-mesures">Mesures et formules</h3>
+      <dl class="meth-defs">
+        <dt>Marge de victoire</dt>
+        <dd>Votes du·de la gagnant·e moins ceux du·de la deuxième, et le même écart en points de pourcentage du vote valide. Les « courses serrées » sont classées par marge en votes.</dd>
+        <dt>Électeurs à convaincre</dt>
+        <dd>Nombre minimal d'électeurs qui auraient dû changer de choix pour renverser le résultat : la moitié de la marge, arrondie à l'entier inférieur, plus un. Ordre de grandeur, pas une prévision.</dd>
+        <dt>Participation</dt>
+        <dd>Votants (électeurs ayant exercé leur droit) divisés par les électeurs inscrits. Les parts de vote sont calculées sur les <em>votes valides</em>, donc sans les bulletins rejetés.</dd>
+        <dt>Majorité</dt>
+        <dd>Seuil de 64 sièges sur 127. L'écart au seuil est calculé pour le parti en tête.</dd>
+        <dt>Nombre effectif de partis</dt>
+        <dd>Pour une circonscription : 1 divisé par la somme des carrés des parts de vote de chaque candidature (indice de Laakso–Taagepera). Il vaut 2 pour une course à deux à égalité, plus pour une course éclatée. La page Analyses en donne la moyenne sur les 127 circonscriptions.</dd>
+        <dt>Indice de Gallagher</dt>
+        <dd>Mesure de disproportionnalité : racine carrée de la moitié de la somme des carrés des écarts, pour chaque parti, entre sa part des votes et sa part des sièges (CAQ, PCQ, PLQ, PQ, QS). Plus il est élevé, plus le résultat s'éloigne de la proportionnelle.</dd>
+        <dt>Sièges « si proportionnel »</dt>
+        <dd>Hypothèse d'école, pas une prédiction : les 127 sièges répartis selon la méthode du plus fort reste à partir des votes obtenus, comme si le Québec était une seule circonscription et sans seuil. Les électeurs voteraient sans doute autrement dans un autre système.</dd>
+        <dt>Votes par siège</dt>
+        <dd>Votes obtenus par un parti divisés par ses sièges ; « aucun siège » si le parti n'en a pas gagné.</dd>
+        <dt>Votes sans effet</dt>
+        <dd>Part des votes d'un parti qui n'ont servi à élire personne : tous ses votes dans les circonscriptions perdues, plus, dans celles gagnées, l'excédent sur le nombre nécessaire pour l'emporter (votes du·de la deuxième + 1). Ce n'est pas l'« écart d'efficacité » (efficiency gap) de la littérature, qui compare les deux partis principaux.</dd>
+        <dt>Regroupement par région</dt>
+        <dd>Les 127 circonscriptions sont réparties en 13 groupes de régions, tel qu'utilisé pour les fiches de candidat·e·s ; certaines régions administratives y sont regroupées. Ce n'est pas un découpage officiel de résultats.</dd>
+      </dl>
+
+      <h3 id="mt-2022">Comparaison avec 2022 et projections</h3>
+      <p><strong>Transposition.</strong> La carte électorale a changé : les résultats de 2022 ne se comparent pas directement circonscription par circonscription. Qc125 recalcule les résultats de 2022 sur les contours de 2026. Le « gagnant de 2022 » d'une circonscription est le parti ayant la plus forte part transposée ; le total obtenu (CAQ 93, PLQ 20, QS 11, PQ 3) concorde avec celui publié par Radio-Canada. Les sièges de 2022 sur l'ancienne carte (CAQ 90, PLQ 21, QS 11, PQ 3) servent pour le portrait à l'échelle du Québec.</p>
+      <p><strong>Siège « changé de main ».</strong> Une circonscription dont le gagnant de 2026 n'est pas le parti en tête de la transposition de 2022. La variation de part de vote est la part de 2026 moins la part transposée de 2022, en points de pourcentage.</p>
+      <p><strong>D'où viennent les sièges.</strong> Croisement, circonscription par circonscription, du parti gagnant en 2022 (transposé) et du parti gagnant en 2026.</p>
+      <p><strong>Exactitude des projections.</strong> La projection de Qc125 affichée avant le scrutin pour chaque circonscription est comparée au résultat : le parti projeté en tête est-il le bon ? L'écart moyen est <em>projeté moins obtenu</em> (positif = surestimé), et l'erreur absolue moyenne ignore le signe. Les « plus grandes surprises » sont les circonscriptions où le parti projeté en tête avait le plus d'avance sur le·la véritable gagnant·e. Ces projections servent à mesurer l'écart avec les résultats, pas à les remplacer, et d'autres modèles auraient donné d'autres chiffres.</p>
+
+      <h3 id="mt-cartes">Cartes et densité</h3>
+      <p><strong>Carte des gagnants.</strong> Chaque circonscription prend la couleur du parti gagnant ; l'intensité croît avec la marge, jusqu'à pleine intensité à 30 points d'écart ou plus.</p>
+      <p><strong>Carte par parti.</strong> Au choix : part du vote du parti en 2026, ou variation depuis 2022 (transposé), en vert pour une hausse et en rouge pour une baisse. Les deux cartes partagent le même zoom.</p>
+      <p><strong>Densité et « ville / campagne ».</strong> Densité = électeurs inscrits par km² de superficie terrestre, calculée à partir des contours officiels dont on retranche les plans d'eau d'OpenStreetMap. Les 127 circonscriptions sont classées par densité puis réparties en trois groupes de 42, 43 et 42 (régions éloignées et rurales, banlieues et villes moyennes, grands centres urbains). Le nuage de points utilise une échelle logarithmique. C'est un indicateur approximatif de l'urbanité, pas une classification officielle.</p>
+      <p><strong>Approximations du dessin.</strong> Le fjord du Saguenay suit le contour du Parc marin du Saguenay–Saint-Laurent ; entre Chicoutimi et Saint-Fulgence, sa largeur est estimée à partir de l'axe de la rivière. Dans le golfe du Saint-Laurent, un raccord manuel comble l'écart entre deux contours OpenStreetMap. La carte est illustrative : les chiffres, eux, sont ceux d'Élections Québec.</p>
+      <p><strong>Fiches de candidat·e·s.</strong> Le détail d'une circonscription affiche la biographie du·de la gagnant·e seulement si son nom correspond à celui de la fiche prévue avant le scrutin pour le même parti et la même circonscription ; en cas de remplacement de dernière minute, aucune biographie n'est affichée plutôt qu'une fiche erronée.</p>
+
+      <h3 id="mt-limites">Limites et mises à jour</h3>
+      <ul class="meth-list">
+        <li>Les résultats sont ceux publiés par Élections Québec à la date indiquée sur la page Résultats ; d'éventuels recomptages judiciaires ou corrections ultérieurs ne sont pas intégrés automatiquement.</li>
+        <li>Les chiffres de 2022 sur la carte de 2026 et les projections sont des estimations de tiers, relevées à la main : une erreur de relevé reste possible, même si le total de sièges de 2022 a été vérifié.</li>
+        <li>Les groupes « ville / campagne » et les régions sont des regroupements de lecture, pas des catégories officielles.</li>
+        <li>Les indices (Gallagher, nombre effectif de partis, votes sans effet) décrivent le résultat ; ils ne disent pas ce qu'un autre mode de scrutin aurait produit.</li>
+        <li>Le site est statique : les données sont générées à partir du dossier <code>election-result-data/</code> du dépôt (voir le README) et publiées avec la page, sans appel à un serveur au moment de la visite.</li>
+      </ul>
+
+      <h3 id="mt-archive">Archive : méthodologie de la campagne</h3>
+      <p class="section-intro">Détails méthodologiques des pages de campagne (Partis, Enjeux, Quiz, Candidats), conservés comme référence. Ils ne concernent pas les résultats.</p>
+      <details class="meth-archive">
+        <summary>Afficher la méthodologie de la campagne</summary>
       <div class="snapshot-note">
         <span><strong>Sources et date de codage.</strong> Les positions affichées sur les pages « Partis » et « Enjeux » ont été codées le 23 septembre 2026 à partir de la couverture journalistique de la campagne (Le Devoir, La Presse, Radio-Canada, Noovo Info, Les Affaires, Le Quotidien, entre autres), avec une source citée sous chaque position. La campagne se poursuit jusqu'au vote du 5 octobre 2026 : ce squelette n'a pas vocation à être mis à jour en continu et devrait être revérifié avant toute utilisation après cette date.</span>
       </div>
-
       <h3>Grille de notation complète (1–5)</h3>
       <div class="table-scroll">
         <table>
@@ -1042,15 +1131,6 @@
       </ol>
       <p class="method" style="margin-bottom:26px">Construction envisagée&nbsp;: moyenne des quatre sous-composantes, dérivées du codage des dimensions « souveraineté » et « immigration et identité » (recodées selon le sens de cet axe) et des couches ci-dessus. Le sens de chaque sous-composante devra être vérifié pour que l'indice reste cohérent — une position restrictionniste en immigration correspond à un score de 1 sur la dimension, mais à une valeur élevée sur cette composante.</p>
 
-      <h3>Résultats du scrutin</h3>
-      <p><strong>Source.</strong> Résultats officiels d'Élections Québec pour le scrutin du 5 octobre 2026 (127 circonscriptions, résultats finaux), et contours officiels des circonscriptions 2026 (format MapInfo, reprojetés et simplifiés). Les cours d'eau (fleuve, estuaire, golfe, rivières, lacs) viennent d'OpenStreetMap (© contributeurs OpenStreetMap, ODbL) et sont dessinés en blanc par-dessus les circonscriptions, dont les contours officiels couvrent aussi l'eau.</p>
-      <p><strong>Comparaison avec 2022 et projections.</strong> Les résultats de 2022 recalculés sur la carte de 2026 et les projections par circonscription viennent de <a href="https://qc125.com/" target="_blank" rel="noopener">Qc125</a> (Philippe J. Fournier ; transposition de Kyle Hutton), relevés manuellement sur les 127 pages de circonscription le 6 octobre 2026. Ce sont des estimations de tiers, pas des données officielles : le « gagnant·e de 2022 » d'une circonscription est le parti ayant la plus forte part transposée, et le total obtenu (CAQ 93, PLQ 20, QS 11, PQ 3) concorde avec celui publié par Radio-Canada. Les parts de vote 2022 à l'échelle du Québec sont celles d'Élections Québec. Les projections sont celles affichées avant le scrutin ; elles servent à mesurer l'écart avec les résultats, pas à les remplacer.</p>
-      <p><strong>Densité et « ville / campagne ».</strong> Densité = électeurs inscrits (Élections Québec) par km² de superficie terrestre, calculée à partir des contours officiels des circonscriptions dont on retranche les plans d'eau d'OpenStreetMap ; les 127 circonscriptions sont classées par densité puis réparties en trois groupes de 42, 43 et 42. C'est un indicateur approximatif de l'urbanité, pas une classification officielle.</p>
-      <p><strong>Votes sans effet.</strong> Part des votes d'un parti qui n'ont servi à élire personne : tous ses votes dans les circonscriptions perdues, plus, dans celles gagnées, les votes en excédent du nombre nécessaire pour l'emporter (votes du·de la deuxième + 1). Ce n'est pas l'« écart d'efficacité » (efficiency gap) de la littérature, qui compare les deux partis principaux.</p>
-      <p><strong>Marge de victoire.</strong> Écart entre le·la gagnant·e et le·la deuxième, en votes et en points de pourcentage du vote valide. « Autres » regroupe tous les partis et candidatures indépendantes hors CAQ, PCQ, PLQ, PQ et QS.</p>
-      <p><strong>Approximations de la carte.</strong> Le fjord du Saguenay suit le contour du Parc marin du Saguenay–Saint-Laurent ; entre Chicoutimi et Saint-Fulgence, la largeur du fjord est estimée à partir de l'axe de la rivière. Dans le golfe du Saint-Laurent, un raccord manuel comble l'écart entre deux contours OpenStreetMap. La carte est illustrative : les chiffres, eux, sont ceux d'Élections Québec.</p>
-      <p><strong>Lien avec les fiches de candidat·e·s.</strong> Le détail d'une circonscription affiche la biographie du·de la gagnant·e seulement si son nom correspond à celui de notre fiche pour le même parti et la même circonscription ; en cas de remplacement de dernière minute, aucune biographie n'est affichée plutôt qu'une fiche erronée.</p>
-
       <h3>Architecture i18n</h3>
       <p class="section-intro">Le français est aujourd'hui la seule langue active. La structure ci-dessous est pensée pour accueillir d'autres langues plus tard, sans réécriture du contenu ni de la logique d'affichage.</p>
 
@@ -1067,6 +1147,7 @@
   grille.sante.ancrage1: "Privé, concurrence"
   grille.sante.ancrage5: "Public, universel"</code></pre></div>
       <p class="caption">Extrait illustratif — montre la forme des clés, ce n'est pas une implémentation fonctionnelle.</p>
+      </details>
     </div>
   </section>
 
