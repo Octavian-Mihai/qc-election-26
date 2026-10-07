@@ -547,6 +547,30 @@
     .circ-item{padding:.85em 14px; font-size:.95rem;}
     #page-candidats .field-notes{display:none;}
   }
+  .home-cta{display:flex; flex-wrap:wrap; gap:10px; margin:0 0 34px;}
+  .home-cta a{display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding:.6em 1.4em; border-radius:999px; font-weight:600; font-size:.95rem; text-decoration:none; border:1px solid var(--accent);}
+  .cta-primary{background:var(--accent); color:var(--accent-contrast);}
+  .cta-secondary{background:transparent; color:var(--accent-2); border-color:var(--border) !important;}
+  .cta-secondary:hover{border-color:var(--accent-2) !important;}
+  @media (max-width:600px){
+    .hero-flag{margin-bottom:12px;}
+    .hero-flag svg{width:58px; height:39px;}
+    #page-accueil .lede{font-size:1rem;}
+    #page-accueil .res-grid{margin:14px 0;}
+    #homeSeats{margin-bottom:18px;}
+    #homeSeats .res-legend{display:grid; grid-template-columns:1fr 1fr; gap:6px 10px; font-size:.8rem;}
+    .home-cta{flex-direction:column; margin-bottom:26px;}
+    .home-cta a{width:100%;}
+    #page-accueil .toc-grid{grid-template-columns:minmax(0,1fr); gap:8px;}
+    #page-accueil .toc-card{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:center; padding:12px 14px; min-height:64px;}
+    #page-accueil .toc-num{margin:0; grid-row:1 / span 2;}
+    #page-accueil .toc-card h3{margin:0; font-size:1rem;}
+    #page-accueil .toc-card p{grid-column:2; font-size:.8rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+    #page-accueil .toc-card::after{content:"›"; grid-column:3; grid-row:1 / span 2; font-size:1.6rem; color:var(--ink-faint); line-height:1;}
+    .home-sub{margin-top:1.8em;}
+    #page-accueil .archive-links{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+    #page-accueil .archive-links a{justify-content:center; min-height:46px;}
+  }
   .home-sub{margin-top:2.2em;}
   .archive-links{display:flex; flex-wrap:wrap; gap:8px;}
   .archive-links a{
@@ -668,6 +692,10 @@
 
       <div class="res-grid" id="homeTiles"><p class="section-intro">Chargement des résultats…</p></div>
       <div id="homeSeats"></div>
+      <div class="home-cta">
+        <a class="cta-primary" href="#resultats" onclick="goTo('resultats')">Voir tous les résultats</a>
+        <a class="cta-secondary" href="#cartes" onclick="goTo('cartes')">Explorer la carte</a>
+      </div>
 
       <div class="toc-grid">
         <a class="toc-card" href="#resultats" onclick="goTo('resultats')">
