@@ -507,6 +507,21 @@
   .res-pager-pos{font-size:.86rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; white-space:nowrap;}
   .res-pager .chip-btn:disabled{opacity:.4; cursor:default;}
   @media (max-width:600px){ .res-pager{flex-direction:column; align-items:stretch;} .res-pager-btns{justify-content:space-between;} }
+  .pf-sub{margin:20px 0 6px; font-size:1rem;}
+  .pf-p{display:inline-block; font-family:"IBM Plex Mono", monospace; font-weight:700; font-size:.74rem; color:#fff; border-radius:6px; padding:.25em .5em; line-height:1; margin:1px 2px 1px 0;}
+  .pf-yes,.pf-no{font-weight:600;}
+  .pf-yes{color:#1B8A6B;} .pf-no{color:#C2553A;}
+  .pf-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin:22px 0;}
+  .pf-card{background:var(--surface); border:1px solid var(--border); border-top:4px solid var(--border); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow);}
+  .pf-card h4{margin:0 0 8px; font-size:1.02rem;}
+  .pf-card p{font-size:.9rem; color:var(--ink-soft); margin:0 0 .7em;}
+  .pf-verdict{color:var(--ink) !important; font-weight:600; margin-bottom:0 !important;}
+  .pf-scen{display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin:16px 0;}
+  .pf-scen-item{background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent-2); border-radius:0 12px 12px 0; padding:14px 18px;}
+  .pf-scen-item h4{margin:0 0 6px; font-size:1rem; display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center;}
+  .pf-scen-item p{margin:0; font-size:.92rem; color:var(--ink-soft);}
+  .pf-themes td{font-size:.88rem;}
+  table.pf-dist td.near{background:color-mix(in srgb, #1B8A6B 18%, transparent); font-weight:600;}
   .home-sub{margin-top:2.2em;}
   .archive-links{display:flex; flex-wrap:wrap; gap:8px;}
   .archive-links a{
@@ -536,7 +551,7 @@
     .page{padding-block:24px 48px;}
     .wrap{padding-inline:16px;}
     .res-jump{margin-inline:-16px; padding-inline:16px;}
-    #page-resultats h3,#page-analyses h3,#page-cartes h3,#page-methodologie h3{margin-top:2.2em;}
+    #page-resultats h3,#page-analyses h3,#page-cartes h3,#page-methodologie h3,#page-perspectives h3{margin-top:2.2em;}
     .chip-btn{min-height:40px;}
     .filter-row{gap:8px; margin:14px 0 20px;}
     .res-grid{gap:10px; margin:16px 0;}
@@ -600,6 +615,7 @@
       <a href="#resultats" onclick="goTo('resultats')">Résultats</a>
       <a href="#analyses" onclick="goTo('analyses')">Analyses</a>
       <a href="#cartes" onclick="goTo('cartes')">Cartes</a>
+      <a href="#perspectives" onclick="goTo('perspectives')">Perspectives</a>
       <a href="#methodologie" onclick="goTo('methodologie')">Méthodologie</a>
       <div class="nav-more" id="navMore">
         <button type="button" class="nav-more-btn" id="navMoreBtn" aria-expanded="false" aria-controls="navMoreMenu">Avant le scrutin <span aria-hidden="true">▾</span></button>
@@ -644,8 +660,13 @@
           <h3>Cartes</h3>
           <p>Cartes interactives des gagnants et du vote par parti, recherche et détail par circonscription.</p>
         </a>
-        <a class="toc-card" href="#methodologie" onclick="goTo('methodologie')">
+        <a class="toc-card" href="#perspectives" onclick="goTo('perspectives')">
           <span class="toc-num">04</span>
+          <h3>Perspectives</h3>
+          <p>Un PQ minoritaire : ses promesses, l'arithmétique de l'Assemblée et les partenaires probables.</p>
+        </a>
+        <a class="toc-card" href="#methodologie" onclick="goTo('methodologie')">
+          <span class="toc-num">05</span>
           <h3>Méthodologie</h3>
           <p>Sources des données, transposition 2022 et limites.</p>
         </a>
@@ -916,6 +937,136 @@
       <h3 id="rj-detail">Détail de la circonscription</h3>
       <div class="res-detail" id="resDetail" aria-live="polite"></div>
 
+    </div>
+  </section>
+
+  <!-- ============ PAGE : PERSPECTIVES ============ -->
+  <section id="page-perspectives" class="page" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Après le scrutin · analyse prospective</p>
+      <h2>Et maintenant ? Un gouvernement péquiste minoritaire</h2>
+      <p class="section-intro">Ce que le PQ a promis, ce que l'arithmétique de l'Assemblée nationale lui permet, et avec quels partis il aura probablement à s'entendre. <strong>Ce sont des scénarios, pas des prévisions</strong> : ils s'appuient sur les résultats officiels, sur les positions des partis codées avant le vote, et sur les déclarations rapportées par la presse les 21 septembre et 6-7 octobre 2026.</p>
+
+      <div class="res-grid">
+        <div class="stat-tile"><h4>Sièges du PQ</h4><div class="value" style="color:var(--ink)">59 / 127</div><p>5 sièges sous la majorité de 64</p></div>
+        <div class="stat-tile"><h4>Opposition</h4><div class="value" style="color:var(--ink)">68</div><p>PLQ 40 · PCQ 19 · QS 9 · CAQ 0</p></div>
+        <div class="stat-tile"><h4>Plus petit partenaire suffisant</h4><div class="value" style="color:var(--ink)">QS : 9</div><p>PQ + QS = 68 sièges, la seule paire à ne dépendre de personne d'autre</p></div>
+      </div>
+
+      <nav class="res-jump" aria-label="Sections de la page">
+        <button type="button" class="chip-btn" onclick="resJump('pf-promesses')">Promesses du PQ</button>
+        <button type="button" class="chip-btn" onclick="resJump('pf-math')">Arithmétique</button>
+        <button type="button" class="chip-btn" onclick="resJump('pf-themes')">Enjeu par enjeu</button>
+        <button type="button" class="chip-btn" onclick="resJump('pf-partenaires')">Partenaires</button>
+        <button type="button" class="chip-btn" onclick="resJump('pf-scenarios')">Scénarios</button>
+        <button type="button" class="chip-btn" onclick="resJump('pf-sources')">Sources</button>
+      </nav>
+
+      <h3 id="pf-promesses">Les principales promesses du PQ</h3>
+      <h4 class="pf-sub">Premiers gestes annoncés après la victoire</h4>
+      <ul class="meth-list">
+        <li><strong>Itinérance :</strong> un sommet et des ressources débloquées rapidement, avec l'objectif de réduire le phénomène de moitié ; 100 M$ par année pour les banques alimentaires.</li>
+        <li><strong>Projets de loi rapides :</strong> gel des salaires des député·e·s, ministres et dirigeant·e·s de sociétés d'État (jusqu'au retour à l'équilibre budgétaire) ; abolition de la taxe de vente sur les biens usagés ; baisse de 7 cents de la taxe sur l'essence.</li>
+        <li><strong>État :</strong> un Secrétariat à l'efficacité gouvernementale pour passer les programmes au peigne fin, un audit des projets informatiques de l'État et un conseil des ministres plus petit que celui de la CAQ.</li>
+        <li><strong>Symboles de la monarchie :</strong> écarter la lieutenante-gouverneure de l'assermentation et éliminer l'étape de la sanction royale, par des moyens symboliques.</li>
+      </ul>
+      <h4 class="pf-sub">Plateforme de campagne (codée le 23 septembre)</h4>
+      <div class="table-scroll"><table id="pfPlatformTable"></table></div>
+      <p class="caption">Pour le référendum : « avant la fin d'un premier mandat, mais pas avant le départ de Donald Trump de la Maison-Blanche (20 janvier 2029) » — autrement dit, pas avant le début de 2029 au plus tôt. Positions codées avant le vote à partir de la presse ; voir les archives « Partis » pour le détail.</p>
+
+      <h3 id="pf-math">L'arithmétique de l'Assemblée</h3>
+      <p class="section-intro">Avec 59 sièges sur 127, le PQ ne peut pas adopter une loi seul. Mais il n'a pas besoin que les autres partis <em>votent pour</em> : il suffit, selon les cas, qu'ils s'abstiennent ou soient absents. Le tableau suppose que le·la président·e de l'Assemblée est issu·e du PQ (usage courant, à confirmer à l'élection du·de la président·e) ; il ne vote alors qu'en cas d'égalité, ce qui laisse 58 voix péquistes.</p>
+      <div class="table-scroll"><table id="pfMathTable">
+        <thead><tr><th>Si le projet de loi est appuyé par…</th><th class="num">Pour</th><th class="num">Contre</th><th>Résultat</th></tr></thead>
+        <tbody>
+          <tr><td>le PQ seul, tous les autres contre</td><td class="num">58</td><td class="num">68</td><td><span class="pf-no">Rejeté</span></td></tr>
+          <tr><td>le PQ + QS</td><td class="num">67</td><td class="num">59</td><td><span class="pf-yes">Adopté</span></td></tr>
+          <tr><td>le PQ + PCQ</td><td class="num">77</td><td class="num">49</td><td><span class="pf-yes">Adopté</span></td></tr>
+          <tr><td>le PQ + PLQ</td><td class="num">98</td><td class="num">28</td><td><span class="pf-yes">Adopté</span></td></tr>
+          <tr><td>le PQ, avec le PLQ <em>absent ou abstenu</em></td><td class="num">58</td><td class="num">28</td><td><span class="pf-yes">Adopté</span></td></tr>
+          <tr><td>le PQ, avec le PCQ <em>absent ou abstenu</em></td><td class="num">58</td><td class="num">49</td><td><span class="pf-yes">Adopté</span></td></tr>
+          <tr><td>le PQ, avec QS <em>absent ou abstenu</em></td><td class="num">58</td><td class="num">59</td><td><span class="pf-no">Rejeté</span> <small>(de justesse)</small></td></tr>
+        </tbody>
+      </table></div>
+      <p class="caption">Hypothèses simplificatrices : discipline de parti parfaite, aucun siège vacant, les autres partis votent ensemble contre quand ils ne s'abstiennent pas. Un vote de confiance (budget, discours d'ouverture) suit la même arithmétique, mais sa défaite provoquerait la chute du gouvernement. La CAQ n'a aucun siège.</p>
+
+      <h3 id="pf-themes">Enjeu par enjeu : qui peut appuyer quoi ?</h3>
+      <p class="section-intro">Pour chaque priorité du PQ, les partis dont les positions de campagne s'en rapprochent ou s'y opposent. La presse rapporte que pour chaque dossier prioritaire du PQ, au moins un parti d'opposition est prêt à l'appuyer.</p>
+      <div class="table-scroll"><table class="pf-themes">
+        <thead><tr><th>Priorité du PQ</th><th>Alliés naturels</th><th>Opposants probables</th><th>Pourquoi</th></tr></thead>
+        <tbody>
+          <tr><td>Baisse de la taxe sur l'essence, taxe sur les biens usagés abolie</td><td><span class="pf-p" data-p="PCQ">PCQ</span> <span class="pf-p" data-p="PLQ">PLQ</span></td><td><span class="pf-p" data-p="QS">QS</span></td><td>Le PCQ propose de suspendre la taxe sur l'essence et de baisser fortement les impôts ; le PLQ de réduire l'impôt des PME. QS mise sur de nouvelles taxes sur les grandes fortunes et sur la transition.</td></tr>
+          <tr><td>Réduire l'immigration (seuil de 35 000, moratoire économique)</td><td><span class="pf-p" data-p="PCQ">PCQ</span></td><td><span class="pf-p" data-p="PLQ">PLQ</span> <span class="pf-p" data-p="QS">QS</span></td><td>Le PCQ est aussi restrictionniste ; le PLQ veut plus de contrôle sur les travailleurs temporaires pour combler les pénuries ; QS propose 70 000 admissions par an, soit le double de la cible du PQ.</td></tr>
+          <tr><td>Abolir Santé Québec</td><td><span class="pf-p" data-p="PCQ">PCQ</span></td><td>—</td><td>Le PCQ promet la même abolition, au nom de la bureaucratie ; les positions de QS et du PLQ à ce sujet ne sont pas documentées dans nos sources.</td></tr>
+          <tr><td>Équilibre budgétaire dès 2028-2029, efficacité de l'État</td><td><span class="pf-p" data-p="PLQ">PLQ</span> <span class="pf-p" data-p="PCQ">PCQ</span></td><td><span class="pf-p" data-p="QS">QS</span></td><td>Le PLQ vise l'équilibre en 2029-2030 par l'efficacité et la compression de postes ; le PCQ propose un État réduit de plus de 60 G$. QS vise 2030 par de nouveaux revenus.</td></tr>
+          <tr><td>Pas de nouveau troisième lien, cibles climatiques à la hausse</td><td><span class="pf-p" data-p="QS">QS</span></td><td><span class="pf-p" data-p="PLQ">PLQ</span> <span class="pf-p" data-p="PCQ">PCQ</span></td><td>QS est le parti le plus écologiste ; le PLQ conditionne le troisième lien à un partenariat public-privé ; le PCQ veut exploiter les hydrocarbures.</td></tr>
+          <tr><td>Référendum sur la souveraineté (pas avant 2029)</td><td><span class="pf-p" data-p="QS">QS</span> <small>(par une constituante)</small></td><td><span class="pf-p" data-p="PLQ">PLQ</span> <span class="pf-p" data-p="PCQ">PCQ</span></td><td>QS est souverainiste mais préfère une assemblée constituante à un référendum rapide. Le chef libéral a dit qu'il n'appuierait pas de consultation référendaire ; le PCQ est fédéraliste autonomiste.</td></tr>
+          <tr><td>Itinérance, banques alimentaires, gel des salaires des élus</td><td colspan="2"><em>Large appui probable</em></td><td>Mesures peu clivantes ; aucune opposition déclarée dans les sources consultées.</td></tr>
+        </tbody>
+      </table></div>
+      <p class="caption">Lecture déduite des positions de campagne : aucun de ces partis n'a, à notre connaissance, annoncé son vote sur ces projets de loi précis.</p>
+
+      <h3 id="pf-partenaires">Les partenaires possibles</h3>
+      <p class="section-intro">Proximité de chaque parti avec le PQ sur les six dimensions du site (1 à 5, codées avant le vote). Une case verte indique un écart d'au plus 1 point avec le PQ ; la dernière ligne additionne les écarts (plus petit = plus proche).</p>
+      <div class="table-scroll"><table id="pfDistTable"></table></div>
+      <p class="caption">Mesure grossière : deux partis proches sur le papier peuvent diverger sur ce qui compte le plus pour le PQ (immigration, souveraineté). L'échelle mesure une position, pas une qualité.</p>
+
+      <div class="pf-cards">
+        <div class="pf-card" data-p="PCQ">
+          <h4><span class="pf-p" data-p="PCQ">PCQ</span> · 19 sièges</h4>
+          <p><strong>Atouts du côté du PQ :</strong> même ligne dure en immigration, abolition de Santé Québec, baisses de taxes, discours autonomiste. PQ + PCQ = 78 sièges, une marge confortable.</p>
+          <p><strong>Obstacles :</strong> divergence totale sur la souveraineté, l'économie et l'environnement ; QS a accusé les deux partis d'une « alliance souveraineté-austérité ». Le chef du PCQ exclut toute coalition formelle mais se dit ouvert aux « collaborations ponctuelles ».</p>
+          <p class="pf-verdict">Partenaire probable sur l'immigration, la fiscalité et la santé.</p>
+        </div>
+        <div class="pf-card" data-p="QS">
+          <h4><span class="pf-p" data-p="QS">QS</span> · 9 sièges</h4>
+          <p><strong>Atouts :</strong> souverainiste, proche du PQ sur l'environnement et le refus du troisième lien. PQ + QS = 68 sièges : une majorité arithmétique sans autre appui, même sans le président.</p>
+          <p><strong>Obstacles :</strong> l'écart sur l'immigration est le plus grand de tous (QS 5, PQ 1), la fiscalité et le référendum les séparent aussi. Le PQ a exclu toute alliance formelle durant la campagne.</p>
+          <p class="pf-verdict">Partenaire naturel sur la souveraineté et l'environnement, plus difficile sur l'immigration et le budget.</p>
+        </div>
+        <div class="pf-card" data-p="PLQ">
+          <h4><span class="pf-p" data-p="PLQ">PLQ</span> · 40 sièges</h4>
+          <p><strong>Atouts :</strong> opposition officielle, discipline budgétaire proche de celle du PQ, ouverture déclarée à la collaboration. Son abstention seule suffit à faire adopter un projet de loi.</p>
+          <p><strong>Obstacles :</strong> fédéraliste : le chef libéral a prévenu qu'il n'appuierait pas de consultation sur la souveraineté. Désaccord sur l'immigration, où le PLQ veut plus de travailleurs temporaires.</p>
+          <p class="pf-verdict">Appui possible sur le budget et l'efficacité ; opposition ferme sur le référendum.</p>
+        </div>
+      </div>
+
+      <h3 id="pf-scenarios">Trois scénarios</h3>
+      <div class="pf-scen">
+        <div class="pf-scen-item">
+          <h4>1. Des ententes à la pièce <span class="tag">le plus probable</span></h4>
+          <p>Le PQ choisit son partenaire projet de loi par projet de loi : le PCQ sur l'immigration, la fiscalité et Santé Québec ; QS sur l'environnement ; le PLQ sur le budget. C'est cohérent avec les positions publiques : le PQ a promis de tendre la main à tous et exclu une alliance formelle ; le PCQ exclut la coalition mais accepte les collaborations ponctuelles ; le PLQ accepte de collaborer sauf sur le référendum. Comme un seul parti qui s'abstient suffit la plupart du temps, le PQ peut gouverner sans accord durable.</p>
+        </div>
+        <div class="pf-scen-item">
+          <h4>2. Une entente de soutien avec QS <span class="tag">possible, moins probable</span></h4>
+          <p>Seule paire qui forme une majorité à elle seule (68). Elle pourrait prendre la forme d'un soutien sur les budgets en échange de mesures sociales ou environnementales, et d'un engagement sur une constituante. Freins : l'immigration, la fiscalité, et la position exprimée en campagne contre toute alliance.</p>
+        </div>
+        <div class="pf-scen-item">
+          <h4>3. Un blocage et des élections anticipées <span class="tag">risque réel, pas le plus probable à court terme</span></h4>
+          <p>Les 68 député·e·s d'opposition pourraient, ensemble, faire tomber le gouvernement sur un vote de confiance. Mais le PLQ, le PCQ et QS ont des intérêts très différents, et la CAQ, sans siège, est affaiblie (sa cheffe a annoncé son départ de la politique selon Noovo). Précédents québécois : les deux gouvernements minoritaires récents ont duré environ 18 à 20 mois (Charest, 2007-2008 ; Marois, 2012-2014). La loi prévoit une prochaine élection à date fixe en octobre 2030, mais un premier ministre peut la devancer.</p>
+        </div>
+      </div>
+
+      <h3>À surveiller</h3>
+      <ul class="meth-list">
+        <li>Les rencontres de PSPP avec chaque chef de parti, annoncées « dans les prochains jours ».</li>
+        <li>L'élection du·de la président·e de l'Assemblée, qui détermine le nombre de voix réelles du PQ.</li>
+        <li>Le discours d'ouverture et la mise à jour budgétaire (premiers votes de confiance), où PSPP a promis d'intégrer de bonnes idées des autres partis.</li>
+        <li>La réaction du PCQ et de QS : au moment de rédiger cette page, leurs réponses détaillées ne sont pas documentées dans nos sources.</li>
+        <li>Le projet de référendum : promis pour ce mandat, mais pas avant 2029.</li>
+      </ul>
+
+      <h3 id="pf-sources">Sources et limites</h3>
+      <p class="section-intro">Page rédigée le 7 octobre 2026, à partir de ces sources ; elle n'est pas mise à jour automatiquement.</p>
+      <ul class="meth-list">
+        <li><a href="https://www.latribune.ca/elections-provinciales-2026/2026/10/06/a-quoi-sattendre-des-debuts-du-gouvernement-de-paul-st-pierre-plamondon-ONEXSFWXIVAYNGZOPZEQR6KH5U/" target="_blank" rel="noopener">La Tribune, 6 oct. 2026 — À quoi s'attendre des débuts du gouvernement PSPP</a></li>
+        <li><a href="https://www.noovo.info/nouvelles/politique/article/paul-st-pierre-plamondon-prend-la-parole-au-lendemain-de-son-election/" target="_blank" rel="noopener">Noovo Info — PSPP dévoile ses priorités au lendemain de la victoire</a></li>
+        <li><a href="https://flofm.ca/actualites/2026/victoire-minoritaire-du-pq-aux-provinciales-du-05-octobre-paul-st-pierre-plamondon-tend-la-main-aux-autres-partis" target="_blank" rel="noopener">FLO FM — Victoire minoritaire du PQ : PSPP tend la main aux autres partis</a></li>
+        <li><a href="https://www.noovo.info/nouvelles/politique/elections-quebec/article/jour-26-la-question-des-alliances-revient-pour-une-deuxieme-journee/" target="_blank" rel="noopener">Noovo Info, 21 sept. 2026 — La question des alliances (déclarations de campagne)</a></li>
+        <li>Résultats : Élections Québec (voir <a class="crosslink" href="#methodologie" onclick="goTo('methodologie')">Méthodologie</a>) ; positions de campagne : pages d'archive « Partis » de ce site.</li>
+      </ul>
+      <p class="caption">Les déclarations de campagne (21 septembre) peuvent ne plus refléter les positions après le vote. Les scénarios ne sont pas des prévisions et n'engagent aucun parti.</p>
     </div>
   </section>
 
@@ -1208,7 +1359,7 @@
     {label:'Transparence budgétaire'},
     {label:'Compatibilité de coalition'}
   ];
-  var PAGES = ['accueil','resultats','analyses','cartes','methodologie','partis','enjeux','quiz','candidats'];
+  var PAGES = ['accueil','resultats','analyses','cartes','perspectives','methodologie','partis','enjeux','quiz','candidats'];
   var PRE_PAGES = ['partis','enjeux','quiz','candidats'];
   var RES_PAGES = ['accueil','resultats','analyses','cartes'];
 
@@ -2298,6 +2449,33 @@
     if(RES_PAGES.indexOf(id) !== -1) resEnsureLoaded(function(){ resApplyView(); resSpy(); });
   }
 
+  function renderPerspectives(){
+    var COL = {PQ:'#1F78D1', PLQ:'#E4032E', PCQ:'#5B2C8F', QS:'#FF7900'};
+    document.querySelectorAll('.pf-p').forEach(function(e){ e.style.background = COL[e.getAttribute('data-p')]; });
+    document.querySelectorAll('.pf-card').forEach(function(e){ e.style.borderTopColor = COL[e.getAttribute('data-p')]; });
+    var esc = function(x){ return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;'); };
+    document.getElementById('pfPlatformTable').innerHTML =
+      '<thead><tr><th>Dimension</th><th>Engagement</th><th>Source</th></tr></thead><tbody>'
+      + DIMENSIONS.map(function(d){
+          var c = SCORES.PQ[d.id];
+          return '<tr><td><strong>'+esc(d.label)+'</strong></td><td>'+esc(c.note)+'</td><td><a href="'+c.url+'" target="_blank" rel="noopener">'+esc(c.src)+'</a></td></tr>';
+        }).join('') + '</tbody>';
+    var P = ['PQ','PLQ','PCQ','QS'], dist = {PLQ:0, PCQ:0, QS:0};
+    var rows = DIMENSIONS.map(function(d){
+      var q = SCORES.PQ[d.id].score;
+      return '<tr><td>'+esc(d.label)+'</td>' + P.map(function(k){
+        var v = SCORES[k][d.id].score, near = k!=='PQ' && Math.abs(v-q) <= 1;
+        if(k!=='PQ') dist[k] += Math.abs(v-q);
+        return '<td class="num'+(near?' near':'')+'">'+v+'</td>';
+      }).join('') + '</tr>';
+    }).join('');
+    var best = Math.min(dist.PLQ, dist.PCQ, dist.QS);
+    document.getElementById('pfDistTable').className = 'pf-dist';
+    document.getElementById('pfDistTable').innerHTML =
+      '<thead><tr><th>Dimension</th>'+P.map(function(k){ return '<th class="num"><span class="pf-p" style="background:'+COL[k]+'">'+k+'</span></th>'; }).join('')+'</tr></thead><tbody>'
+      + rows + '<tr><td><strong>Écart total avec le PQ</strong></td><td class="num">—</td>'
+      + ['PLQ','PCQ','QS'].map(function(k){ return '<td class="num"'+(dist[k]===best?' style="font-weight:700"':'')+'>'+dist[k]+(dist[k]===best?' ✓':'')+'</td>'; }).join('')+'</tr></tbody>';
+  }
   function closeMore(){
     var m = document.getElementById('navMoreMenu'), b = document.getElementById('navMoreBtn');
     if(m){ m.hidden = true; b.setAttribute('aria-expanded','false'); }
@@ -2351,6 +2529,7 @@
     loadQuiz();
     renderQuiz();
     renderCandidats();
+    renderPerspectives();
     updatePartyChips();
     updateTopicChips();
 
