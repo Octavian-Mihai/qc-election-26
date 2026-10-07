@@ -128,7 +128,7 @@
     background:transparent; color:var(--ink); border:1px solid var(--border);
     padding:.45em .9em; border-radius:8px; cursor:pointer;
   }
-  .site-nav{display:flex; flex-wrap:wrap; gap:4px 22px;}
+  .site-nav{display:flex; flex-wrap:wrap; align-items:center; gap:4px 18px;}
   .site-nav a{
     color:var(--ink-soft); text-decoration:none; font-size:.92rem; font-weight:500;
     padding:.3em 0; border-bottom:2px solid transparent;
@@ -138,7 +138,7 @@
   @media (max-width:760px){
     .nav-toggle{display:inline-block}
     .site-nav{
-      display:none; flex-direction:column; gap:2px;
+      display:none; flex-direction:column; align-items:stretch; gap:2px;
       position:absolute; left:0; right:0; top:100%;
       background:var(--surface); border-bottom:1px solid var(--border);
       padding:10px 20px 16px; box-shadow:var(--shadow);
@@ -192,7 +192,7 @@
   .party-chip small{font-family:"IBM Plex Sans", sans-serif; font-weight:400; color:var(--ink-soft); font-size:.72rem;}
 
   .toc-grid{
-    display:grid; grid-template-columns:repeat(auto-fit, minmax(210px,1fr));
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr));
     gap:14px;
   }
   .toc-card{
@@ -456,6 +456,50 @@
   th.sortable{cursor:pointer;}
   th.sortable:hover{color:var(--accent-2);}
 
+
+  /* ---------- menu « Avant le scrutin » ---------- */
+  .nav-more{position:relative;}
+  .nav-more-btn{
+    font:inherit; font-size:.92rem; font-weight:500; color:var(--ink-soft); background:transparent;
+    border:1px solid var(--border); border-radius:999px; padding:.3em .9em; cursor:pointer;
+  }
+  .nav-more-btn:hover,.nav-more-btn[aria-expanded="true"],.nav-more-btn.active{color:var(--ink); border-color:var(--accent-2);}
+  .nav-more-btn.active{background:var(--accent-2-soft);}
+  .nav-more-menu{
+    position:absolute; right:0; top:calc(100% + 8px); min-width:290px; z-index:30;
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    box-shadow:var(--shadow); padding:8px;
+  }
+  .nav-more-note{margin:4px 10px 8px; font-size:.78rem; color:var(--ink-faint); line-height:1.4;}
+  .site-nav .nav-more-menu a{
+    display:block; padding:.55em .8em; border:0; border-radius:8px; font-size:.95rem; color:var(--ink);
+  }
+  .site-nav .nav-more-menu a small{display:block; font-size:.76rem; font-weight:400; color:var(--ink-soft);}
+  .site-nav .nav-more-menu a:hover,.site-nav .nav-more-menu a.active{background:var(--accent-2-soft);}
+  @media (max-width:760px){
+    .nav-more-btn{width:100%; text-align:left; border-radius:8px; padding:.7em .9em; margin-top:6px; font-size:.95rem;}
+    .nav-more-menu{position:static; box-shadow:none; border:0; border-left:2px solid var(--border); border-radius:0; margin:6px 0 0 6px; padding:0 0 0 8px; min-width:0;}
+    .site-nav .nav-more-menu a{border-bottom:0; padding:.6em .6em; min-height:44px;}
+  }
+  .archive-note{
+    display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline; justify-content:space-between;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:10px;
+    padding:10px 14px; margin:0 0 26px; font-size:.86rem; color:var(--ink-soft);
+  }
+  .archive-note strong{color:var(--ink);}
+  .home-sub{margin-top:2.2em;}
+  .archive-links{display:flex; flex-wrap:wrap; gap:8px;}
+  .archive-links a{
+    padding:.6em 1.2em; border:1px solid var(--border); border-radius:999px; background:var(--surface);
+    color:var(--ink-soft); text-decoration:none; font-weight:600; font-size:.9rem; min-height:40px; display:inline-flex; align-items:center;
+  }
+  .archive-links a:hover{color:var(--ink); border-color:var(--accent-2);}
+  #homeSeats{margin:0 0 34px;}
+  .home-bar{display:flex; height:30px; border-radius:8px; overflow:hidden; margin:6px 0 4px; position:relative;}
+  .home-bar span{display:block; height:100%;}
+  .home-bar::after{content:""; position:absolute; left:50.4%; top:-3px; bottom:-3px; width:2px; background:var(--ink);}
+  .home-bar-cap{font-size:.78rem; color:var(--ink-faint); margin:0 0 8px;}
+
   /* ---------- page Résultats : navigation rapide (téléphone) ---------- */
   .res-jump{
     display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
@@ -467,12 +511,12 @@
   }
   .res-jump::-webkit-scrollbar{display:none;}
   .res-jump .chip-btn{white-space:nowrap; flex:0 0 auto; min-height:40px;}
-  #page-resultats h3{scroll-margin-top:130px;}
+  .page h3{scroll-margin-top:130px;}
   @media (max-width:600px){
     .page{padding-block:24px 48px;}
     .wrap{padding-inline:16px;}
     .res-jump{margin-inline:-16px; padding-inline:16px;}
-    #page-resultats h3{margin-top:2.2em;}
+    #page-resultats h3,#page-analyses h3,#page-cartes h3{margin-top:2.2em;}
     .chip-btn{min-height:40px;}
     .filter-row{gap:8px; margin:14px 0 20px;}
     .res-grid{gap:10px; margin:16px 0;}
@@ -483,9 +527,9 @@
     table.wide{min-width:560px;}
     th,td{padding:9px 8px; font-size:.82rem;}
     thead th, thead th.num{white-space:normal; line-height:1.25; vertical-align:bottom;}
-    #page-resultats .table-scroll td:first-child,
-    #page-resultats .table-scroll th:first-child{position:sticky; left:0; z-index:1; background:var(--surface); box-shadow:1px 0 0 var(--border);}
-    #page-resultats .table-scroll thead th:first-child{background:var(--surface-2);}
+    .page .table-scroll td:first-child,
+    .page .table-scroll th:first-child{position:sticky; left:0; z-index:1; background:var(--surface); box-shadow:1px 0 0 var(--border);}
+    .page .table-scroll thead th:first-child{background:var(--surface-2);}
     #resMarginTable th:nth-child(3),#resMarginTable td:nth-child(3),
     #resMarginTable th:nth-child(6),#resMarginTable td:nth-child(6){display:none;}
     .res-map-wrap{padding:6px;}
@@ -533,12 +577,20 @@
     </div>
     <nav class="site-nav" id="siteNav" aria-label="Navigation principale">
       <a href="#accueil" onclick="goTo('accueil')">Accueil</a>
-      <a href="#partis" onclick="goTo('partis')">Partis</a>
-      <a href="#enjeux" onclick="goTo('enjeux')">Enjeux</a>
-      <a href="#quiz" onclick="goTo('quiz')">Quiz</a>
-      <a href="#candidats" onclick="goTo('candidats')">Candidats</a>
       <a href="#resultats" onclick="goTo('resultats')">Résultats</a>
+      <a href="#analyses" onclick="goTo('analyses')">Analyses</a>
+      <a href="#cartes" onclick="goTo('cartes')">Cartes</a>
       <a href="#methodologie" onclick="goTo('methodologie')">Méthodologie</a>
+      <div class="nav-more" id="navMore">
+        <button type="button" class="nav-more-btn" id="navMoreBtn" aria-expanded="false" aria-controls="navMoreMenu">Avant le scrutin <span aria-hidden="true">▾</span></button>
+        <div class="nav-more-menu" id="navMoreMenu" hidden>
+          <p class="nav-more-note">Archives de la campagne, produites avant le vote du 5 octobre.</p>
+          <a href="#partis" onclick="goTo('partis')">Partis<small>Positions sur six dimensions</small></a>
+          <a href="#enjeux" onclick="goTo('enjeux')">Enjeux<small>Comparatif enjeu par enjeu</small></a>
+          <a href="#quiz" onclick="goTo('quiz')">Quiz<small>Concordance avec les partis</small></a>
+          <a href="#candidats" onclick="goTo('candidats')">Candidats<small>635 candidat·e·s, 127 circonscriptions</small></a>
+        </div>
+      </div>
     </nav>
   </div>
 </header>
@@ -549,48 +601,43 @@
   <section id="page-accueil" class="page">
     <div class="wrap">
       <div class="hero-flag" aria-hidden="true" id="heroFlag"></div>
-      <p class="eyebrow">Élection générale du Québec · 2026</p>
+      <p class="eyebrow">Élection générale du Québec · 5 octobre 2026</p>
       <h1>Repères Québec 2026</h1>
-      <p class="lede">Plateforme comparative pour l'élection générale québécoise du 5 octobre 2026 : positions des partis, candidat·e·s et résultats officiels du scrutin. Choisissez une section ci-dessous.</p>
+      <p class="lede">Les résultats officiels du scrutin, circonscription par circonscription : qui a gagné, par quelle marge, et ce que ça change depuis 2022.</p>
 
-      <div class="status-badge">Statut&nbsp;: résultats officiels du scrutin du 5 octobre 2026 intégrés — positions des 5 partis codées avant le vote (23 sept. 2026)</div>
-      <div class="snapshot-note">
-        <span><strong>Deux types de données, deux dates.</strong> Les positions des partis sont un instantané de la campagne, codé le 23 septembre 2026 à partir de la couverture médiatique — <em>avant</em> le vote ; elles n'ont pas été mises à jour depuis et ne reflètent pas d'éventuels changements postérieurs. Les résultats viennent d'Élections Québec (scrutin du 5 octobre 2026, résultats finaux) : voir la page <a class="crosslink" href="#resultats" onclick="goTo('resultats')">Résultats</a>. Chaque position cite sa source ; les cellules marquées <span class="thin-flag">peu documenté</span> reposent sur une couverture plus mince et méritent d'être vérifiées davantage.</span>
-      </div>
-
-      <div class="party-row" aria-label="Partis couverts par ce squelette" id="introPartyRow"></div>
+      <div class="res-grid" id="homeTiles"><p class="section-intro">Chargement des résultats…</p></div>
+      <div id="homeSeats"></div>
 
       <div class="toc-grid">
-        <a class="toc-card" href="#partis" onclick="goTo('partis')">
-          <span class="toc-num">01</span>
-          <h3>Analyse par parti</h3>
-          <p>Positionnement de chaque parti sur les six dimensions et l'indice composite, avec filtre.</p>
-        </a>
-        <a class="toc-card" href="#enjeux" onclick="goTo('enjeux')">
-          <span class="toc-num">02</span>
-          <h3>Comparatif par enjeu</h3>
-          <p>Qui se positionne comment, enjeu par enjeu — à vous de juger qui sert le mieux l'intérêt du Québec.</p>
-        </a>
-        <a class="toc-card" href="#quiz" onclick="goTo('quiz')">
-          <span class="toc-num">03</span>
-          <h3>Quiz de concordance</h3>
-          <p>Répondez aux six mêmes enjeux et voyez votre pourcentage de concordance avec chaque parti.</p>
-        </a>
-        <a class="toc-card" href="#candidats" onclick="goTo('candidats')">
-          <span class="toc-num">04</span>
-          <h3>Candidats par parti</h3>
-          <p>Les 635 candidat·e·s des 127 circonscriptions, avec biographie lorsque l'information publique le permettait.</p>
-        </a>
         <a class="toc-card" href="#resultats" onclick="goTo('resultats')">
-          <span class="toc-num">05</span>
-          <h3>Résultats du scrutin</h3>
-          <p>Qui a gagné chaque circonscription et par quelle marge : sièges, vote populaire, cartes interactives et détail par circonscription.</p>
+          <span class="toc-num">01</span>
+          <h3>Résultats</h3>
+          <p>Sièges, vote populaire, régions et marges de victoire des 127 circonscriptions.</p>
+        </a>
+        <a class="toc-card" href="#analyses" onclick="goTo('analyses')">
+          <span class="toc-num">02</span>
+          <h3>Analyses</h3>
+          <p>Courses serrées, sièges changés de main, exactitude des projections, ville et campagne.</p>
+        </a>
+        <a class="toc-card" href="#cartes" onclick="goTo('cartes')">
+          <span class="toc-num">03</span>
+          <h3>Cartes</h3>
+          <p>Cartes interactives des gagnants et du vote par parti, recherche et détail par circonscription.</p>
         </a>
         <a class="toc-card" href="#methodologie" onclick="goTo('methodologie')">
-          <span class="toc-num">06</span>
+          <span class="toc-num">04</span>
           <h3>Méthodologie</h3>
-          <p>Sources, couches d'analyse, indice « Québec d'abord » et architecture i18n.</p>
+          <p>Sources des données, transposition 2022 et limites.</p>
         </a>
+      </div>
+
+      <h3 class="home-sub">Avant le scrutin</h3>
+      <p class="section-intro">Les pages de la campagne restent consultables comme archives : elles n'ont pas été mises à jour depuis le vote.</p>
+      <div class="archive-links">
+        <a href="#partis" onclick="goTo('partis')">Partis</a>
+        <a href="#enjeux" onclick="goTo('enjeux')">Enjeux</a>
+        <a href="#quiz" onclick="goTo('quiz')">Quiz</a>
+        <a href="#candidats" onclick="goTo('candidats')">Candidats</a>
       </div>
     </div>
   </section>
@@ -598,6 +645,7 @@
   <!-- ============ PAGE : PARTIS ============ -->
   <section id="page-partis" class="page" hidden>
     <div class="wrap">
+      <div class="archive-note" role="note"><span><strong>Archive de la campagne.</strong> Contenu produit avant le scrutin du 5 octobre 2026 (positions codées le 23 septembre) ; il n'a pas été mis à jour.</span> <a class="crosslink" href="#resultats" onclick="goTo('resultats')">Voir les résultats →</a></div>
       <p class="eyebrow">Analyse par parti</p>
       <h2 id="partisHeading">—</h2>
       <p class="section-intro">Sélectionnez un parti pour voir son positionnement sur les six dimensions, ses couches analytiques et son indice « Québec d'abord », codé à partir de la couverture de la campagne 2026 (sources citées sous chaque position).</p>
@@ -628,6 +676,7 @@
   <!-- ============ PAGE : ENJEUX ============ -->
   <section id="page-enjeux" class="page" hidden>
     <div class="wrap">
+      <div class="archive-note" role="note"><span><strong>Archive de la campagne.</strong> Contenu produit avant le scrutin du 5 octobre 2026 (positions codées le 23 septembre) ; il n'a pas été mis à jour.</span> <a class="crosslink" href="#resultats" onclick="goTo('resultats')">Voir les résultats →</a></div>
       <p class="eyebrow">Comparatif par enjeu</p>
       <h2 id="enjeuxHeading">—</h2>
       <p class="section-intro">Pour chaque enjeu, ce comparatif montre où se positionne chaque parti. Le positionnement est <strong>descriptif</strong>&nbsp;: à vous d'évaluer qui répond le mieux à vos priorités pour le Québec.</p>
@@ -649,6 +698,7 @@
   <!-- ============ PAGE : QUIZ ============ -->
   <section id="page-quiz" class="page" hidden>
     <div class="wrap">
+      <div class="archive-note" role="note"><span><strong>Archive de la campagne.</strong> Contenu produit avant le scrutin du 5 octobre 2026 (positions codées le 23 septembre) ; il n'a pas été mis à jour.</span> <a class="crosslink" href="#resultats" onclick="goTo('resultats')">Voir les résultats →</a></div>
       <p class="eyebrow">Quiz de concordance</p>
       <h2>Où vous situez-vous ?</h2>
       <p class="section-intro">Pour chacun des six mêmes enjeux utilisés dans l'analyse par parti, choisissez la position (1 à 5) la plus proche de la vôtre entre les deux ancrages. Votre pourcentage de concordance avec chaque parti est recalculé automatiquement — vous pouvez modifier vos réponses en tout temps.</p>
@@ -671,6 +721,7 @@
   <!-- ============ PAGE : CANDIDATS ============ -->
   <section id="page-candidats" class="page" hidden>
     <div class="wrap">
+      <div class="archive-note" role="note"><span><strong>Archive de la campagne.</strong> Contenu produit avant le scrutin du 5 octobre 2026 (positions codées le 23 septembre) ; il n'a pas été mis à jour.</span> <a class="crosslink" href="#resultats" onclick="goTo('resultats')">Voir les résultats →</a></div>
       <p class="eyebrow">Analyse des candidats</p>
       <h2 id="candidatsHeading">—</h2>
       <p class="section-intro">Gabarit complet, en deux modes de consultation.</p>
@@ -729,28 +780,49 @@
     <div class="wrap">
       <p class="eyebrow">Résultats du scrutin du 5 octobre 2026</p>
       <h2>Qui a gagné, et par combien ?</h2>
-      <p class="section-intro">Résultats officiels d'Élections Québec pour les 127 circonscriptions : gagnant·e, marge de victoire, vote populaire et cartes. <span id="resMaj"></span></p>
+      <p class="section-intro">Résultats officiels d'Élections Québec pour les 127 circonscriptions : sièges, vote populaire, régions et marges de victoire. <span id="resMaj"></span> Pour les cartes, voir <a class="crosslink" href="#cartes" onclick="goTo('cartes')">Cartes</a> ; pour les comparaisons avec 2022, <a class="crosslink" href="#analyses" onclick="goTo('analyses')">Analyses</a>.</p>
 
       <div class="res-grid" id="resTiles"></div>
 
       <nav class="res-jump" aria-label="Sections de la page">
         <button type="button" class="chip-btn" onclick="resJump('rj-sieges')">Sièges</button>
-        <button type="button" class="chip-btn" onclick="resJump('rj-serrees')">À surveiller</button>
-        <button type="button" class="chip-btn" onclick="resJump('rj-2022')">Depuis 2022</button>
-        <button type="button" class="chip-btn" onclick="resJump('rj-villes')">Ville/campagne</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-amplif')">Votes vs sièges</button>
         <button type="button" class="chip-btn" onclick="resJump('rj-regions')">Régions</button>
-        <button type="button" class="chip-btn" onclick="resJump('rj-chercher')">Recherche</button>
-        <button type="button" class="chip-btn" onclick="resJump('rj-cartes')">Cartes</button>
         <button type="button" class="chip-btn" onclick="resJump('rj-marges')">Marges</button>
       </nav>
 
       <h3 id="rj-sieges">Sièges et vote populaire</h3>
       <div class="table-scroll"><table id="resSeatsTable"></table></div>
 
-      <h3>Votes et sièges : un système qui amplifie</h3>
+      <h3 id="rj-amplif">Votes et sièges : un système qui amplifie</h3>
       <p class="section-intro" id="resInsightLead"></p>
       <div class="table-scroll"><table id="resVsSeatsTable"></table></div>
       <p class="caption" id="resVsSeatsNote"></p>
+
+      <h3 id="rj-regions">Résultats par région</h3>
+      <p class="section-intro">Regroupement des circonscriptions par région, tel qu'utilisé pour les fiches de candidat·e·s (13 groupes, certaines régions étant regroupées). Cliquez une ligne pour zoomer la carte sur la région.</p>
+      <div class="table-scroll"><table id="resRegionTable"></table></div>
+
+      <h3 id="rj-marges">Marges de victoire</h3>
+      <div class="callout"><p id="resHighlights"></p></div>
+      <div class="filter-row" role="group" aria-label="Filtrer par parti gagnant" id="resWinnerFilter"></div>
+      <div class="table-scroll"><table id="resMarginTable"></table></div>
+    </div>
+  </section>
+
+  <!-- ============ PAGE : ANALYSES ============ -->
+  <section id="page-analyses" class="page" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Après le scrutin</p>
+      <h2>Ce que révèlent les résultats</h2>
+      <p class="section-intro">Courses serrées, sièges changés de main depuis 2022, exactitude des projections et fracture ville/campagne.</p>
+
+      <nav class="res-jump" aria-label="Sections de la page">
+        <button type="button" class="chip-btn" onclick="resJump('rj-serrees')">À surveiller</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-2022')">Depuis 2022</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-proj')">Projections</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-villes')">Ville/campagne</button>
+      </nav>
 
       <h3 id="rj-serrees">Circonscriptions à surveiller</h3>
       <p class="section-intro" id="resPlayLead"></p>
@@ -765,7 +837,7 @@
       <h3>Les plus fortes variations</h3>
       <div class="table-scroll"><table id="resSwingTable"></table></div>
 
-      <h3>Les projections avaient-elles raison ?</h3>
+      <h3 id="rj-proj">Les projections avaient-elles raison ?</h3>
       <p class="section-intro" id="resProjLead"></p>
       <div class="table-scroll"><table id="resProjBias"></table></div>
       <h4 style="margin:18px 0 6px">Les plus grandes surprises</h4>
@@ -779,9 +851,22 @@
       <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:14px 10px 6px"><div id="resDensChart"></div></div>
       <p class="caption">Chaque point est une circonscription. Densité = électeurs inscrits par km² de superficie terrestre (contours officiels, plans d'eau OpenStreetMap retranchés) ; échelle logarithmique. Cliquez un point pour le détail. La densité d'électeurs est un indicateur approximatif de l'urbanité, pas une mesure officielle de population.</p>
 
-      <h3 id="rj-regions">Résultats par région</h3>
-      <p class="section-intro">Regroupement des circonscriptions par région, tel qu'utilisé pour les fiches de candidat·e·s (13 groupes, certaines régions étant regroupées). Cliquez une ligne pour zoomer la carte sur la région.</p>
-      <div class="table-scroll"><table id="resRegionTable"></table></div>
+    </div>
+  </section>
+
+  <!-- ============ PAGE : CARTES ============ -->
+  <section id="page-cartes" class="page" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Résultats du scrutin du 5 octobre 2026</p>
+      <h2>Cartes et circonscriptions</h2>
+      <p class="section-intro">Explorez les 127 circonscriptions : gagnant·e, vote par parti et détail des candidat·e·s.</p>
+
+      <nav class="res-jump" aria-label="Sections de la page">
+        <button type="button" class="chip-btn" onclick="resJump('rj-chercher')">Recherche</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-cartes')">Gagnants</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-vote')">Vote par parti</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-detail')">Détail</button>
+      </nav>
 
       <h3 id="rj-chercher">Trouver une circonscription</h3>
       <div class="res-search">
@@ -794,7 +879,7 @@
       <div class="res-map-wrap"><div class="res-ctl"><button type="button" aria-label="Zoom avant" onclick="resZoomBy(1.6)">+</button><button type="button" aria-label="Zoom arrière" onclick="resZoomBy(1/1.6)">−</button><button type="button" aria-label="Réinitialiser la vue" title="Réinitialiser" onclick="setResZoom('qc')">⟲</button></div><div id="resMapWinner"></div></div>
       <div class="res-legend" id="resLegendWinner"></div>
 
-      <h3>Carte du vote, de la participation et des marges</h3>
+      <h3 id="rj-vote">Carte du vote, de la participation et des marges</h3>
       <div class="filter-row" role="group" aria-label="Parti affiché sur la carte" id="resPartyRow"></div>
       <div class="filter-row" role="group" aria-label="Type de valeur pour un parti" id="resModeRow"><button type="button" class="chip-btn active" data-res-mode="share" onclick="setResMode('share')">Part du vote en 2026</button><button type="button" class="chip-btn" data-res-mode="delta" onclick="setResMode('delta')">Variation depuis 2022</button></div>
       <div class="res-map-wrap"><div class="res-ctl"><button type="button" aria-label="Zoom avant" onclick="resZoomBy(1.6)">+</button><button type="button" aria-label="Zoom arrière" onclick="resZoomBy(1/1.6)">−</button><button type="button" aria-label="Réinitialiser la vue" title="Réinitialiser" onclick="setResZoom('qc')">⟲</button></div><div id="resMapParty"></div></div>
@@ -807,12 +892,9 @@
       <p class="section-intro" style="font-size:.85rem">Les deux cartes sont synchronisées : molette ou pincement pour zoomer, glisser pour déplacer, clic ou toucher sur une circonscription pour le détail.</p>
       <p class="section-intro" style="font-size:.78rem; color:var(--ink-faint)">Contours des circonscriptions : Élections Québec. Cours d'eau : © contributeurs OpenStreetMap (licence ODbL).</p>
       <p class="res-tip" id="resTip" aria-live="polite">Survolez une circonscription ; cliquez ou touchez-la pour le détail ci-dessous.</p>
+      <h3 id="rj-detail">Détail de la circonscription</h3>
       <div class="res-detail" id="resDetail" aria-live="polite"></div>
 
-      <h3 id="rj-marges">Marges de victoire</h3>
-      <div class="callout"><p id="resHighlights"></p></div>
-      <div class="filter-row" role="group" aria-label="Filtrer par parti gagnant" id="resWinnerFilter"></div>
-      <div class="table-scroll"><table id="resMarginTable"></table></div>
     </div>
   </section>
 
@@ -1038,7 +1120,9 @@
     {label:'Transparence budgétaire'},
     {label:'Compatibilité de coalition'}
   ];
-  var PAGES = ['accueil','partis','enjeux','quiz','candidats','resultats','methodologie'];
+  var PAGES = ['accueil','resultats','analyses','cartes','methodologie','partis','enjeux','quiz','candidats'];
+  var PRE_PAGES = ['partis','enjeux','quiz','candidats'];
+  var RES_PAGES = ['accueil','resultats','analyses','cartes'];
 
   var state = { party:'CAQ', topic:'immigration', candMode:'parti', circ:'Trois-Rivières' };
 
@@ -1614,8 +1698,8 @@
   }
   window.addEventListener('resize', resSyncHdr); window.addEventListener('load', resSyncHdr); resSyncHdr();
   function resSpy(){
-    var nav = document.querySelector('.res-jump'), page = document.getElementById('page-resultats');
-    if(!nav || !page || page.hidden) return;
+    var nav = document.querySelector('.page:not([hidden]) .res-jump');
+    if(!nav) return;
     var chips = nav.querySelectorAll('.chip-btn'), line = nav.getBoundingClientRect().bottom + 24, cur = null;
     chips.forEach(function(c){
       var id = (c.getAttribute('onclick').match(/'([^']+)'/)||[])[1], h = id && document.getElementById(id);
@@ -1644,6 +1728,7 @@
     document.getElementById('resDetail').innerHTML = resDetailHtml(r);
     var phone = window.matchMedia('(max-width:760px)').matches;
     if(fromTable==='init') return;
+    if(document.getElementById('page-cartes').hidden){ goTo('cartes'); resApplyView(); }
     if(fromTable || phone){
       var d = document.getElementById('resDetail');
       if(phone && !fromTable && !d.querySelector('.res-back')){
@@ -1967,9 +2052,12 @@
     resApplyView();
   }
   function resGoTo(code){
-    resSelect(code);
+    var wasHidden = document.getElementById('page-cartes').hidden;
+    if(wasHidden){ goTo('cartes'); resApplyView(); }
+    resSelect(code, 'init');
     resZoomTo(code);
     document.getElementById('resSuggest').hidden = true;
+    if(wasHidden) resJump('rj-cartes');
     document.getElementById('resMapWinner').scrollIntoView({behavior:'smooth', block:'center'});
   }
   function resSearchMatches(){
@@ -2030,7 +2118,7 @@
   }
 
   function resTagWideTables(){
-    document.querySelectorAll('#page-resultats table').forEach(function(t){
+    document.querySelectorAll('.page table').forEach(function(t){
       var r = t.rows[0]; t.classList.toggle('wide', !!r && r.cells.length>=7);
     });
   }
@@ -2050,6 +2138,14 @@
     ].map(function(x,i){
       return '<div class="stat-tile"><h4>'+x[0]+'</h4><div class="value" style="color:var(--ink)">'+x[1]+'</div><p>'+x[2]+'</p></div>';
     }).join('');
+    document.getElementById('homeTiles').innerHTML = document.getElementById('resTiles').innerHTML;
+    document.getElementById('homeSeats').innerHTML =
+      '<div class="home-bar" role="img" aria-label="Répartition des 127 sièges">'+order.filter(function(k){ return t[k].seats>0; }).map(function(k){
+        return '<span style="width:'+(t[k].seats/127*100)+'%; background:'+RES_COLORS[k]+'" title="'+RES_NAMES[k]+' : '+t[k].seats+'"></span>';
+      }).join('')+'</div><p class="home-bar-cap">Majorité à 64 sièges (trait vertical).</p>'
+      + '<div class="res-legend">'+order.filter(function(k){ return t[k].seats>0; }).map(function(k){
+        return '<span><i style="background:'+RES_COLORS[k]+'"></i>'+RES_NAMES[k]+' <strong>'+t[k].seats+'</strong></span>';
+      }).join('')+'</div>';
     document.getElementById('resSeatsTable').innerHTML =
       '<thead><tr><th>Parti</th><th class="num">Sièges</th><th class="num">Votes</th><th class="num">% du vote</th><th class="num">% des sièges</th></tr></thead><tbody>'
       + order.map(function(k){
@@ -2089,13 +2185,20 @@
     document.querySelectorAll('.site-nav a').forEach(function(a){
       a.classList.toggle('active', a.getAttribute('href') === '#'+id);
     });
+    var pre = PRE_PAGES.indexOf(id) !== -1;
+    document.getElementById('navMoreBtn').classList.toggle('active', pre);
+    closeMore();
     var nav = document.getElementById('siteNav');
     nav.classList.remove('open');
     document.getElementById('navToggle').setAttribute('aria-expanded','false');
     window.scrollTo(0,0);
-    if(id==='resultats') resEnsureLoaded(resApplyView);
+    if(RES_PAGES.indexOf(id) !== -1) resEnsureLoaded(function(){ resApplyView(); resSpy(); });
   }
 
+  function closeMore(){
+    var m = document.getElementById('navMoreMenu'), b = document.getElementById('navMoreBtn');
+    if(m){ m.hidden = true; b.setAttribute('aria-expanded','false'); }
+  }
   function goTo(id){
     showPage(id);
     try{ if(location.hash !== '#'+id) history.pushState(null,'','#'+id); }catch(e){}
@@ -2129,9 +2232,14 @@
     setTheme(savedTheme);
 
     document.getElementById('heroFlag').innerHTML = QUEBEC_FLAG_SVG;
-    document.getElementById('introPartyRow').innerHTML = PARTIES.map(function(p){
-      return '<span class="party-chip">'+partyBadge(p.code, true)+'<span class="chip-text">'+p.code+'<small>'+p.full+'</small></span></span>';
-    }).join('');
+    var moreBtn = document.getElementById('navMoreBtn'), moreMenu = document.getElementById('navMoreMenu');
+    moreBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open = moreMenu.hidden; moreMenu.hidden = !open;
+      moreBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', function(e){ if(!e.target.closest('#navMore')) closeMore(); });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMore(); } });
 
     renderCircList();
 
