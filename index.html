@@ -1613,6 +1613,25 @@
     if(h) document.documentElement.style.setProperty('--hdr-h', h.offsetHeight+'px');
   }
   window.addEventListener('resize', resSyncHdr); window.addEventListener('load', resSyncHdr); resSyncHdr();
+  function resSpy(){
+    var nav = document.querySelector('.res-jump'), page = document.getElementById('page-resultats');
+    if(!nav || !page || page.hidden) return;
+    var chips = nav.querySelectorAll('.chip-btn'), line = nav.getBoundingClientRect().bottom + 24, cur = null;
+    chips.forEach(function(c){
+      var id = (c.getAttribute('onclick').match(/'([^']+)'/)||[])[1], h = id && document.getElementById(id);
+      if(h && h.getBoundingClientRect().top <= line) cur = c;
+    });
+    chips.forEach(function(c){
+      var on = c===cur; if(c.classList.contains('active')===on) return;
+      c.classList.toggle('active', on);
+      if(on && nav.scrollWidth>nav.clientWidth) nav.scrollTo({left: c.offsetLeft - (nav.clientWidth - c.offsetWidth)/2, behavior:'smooth'});
+    });
+  }
+  var resSpyTick = false;
+  window.addEventListener('scroll', function(){
+    if(resSpyTick) return; resSpyTick = true;
+    requestAnimationFrame(function(){ resSpyTick = false; resSpy(); });
+  }, {passive:true});
   function resJump(id){
     var el = document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   }
