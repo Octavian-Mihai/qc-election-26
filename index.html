@@ -455,6 +455,55 @@
   td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono", monospace; white-space:nowrap;}
   th.sortable{cursor:pointer;}
   th.sortable:hover{color:var(--accent-2);}
+
+  /* ---------- page Résultats : navigation rapide (téléphone) ---------- */
+  .res-jump{display:none;}
+  #page-resultats h3{scroll-margin-top:118px;}
+  @media (max-width:760px){
+    .res-jump{
+      display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+      position:sticky; top:calc(env(safe-area-inset-top,0px) + 57px); z-index:15;
+      margin:0 -20px 14px; padding:10px 20px;
+      background:color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .res-jump::-webkit-scrollbar{display:none;}
+    .res-jump .chip-btn{white-space:nowrap; flex:0 0 auto; min-height:40px;}
+  }
+  @media (max-width:600px){
+    .page{padding-block:24px 48px;}
+    .wrap{padding-inline:16px;}
+    .res-jump{margin-inline:-16px; padding-inline:16px;}
+    #page-resultats h3{margin-top:2.2em;}
+    .chip-btn{min-height:40px;}
+    .filter-row{gap:8px; margin:14px 0 20px;}
+    .res-grid{gap:10px; margin:16px 0;}
+    .res-grid .stat-tile{padding:14px;}
+    .res-grid .stat-tile .value{font-size:1.15rem;}
+    .table-scroll{margin-block:14px; border-radius:10px;}
+    table{min-width:0;}
+    table.wide{min-width:560px;}
+    th,td{padding:9px 8px; font-size:.82rem;}
+    thead th, thead th.num{white-space:normal; line-height:1.25; vertical-align:bottom;}
+    #page-resultats .table-scroll td:first-child,
+    #page-resultats .table-scroll th:first-child{position:sticky; left:0; z-index:1; background:var(--surface); box-shadow:1px 0 0 var(--border);}
+    #page-resultats .table-scroll thead th:first-child{background:var(--surface-2);}
+    #resMarginTable th:nth-child(3),#resMarginTable td:nth-child(3),
+    #resMarginTable th:nth-child(6),#resMarginTable td:nth-child(6){display:none;}
+    .res-map-wrap{padding:6px;}
+    .res-map-wrap svg{height:min(62vh,480px); touch-action:pan-y;}
+    .res-ctl{top:10px; right:10px;}
+    .res-ctl button{width:44px; height:44px; font-size:1.3rem;}
+    .res-search{max-width:none;}
+    .res-search input{font-size:16px; padding:12px 14px;}
+    .res-suggest button{padding:13px 14px;}
+    .res-detail{padding:14px;}
+    .res-detail .actions .chip-btn,.res-detail .actions a,.res-detail .actions button{min-height:44px;}
+    .res-legend{gap:6px 12px;}
+    .res-tip{min-height:0;}
+    .callout,.note{padding:14px 16px;}
+  }
 </style>
 
 <script>
@@ -687,7 +736,18 @@
 
       <div class="res-grid" id="resTiles"></div>
 
-      <h3>Sièges et vote populaire</h3>
+      <nav class="res-jump" aria-label="Sections de la page">
+        <button type="button" class="chip-btn" onclick="resJump('rj-sieges')">Sièges</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-serrees')">À surveiller</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-2022')">Depuis 2022</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-villes')">Ville/campagne</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-regions')">Régions</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-chercher')">Recherche</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-cartes')">Cartes</button>
+        <button type="button" class="chip-btn" onclick="resJump('rj-marges')">Marges</button>
+      </nav>
+
+      <h3 id="rj-sieges">Sièges et vote populaire</h3>
       <div class="table-scroll"><table id="resSeatsTable"></table></div>
 
       <h3>Votes et sièges : un système qui amplifie</h3>
@@ -695,11 +755,11 @@
       <div class="table-scroll"><table id="resVsSeatsTable"></table></div>
       <p class="caption" id="resVsSeatsNote"></p>
 
-      <h3>Circonscriptions à surveiller</h3>
+      <h3 id="rj-serrees">Circonscriptions à surveiller</h3>
       <p class="section-intro" id="resPlayLead"></p>
       <div class="table-scroll"><table id="resPlayTable"></table></div>
 
-      <h3>Qu'est-ce qui a changé depuis 2022 ?</h3>
+      <h3 id="rj-2022">Qu'est-ce qui a changé depuis 2022 ?</h3>
       <p class="section-intro" id="resChangeLead"></p>
       <div class="table-scroll"><table id="resChangeTable"></table></div>
       <h3>D'où viennent les sièges</h3>
@@ -715,24 +775,24 @@
       <div class="table-scroll"><table id="resProjTable"></table></div>
       <p class="caption">Résultats de 2022 transposés sur la carte électorale de 2026 et projections par circonscription : <a href="https://qc125.com/" target="_blank" rel="noopener">Qc125</a> (Philippe J. Fournier ; transposition de Kyle Hutton), relevés sur les pages de circonscription le 6 octobre 2026. Ce sont des estimations tierces, pas des données officielles. Les parts de vote 2022 à l'échelle du Québec sont celles d'Élections Québec.</p>
 
-      <h3>Ville et campagne : deux Québec</h3>
+      <h3 id="rj-villes">Ville et campagne : deux Québec</h3>
       <p class="section-intro" id="resDensLead"></p>
       <div class="table-scroll"><table id="resDensTable"></table></div>
       <div class="filter-row" role="group" aria-label="Parti du nuage de points" id="resDensParty"></div>
       <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:14px 10px 6px"><div id="resDensChart"></div></div>
       <p class="caption">Chaque point est une circonscription. Densité = électeurs inscrits par km² de superficie terrestre (contours officiels, plans d'eau OpenStreetMap retranchés) ; échelle logarithmique. Cliquez un point pour le détail. La densité d'électeurs est un indicateur approximatif de l'urbanité, pas une mesure officielle de population.</p>
 
-      <h3>Résultats par région</h3>
+      <h3 id="rj-regions">Résultats par région</h3>
       <p class="section-intro">Regroupement des circonscriptions par région, tel qu'utilisé pour les fiches de candidat·e·s (13 groupes, certaines régions étant regroupées). Cliquez une ligne pour zoomer la carte sur la région.</p>
       <div class="table-scroll"><table id="resRegionTable"></table></div>
 
-      <h3>Trouver une circonscription</h3>
+      <h3 id="rj-chercher">Trouver une circonscription</h3>
       <div class="res-search">
         <input type="search" id="resSearch" placeholder="Nom de la circonscription…" autocomplete="off" aria-label="Rechercher une circonscription" oninput="resSearchInput()" onkeydown="resSearchKey(event)">
         <div class="res-suggest" id="resSuggest" hidden></div>
       </div>
 
-      <h3>Carte des gagnants</h3>
+      <h3 id="rj-cartes">Carte des gagnants</h3>
       <p class="section-intro">Chaque circonscription est colorée selon le parti gagnant ; plus la teinte est foncée, plus la marge est grande (pleine intensité à 30 points d'écart ou plus). Survolez ou touchez une circonscription pour le détail.</p>
       <div class="res-map-wrap"><div class="res-ctl"><button type="button" aria-label="Zoom avant" onclick="resZoomBy(1.6)">+</button><button type="button" aria-label="Zoom arrière" onclick="resZoomBy(1/1.6)">−</button><button type="button" aria-label="Réinitialiser la vue" title="Réinitialiser" onclick="setResZoom('qc')">⟲</button></div><div id="resMapWinner"></div></div>
       <div class="res-legend" id="resLegendWinner"></div>
@@ -752,7 +812,7 @@
       <p class="res-tip" id="resTip" aria-live="polite">Survolez une circonscription ; cliquez ou touchez-la pour le détail ci-dessous.</p>
       <div class="res-detail" id="resDetail" aria-live="polite"></div>
 
-      <h3>Marges de victoire</h3>
+      <h3 id="rj-marges">Marges de victoire</h3>
       <div class="callout"><p id="resHighlights"></p></div>
       <div class="filter-row" role="group" aria-label="Filtrer par parti gagnant" id="resWinnerFilter"></div>
       <div class="table-scroll"><table id="resMarginTable"></table></div>
@@ -1461,6 +1521,12 @@
         var a = ptrs[ids[0]], b = ptrs[ids[1]], d = Math.hypot(a.x-b.x,a.y-b.y);
         var c = resToMap(sv(), (a.x+b.x)/2, (a.y+b.y)/2);
         if(pinch.d>0) resZoomAt(d/pinch.d, c.x, c.y);
+        var mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+        if(pinch.mx!==undefined){
+          var kk = resToMap(sv(), 0, 0).k;
+          resState.vb[0] -= (mx-pinch.mx)/kk; resState.vb[1] -= (my-pinch.my)/kk; resApplyView();
+        }
+        pinch.mx = mx; pinch.my = my;
         pinch.d = d; return;
       }
       if(drag){
@@ -1545,6 +1611,9 @@
     var proj = P.map(function(p){ return p+' '+fmtP(r.proj[p][0],0); }).join(' · ');
     return '<p class="bio" style="margin-top:10px"><strong>Depuis 2022</strong> (résultats 2022 sur la carte de 2026, Qc125) : '+since+'.'+(r.flip?' <strong>Le siège a changé de main</strong> ('+r.w22+' → '+r.avance[0]+').':' Le siège est resté au même parti ('+r.w22+').')+'<br><strong>Projection Qc125 :</strong> '+proj+' — '+(r.wproj===r.avance[0]?'la projection désignait le·la bon·ne gagnant·e.':'la projection donnait '+r.wproj+' gagnant·e.')+'</p>';
   }
+  function resJump(id){
+    var el = document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
   function resSelect(code, fromTable){
     var r = RES_BY_CODE[code]; if(!r) return;
     resState.selected = code;
@@ -1552,7 +1621,17 @@
     document.querySelectorAll('.res-map-wrap path[data-code="'+code+'"]').forEach(function(p){ p.classList.add('sel'); });
     document.getElementById('resTip').innerHTML = resTipHtml(r);
     document.getElementById('resDetail').innerHTML = resDetailHtml(r);
-    if(fromTable) document.getElementById('resDetail').scrollIntoView({behavior:'smooth', block:'center'});
+    var phone = window.matchMedia('(max-width:760px)').matches;
+    if(fromTable==='init') return;
+    if(fromTable || phone){
+      var d = document.getElementById('resDetail');
+      if(phone && !fromTable && !d.querySelector('.res-back')){
+        var b = document.createElement('button'); b.type='button'; b.className='chip-btn res-back'; b.textContent='↑ Retour à la carte';
+        b.onclick = function(){ resJump('rj-cartes'); };
+        d.appendChild(b);
+      }
+      d.scrollIntoView({behavior:'smooth', block: phone ? 'start' : 'center'});
+    }
   }
   function resOpenCandidats(code){
     var r = RES_BY_CODE[code]; if(!r) return;
@@ -1929,6 +2008,11 @@
         }).join('') + '</tbody>';
   }
 
+  function resTagWideTables(){
+    document.querySelectorAll('#page-resultats table').forEach(function(t){
+      var r = t.rows[0]; t.classList.toggle('wide', !!r && r.cells.length>=7);
+    });
+  }
   function renderResultats(){
     var m = RESULTATS.meta, t = resTally(), rows = RESULTATS.rows;
     document.getElementById('resMaj').textContent = 'Résultats finaux, mis à jour le '+new Date(m.maj.replace(',','.')).toLocaleString('fr-CA',{dateStyle:'long',timeStyle:'short'})+'.';
@@ -1969,7 +2053,8 @@
     renderResRegions();
     renderResMaps();
     renderResMargins();
-    resSelect(RESULTATS.rows.slice().sort(function(a,b){ return a.marge-b.marge; })[0].code);
+    resSelect(RESULTATS.rows.slice().sort(function(a,b){ return a.marge-b.marge; })[0].code, 'init');
+    resTagWideTables();
     bindResMap(document.getElementById('resMapWinner'));
     bindResMap(document.getElementById('resMapParty'));
     resApplyView();
