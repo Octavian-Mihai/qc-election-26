@@ -501,6 +501,12 @@
     .meth-defs dd{padding:0 0 12px; border-top:0;}
     .meth-archive{padding:2px 12px 14px;}
   }
+  .res-pager{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 14px; margin:0 0 10px;}
+  .res-pager-info{font-size:.86rem; color:var(--ink-soft);}
+  .res-pager-btns{display:flex; align-items:center; gap:10px;}
+  .res-pager-pos{font-size:.86rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .res-pager .chip-btn:disabled{opacity:.4; cursor:default;}
+  @media (max-width:600px){ .res-pager{flex-direction:column; align-items:stretch;} .res-pager-btns{justify-content:space-between;} }
   .home-sub{margin-top:2.2em;}
   .archive-links{display:flex; flex-wrap:wrap; gap:8px;}
   .archive-links a{
@@ -821,6 +827,7 @@
       <div class="callout"><p id="resHighlights"></p></div>
       <div class="filter-row" role="group" aria-label="Filtrer par parti gagnant" id="resWinnerFilter"></div>
       <div class="table-scroll"><table id="resMarginTable"></table></div>
+      <div class="res-pager" id="resPager"></div>
     </div>
   </section>
 
@@ -1564,7 +1571,8 @@
   var RES_NAMES = {PQ:'Parti Québécois', PLQ:'Parti libéral du Québec', PCQ:'Parti conservateur du Québec', CAQ:'Coalition Avenir Québec', QS:'Québec solidaire', AUT:'Autres'};
   // resultats.js (~840 Ko : résultats + contours + cours d'eau) n'est chargé qu'à la première visite de la page Résultats.
   var RES_BY_CODE = {};
-  var resState = {mode:'share', party:'PQ', vb:[0,0,0,0], winner:'ALL', sort:'margePct', dir:1};
+  var resState = {mode:'share', party:'PQ', vb:[0,0,0,0], winner:'ALL', sort:'margePct', dir:1, page:0};
+  var RES_PAGE = 20;
   var resLoad = {state:'idle', queue:[]};
   function resEnsureLoaded(cb){
     if(resLoad.state==='ready'){ cb(); return; }
@@ -2170,11 +2178,17 @@
     renderResMaps();
   }
   function setResWinner(w){
-    resState.winner = w;
+    resState.winner = w; resState.page = 0;
     document.querySelectorAll('[data-res-winner]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-res-winner')===w); });
     renderResMargins();
   }
+  function resMarginPage(d){
+    resState.page = Math.max(0, resState.page + d);
+    renderResMargins();
+    resJump('rj-marges');
+  }
   function sortResBy(k){
+    resState.page = 0;
     if(resState.sort===k) resState.dir = -resState.dir; else { resState.sort = k; resState.dir = (k==='nom'||k==='gagnant') ? 1 : -1; if(k==='margePct'||k==='marge') resState.dir = 1; }
     renderResMargins();
   }
@@ -2189,9 +2203,17 @@
     function th(key, label, num){
       return '<th class="sortable'+(num?' num':'')+'" onclick="sortResBy(\''+key+'\')">'+label+(resState.sort===key ? (resState.dir>0?' ▲':' ▼') : '')+'</th>';
     }
+    var pages = Math.max(1, Math.ceil(rows.length / RES_PAGE));
+    if(resState.page >= pages) resState.page = pages-1;
+    var from = resState.page*RES_PAGE, shown = rows.slice(from, from+RES_PAGE);
+    document.getElementById('resPager').innerHTML =
+      '<span class="res-pager-info">'+(from+1)+'–'+(from+shown.length)+' sur '+rows.length+' circonscriptions</span>'
+      + '<span class="res-pager-btns"><button type="button" class="chip-btn" onclick="resMarginPage(-1)"'+(resState.page===0?' disabled':'')+'>← Précédent</button>'
+      + '<span class="res-pager-pos">Page '+(resState.page+1)+' / '+pages+'</span>'
+      + '<button type="button" class="chip-btn" onclick="resMarginPage(1)"'+(resState.page>=pages-1?' disabled':'')+'>Suivant →</button></span>';
     document.getElementById('resMarginTable').innerHTML =
       '<thead><tr>'+th('nom','Circonscription')+th('gagnant','Gagnant·e')+'<th>Deuxième</th>'+th('marge','Marge (votes)',1)+th('margePct','Marge (pts)',1)+th('part','Participation',1)+'</tr></thead><tbody>'
-      + rows.map(function(r){
+      + shown.map(function(r){
           return '<tr class="res-row" tabindex="0" onclick="resSelect('+r.code+',true)" onkeydown="if(event.key===\'Enter\')resSelect('+r.code+',true)"><td>'+r.nom+'</td><td>'+partyBadge(r.avance[0]==='AUT'?'—':r.avance[0])+' '+r.c[0][1]+' <small>('+fmtP(r.c[0][3])+')</small></td>'
             + '<td>'+r.avance[1]+' <small>'+r.c[1][1]+' ('+fmtP(r.c[1][3])+')</small></td>'
             + '<td class="num">'+fmtN(r.marge)+'</td><td class="num">'+r.margePct.toFixed(1).replace('.',',')+'</td><td class="num">'+fmtP(r.part)+'</td></tr>';
