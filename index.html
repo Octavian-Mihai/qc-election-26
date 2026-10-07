@@ -457,20 +457,17 @@
   th.sortable:hover{color:var(--accent-2);}
 
   /* ---------- page Résultats : navigation rapide (téléphone) ---------- */
-  .res-jump{display:none;}
-  #page-resultats h3{scroll-margin-top:118px;}
-  @media (max-width:760px){
-    .res-jump{
-      display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
-      position:sticky; top:calc(env(safe-area-inset-top,0px) + 57px); z-index:15;
-      margin:0 -20px 14px; padding:10px 20px;
-      background:color-mix(in srgb, var(--bg) 92%, transparent);
-      backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-      border-bottom:1px solid var(--border);
-    }
-    .res-jump::-webkit-scrollbar{display:none;}
-    .res-jump .chip-btn{white-space:nowrap; flex:0 0 auto; min-height:40px;}
+  .res-jump{
+    display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+    position:sticky; top:calc(env(safe-area-inset-top,0px) + var(--hdr-h,57px)); z-index:15;
+    margin:0 -20px 14px; padding:10px 20px;
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
   }
+  .res-jump::-webkit-scrollbar{display:none;}
+  .res-jump .chip-btn{white-space:nowrap; flex:0 0 auto; min-height:40px;}
+  #page-resultats h3{scroll-margin-top:130px;}
   @media (max-width:600px){
     .page{padding-block:24px 48px;}
     .wrap{padding-inline:16px;}
@@ -1611,6 +1608,11 @@
     var proj = P.map(function(p){ return p+' '+fmtP(r.proj[p][0],0); }).join(' · ');
     return '<p class="bio" style="margin-top:10px"><strong>Depuis 2022</strong> (résultats 2022 sur la carte de 2026, Qc125) : '+since+'.'+(r.flip?' <strong>Le siège a changé de main</strong> ('+r.w22+' → '+r.avance[0]+').':' Le siège est resté au même parti ('+r.w22+').')+'<br><strong>Projection Qc125 :</strong> '+proj+' — '+(r.wproj===r.avance[0]?'la projection désignait le·la bon·ne gagnant·e.':'la projection donnait '+r.wproj+' gagnant·e.')+'</p>';
   }
+  function resSyncHdr(){
+    var h = document.querySelector('.site-header');
+    if(h) document.documentElement.style.setProperty('--hdr-h', h.offsetHeight+'px');
+  }
+  window.addEventListener('resize', resSyncHdr); window.addEventListener('load', resSyncHdr); resSyncHdr();
   function resJump(id){
     var el = document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   }
